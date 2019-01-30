@@ -1,0 +1,181 @@
+package com.bit.sfa.DataControl;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
+import com.bit.sfa.Models.Dealer;
+import com.bit.sfa.Settings.DatabaseHelper;
+
+import java.util.ArrayList;
+
+public class DealerDS {
+	private SQLiteDatabase dB;
+	private DatabaseHelper dbHelper;
+	Context context;
+	private String TAG="swadeshi";
+	
+	
+	public DealerDS (Context context){
+		this.context = context;
+		dbHelper = new DatabaseHelper(context);
+	}
+	
+	public void open() throws SQLException {
+		dB = dbHelper.getWritableDatabase();
+	}
+	
+	/*
+	 * insert code
+	 */
+	@SuppressWarnings("static-access")
+	public int createOrUpdateFDealer(ArrayList<Dealer>  list) {
+		
+		int count =0;
+		
+		if(dB == null){
+			open();
+		}else if(!dB.isOpen()){
+			open();
+		}
+		Cursor cursor = null;
+		
+	try{
+		
+    for (Dealer dealer : list) {
+    		ContentValues values = new ContentValues();
+			
+			values.put(dbHelper.FDEALER_ADD_DATE, dealer.getFDEALER_ADD_DATE());
+			values.put(dbHelper.FDEALER_ADD_MACH, dealer.getFDEALER_ADD_MACH());
+			values.put(dbHelper.FDEALER_ADD_USER, dealer.getFDEALER_ADD_USER());
+			values.put(dbHelper.FDEALER_CUS_TYP_CODE, dealer.getFDEALER_CUS_TYP_CODE());
+			values.put(dbHelper.FDEALER_DEAL_ADD1, dealer.getFDEALER_DEAL_ADD1());
+			values.put(dbHelper.FDEALER_DEAL_ADD2, dealer.getFDEALER_DEAL_ADD2());
+			values.put(dbHelper.FDEALER_DEAL_ADD3, dealer.getFDEALER_DEAL_ADD3());
+			values.put(dbHelper.FDEALER_DEAL_CODE, dealer.getFDEALER_DEAL_CODE());
+			values.put(dbHelper.FDEALER_DEAL_EMAIL, dealer.getFDEALER_DEAL_EMAIL());
+			values.put(dbHelper.FDEALER_DEAL_GD_CODE, dealer.getFDEALER_DEAL_GD_CODE());
+			values.put(dbHelper.FDEALER_DEAL_MOB, dealer.getFDEALER_DEAL_MOB());
+			values.put(dbHelper.FDEALER_DEAL_NAME, dealer.getFDEALER_DEAL_NAME());
+			values.put(dbHelper.FDEALER_DEAL_TELE, dealer.getFDEALER_DEAL_TELE());
+			values.put(dbHelper.FDEALER_DISTANCE, dealer.getFDEALER_DISTANCE());
+			values.put(dbHelper.FDEALER_STATUS, dealer.getFDEALER_STATUS());
+			values.put(dbHelper.FDEALER_PREFIX, dealer.getFDEALER_PREFIX());
+			
+			count = (int) dB.insert(dbHelper.TABLE_FDEALER, null, values);
+
+			}
+		}catch (Exception e) {
+		
+			Log.v(TAG+" Exception", e.toString());
+	
+		}finally {  
+			if (cursor !=null) {
+				cursor.close();
+			}
+			dB.close();
+		}
+		return count;
+				
+	}
+	
+	
+	public ArrayList<Dealer> getAllDealer() {
+		if (dB == null) {
+			open();
+		} else if (!dB.isOpen()) {
+			open();
+		}
+		
+		ArrayList<Dealer> list = new ArrayList<Dealer>();
+		
+		String selectQuery = "select * from "+dbHelper.TABLE_FDEALER;
+		
+		Cursor cursor = dB.rawQuery(selectQuery, null);
+		while(cursor.moveToNext()){
+			
+			Dealer aDealer=new Dealer();
+		
+			aDealer.setFDEALER_DEAL_CODE(cursor.getString(cursor.getColumnIndex(dbHelper.FDEALER_DEAL_CODE)));
+			aDealer.setFDEALER_DEAL_NAME(cursor.getString(cursor.getColumnIndex(dbHelper.FDEALER_DEAL_NAME)));
+			aDealer.setFDEALER_DEAL_ADD1(cursor.getString(cursor.getColumnIndex(dbHelper.FDEALER_DEAL_ADD1)));
+			aDealer.setFDEALER_DEAL_ADD2(cursor.getString(cursor.getColumnIndex(dbHelper.FDEALER_DEAL_ADD2)));
+			aDealer.setFDEALER_DEAL_ADD3(cursor.getString(cursor.getColumnIndex(dbHelper.FDEALER_DEAL_ADD3)));
+			aDealer.setFDEALER_DEAL_EMAIL(cursor.getString(cursor.getColumnIndex(dbHelper.FDEALER_DEAL_EMAIL)));
+			aDealer.setFDEALER_DEAL_MOB(cursor.getString(cursor.getColumnIndex(dbHelper.FDEALER_DEAL_MOB)));
+			aDealer.setFDEALER_DEAL_TELE(cursor.getString(cursor.getColumnIndex(dbHelper.FDEALER_DEAL_TELE)));
+			aDealer.setFDEALER_STATUS(cursor.getString(cursor.getColumnIndex(dbHelper.FDEALER_STATUS)));
+			aDealer.setFDEALER_PREFIX(cursor.getString(cursor.getColumnIndex(dbHelper.FDEALER_PREFIX)));
+			aDealer.setFDEALER_DISTANCE(cursor.getString(cursor.getColumnIndex(dbHelper.FDEALER_DISTANCE)));
+			aDealer.setFDEALER_ID(cursor.getString(cursor.getColumnIndex(dbHelper.FDEALER_ID)));
+							
+			list.add(aDealer);
+			
+		}
+		
+		return list;
+	}
+	
+	
+	/*
+	 * delete code
+	 */
+	@SuppressWarnings("static-access")
+	public int deleteAll(){
+		
+		int count =0;
+		
+		if(dB == null){
+			open();
+		}else if(!dB.isOpen()){
+			open();
+		}
+		Cursor cursor = null;
+		try{
+			
+			cursor = dB.rawQuery("SELECT * FROM " + dbHelper.TABLE_FDEALER, null);
+			count =cursor.getCount();
+			if(count>0){
+				int success = dB.delete(dbHelper.TABLE_FDEALER, null, null);
+				Log.v("Success", success+"");
+			}
+		}catch (Exception e){
+
+			Log.v(TAG+" Exception", e.toString());
+			
+		}finally{  
+			if (cursor !=null) {
+				cursor.close();
+			}
+			dB.close();
+		}
+		
+		return count;
+		
+	}
+	
+	@SuppressWarnings("static-access")
+	public String getCurrentDealerCode() {
+		if (dB == null) {
+			open();
+		} else if (!dB.isOpen()) {
+			open();
+		}
+				
+		String selectQuery = "SELECT * FROM " + dbHelper.TABLE_FDEALER;
+		
+		Cursor cursor = null;
+		cursor = dB.rawQuery(selectQuery, null);
+		
+		while(cursor.moveToNext()){
+
+			return cursor.getString(cursor.getColumnIndex(dbHelper.FDEALER_DEAL_CODE));
+			
+		}
+		
+		return "";
+	}
+}

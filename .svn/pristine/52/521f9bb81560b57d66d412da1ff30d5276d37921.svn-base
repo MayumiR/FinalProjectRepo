@@ -1,0 +1,214 @@
+package com.kandanafd.kfd_medi.DataControl;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
+
+import com.kandanafd.kfd_medi.Models.FinvHedL3;
+import com.kandanafd.kfd_medi.Settings.DatabaseHelper;
+
+import java.util.ArrayList;
+
+public class FinvHedL3DS {
+	private SQLiteDatabase dB;
+	private DatabaseHelper dbHelper;
+	Context context;
+	private String TAG = "swadeshi";
+
+	public FinvHedL3DS(Context context) {
+		this.context = context;
+		dbHelper = new DatabaseHelper(context);
+	}
+
+	public void open() throws SQLException {
+		dB = dbHelper.getWritableDatabase();
+	}
+
+	@SuppressWarnings("static-access")
+	public int createOrUpdateFinvHedL3(ArrayList<FinvHedL3> list) {
+		int count = 0;
+		if (dB == null) {
+			open();
+		} else if (!dB.isOpen()) {
+			open();
+		}
+
+		try {
+
+			dB.beginTransaction();
+
+			String sql = "Insert or Replace into " + dbHelper.TABLE_FINVHEDL3 + " (" + dbHelper.FINVHEDL3_DEB_CODE + ", " + dbHelper.FINVHEDL3_REF_NO + ", " + dbHelper.FINVHEDL3_REF_NO1 + ", " + dbHelper.FINVHEDL3_TOTAL_AMT + ", " + dbHelper.FINVHEDL3_TOTAL_TAX + ", " + dbHelper.FINVHEDL3_TXN_DATE + ") values(?,?,?,?,?,?)";
+
+			SQLiteStatement insert = dB.compileStatement(sql);
+
+			for (int i = 0; i < list.size(); i++) {
+				
+				FinvHedL3 item = list.get(i);
+
+				// if(i == (numberOfRows-1)){
+				// lastItem = item;
+				// }
+
+				insert.bindString(1, item.getFINVHEDL3_DEB_CODE());
+				insert.bindString(2, item.getFINVHEDL3_REF_NO());
+				insert.bindString(3, item.getFINVHEDL3_REF_NO1());
+				insert.bindString(4, item.getFINVHEDL3_TOTAL_AMT());
+				insert.bindString(5, item.getFINVHEDL3_TOTAL_TAX());
+				insert.bindString(6, item.getFINVHEDL3_TXN_DATE());
+				insert.execute();
+				
+				count = count+1;
+			}
+
+			dB.setTransactionSuccessful();
+			Log.w(TAG, "Done");
+
+		} catch (Exception e) {
+			Log.w("XML:", e);
+		}
+
+		finally {
+			dB.endTransaction();
+
+			dB.close();
+		}
+		
+		return count;
+	}
+
+	@SuppressWarnings("static-access")
+	public int deleteAll() {
+		int count = 0;
+
+		if (dB == null) {
+			open();
+		} else if (!dB.isOpen()) {
+			open();
+		}
+		Cursor cursor = null;
+		try {
+			cursor = dB.rawQuery("SELECT * FROM " + dbHelper.TABLE_FINVHEDL3, null);
+			count = cursor.getCount();
+			if (count > 0) {
+				int success = dB.delete(dbHelper.TABLE_FINVHEDL3, null, null);
+				Log.v("Success", success + "");
+			}
+		} catch (Exception e) {
+
+			Log.v(TAG + " Exception", e.toString());
+
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
+			dB.close();
+		}
+
+		return count;
+
+	}
+	
+	public double getTodaySale(String Date) {
+
+		if (dB == null) {
+			open();
+		} else if (!dB.isOpen()) {
+			open();
+		}
+
+		double totret = 0, totamt = 0;
+		Cursor cursor = null;
+		Cursor cursoret = null;
+		try {
+			String selectQuery = "SELECT Sum(TotalAmt) as TotalAmt FROM " + DatabaseHelper.TABLE_FINVHEDL3 + " WHERE TxnDate ='" + Date + "' AND RefNo1='22'";
+			cursor = dB.rawQuery(selectQuery, null);
+
+			String selectQueryRet = "SELECT Sum(TotalAmt) as TotalAmt FROM " + DatabaseHelper.TABLE_FINVHEDL3 + " WHERE TxnDate ='" + Date + "' AND RefNo1<>'22'";
+			cursoret = dB.rawQuery(selectQueryRet, null);
+			
+			while (cursor.moveToNext()) {
+
+//				String strtotamt = cursor.getString(cursor.getColumnIndex(DatabaseHelper.FINVHEDL3_TOTAL_AMT));
+//				totamt = Double.parseDouble(strtotamt != null ? strtotamt : "0.00");
+				
+				totamt = cursor.getDouble(cursor.getColumnIndex(DatabaseHelper.FINVHEDL3_TOTAL_AMT));
+			}
+			
+			while (cursoret.moveToNext()) {
+//				String strtotret = cursoret.getString(cursoret.getColumnIndex(DatabaseHelper.FINVHEDL3_TOTAL_AMT));
+//				
+//				totret = Double.parseDouble(strtotret != null ? strtotret : "0.00");	
+				
+				totret = cursoret.getDouble(cursoret.getColumnIndex(DatabaseHelper.FINVHEDL3_TOTAL_AMT));
+			}
+			
+		} catch (Exception e) {
+			Log.v(TAG, e.toString());
+
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
+			dB.close();
+		}
+
+		return totamt-totret;
+
+	}
+
+	public double getCurrMonthSale() {
+
+		if (dB == null) {
+			open();
+		} else if (!dB.isOpen()) {
+			open();
+		}
+
+		double totret = 0.00, totamt = 0.00;
+		Cursor cursor = null;
+		Cursor cursoret = null;
+		try {
+			String selectQuery = "SELECT Sum(TotalAmt) as TotalAmt FROM " + DatabaseHelper.TABLE_FINVHEDL3 + " WHERE RefNo1='22'";
+			cursor = dB.rawQuery(selectQuery, null);
+			
+			String selectQueryRet = "SELECT Sum(TotalAmt) as TotalAmt FROM " + DatabaseHelper.TABLE_FINVHEDL3 + " WHERE RefNo1<>'22'";
+			cursoret = dB.rawQuery(selectQueryRet, null);
+			
+			while (cursor.moveToNext()) {
+
+				//String strtotamt = cursor.getString(cursor.getColumnIndex(DatabaseHelper.FINVHEDL3_TOTAL_AMT));
+				//totamt = Double.parseDouble(strtotamt != null ? strtotamt : "0.00");
+				totamt = cursor.getDouble(cursor.getColumnIndex(DatabaseHelper.FINVHEDL3_TOTAL_AMT));
+				//totamt = (Double) totamt null ? totamt : 0.00;
+			}
+			
+			while (cursoret.moveToNext()) {
+//				String strtotret = cursoret.getString(cursoret.getColumnIndex(DatabaseHelper.FINVHEDL3_TOTAL_AMT));
+//				
+//				totret = Double.parseDouble(strtotret != null ? strtotret : "0.00");	
+				
+				totret = cursoret.getDouble(cursoret.getColumnIndex(DatabaseHelper.FINVHEDL3_TOTAL_AMT));
+			}
+
+		} catch (Exception e) {
+			Log.v(TAG, e.toString());
+
+		} finally {
+			if (cursoret != null) {
+				cursoret.close();
+			}
+			if (cursor != null) {
+				cursor.close();
+			}
+			
+			dB.close();
+		}
+
+		return totamt-totret;
+
+	}
+
+}

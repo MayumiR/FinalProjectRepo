@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_customer_search_phone"
+        android:icon="@drawable/search_button"
+        android:showAsAction="always"
+        android:title="Search"
+        app:actionViewClass="android.widget.SearchView" />
+    <item
+        android:id="@+id/action_invoice_phone_new"
+        android:icon="@drawable/search_button"
+        android:showAsAction="always"
+        android:title="New"/>
+
+</menu>

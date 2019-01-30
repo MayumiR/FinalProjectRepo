@@ -1,0 +1,88 @@
+package com.bit.sfa.DataControl;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
+
+import com.bit.sfa.Models.FmArea;
+import com.bit.sfa.Settings.DatabaseHelper;
+
+import java.util.ArrayList;
+
+/**
+ * Created by Sathiyaraja on 7/23/2018.
+ */
+
+public class FmAreaDS {
+    private SQLiteDatabase dB;
+    private DatabaseHelper dbHelper;
+    Context context;
+    private String TAG = "FmAreaDS";
+
+    public static SharedPreferences localSP;
+
+    public FmAreaDS(Context context) {
+        this.context = context;
+        dbHelper = new DatabaseHelper(context);
+    }
+
+    public void open() throws SQLException {
+        dB = dbHelper.getWritableDatabase();
+    }
+
+    public long InsertFmArea(ArrayList<FmArea> fmAreas) {
+
+        int count = 0;
+
+        if (dB == null) {
+            open();
+        } else if (!dB.isOpen()) {
+            open();
+        }
+        Cursor cursor = null;
+        try {
+            dB.beginTransaction();
+            String sql = "Insert or Replace into " + dbHelper.TABLE_FMAREA + " (" + dbHelper.AREA_CODE + ", "
+                    + dbHelper.AREA_NAME + ","
+                    + dbHelper.ASM_CODE + ","
+                    + dbHelper.ADD_USER + ","
+                    + dbHelper.ADD_DATE + ","
+                    + dbHelper.ADD_MACH + ","
+                    + dbHelper.RECORD_ID + ") values(?,?,?,?,?,?,?)";
+
+            SQLiteStatement insert = dB.compileStatement(sql);
+
+            for (FmArea area : fmAreas) {
+
+                insert.bindString(1, area.getAREA_CODE());
+                insert.bindString(2, area.getAREA_NAME());
+                insert.bindString(3, area.getAREA_ASM());
+                insert.bindString(4, area.getAREA_ADDUSER());
+                insert.bindString(5, area.getAREA_ADD_DATE());
+                insert.bindString(6, area.getAREA_MACH());
+                insert.bindString(7, area.getAREA_REC_ID());
+                insert.execute();
+
+                count = 1;
+            }
+
+            dB.setTransactionSuccessful();
+            Log.w(TAG, "Done");
+        } catch (Exception e) {
+
+            Log.v(TAG + " Exception", e.toString());
+
+        } finally {
+            dB.endTransaction();
+
+            dB.close();
+        }
+        return count;
+
+
+    }
+}

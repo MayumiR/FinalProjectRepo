@@ -1,0 +1,92 @@
+package com.kandanafd.kfd_medi.Adapter;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
+import com.kandanafd.kfd_medi.DataControl.CostDS;
+import com.kandanafd.kfd_medi.DataControl.DebtorDS;
+import com.kandanafd.kfd_medi.DataControl.FOrdStatDS;
+import com.kandanafd.kfd_medi.DataControl.RouteDS;
+import com.kandanafd.kfd_medi.Models.OrdHed;
+import com.kandanafd.kfd_medi.R;
+
+import java.util.ArrayList;
+
+/**
+ * Created by Sathiyaraja on 6/21/2018.
+ */
+
+public class InvoiceHistoryAdapter  extends ArrayAdapter<OrdHed> {
+    Context context;
+    ArrayList<OrdHed> list;
+
+    public InvoiceHistoryAdapter(Context context, ArrayList<OrdHed> list){
+
+        super(context, R.layout.row_invoice_history, list);
+        this.context = context;
+        this.list = list;
+    }
+
+
+    @Override
+    public View getView(final int position, final View convertView, final ViewGroup parent) {
+
+        LayoutInflater inflater = null;
+        View row = null;
+
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        row = inflater.inflate(R.layout.row_invoice_history, parent, false);
+
+        TextView refno = (TextView) row.findViewById(R.id.refno);
+        TextView date = (TextView) row.findViewById(R.id.date);
+        TextView route = (TextView) row.findViewById(R.id.route);
+        TextView amount = (TextView) row.findViewById(R.id.amount);
+        TextView customer = (TextView) row.findViewById(R.id.customer);
+        TextView starttime = (TextView) row.findViewById(R.id.starttime);
+        TextView endtime = (TextView) row.findViewById(R.id.endtime);
+        TextView uploadtime = (TextView) row.findViewById(R.id.uploadtime);
+
+        RouteDS routeDS=new RouteDS(context);
+        DebtorDS debtorDS =new DebtorDS(context);
+
+        refno.setText(list.get(position).getFORDHED_REFNO()+" : "+ new CostDS(context).getCostCenterName(list.get(position).getFORDHED_COST_CODE()));
+        date.setText(list.get(position).getFORDHED_ADD_DATE());
+        route.setText(routeDS.getRouteNameByRouteCode(list.get(position).getFORDHED_ROUTE_CODE()));
+        amount.setText(list.get(position).getFORDHED_TOTAL_AMT());
+        customer.setText(debtorDS.getCustNameByCode(list.get(position).getFORDHED_DEB_CODE()));
+        starttime.setText("Start : "+list.get(position).getFORDHED_START_TIME_SO());
+        endtime.setText("End : "+list.get(position).getFORDHED_END_TIME_SO());
+        uploadtime.setText("Upload : "+list.get(position).getFORDHED_UPLOAD_TIME() == null ? "" : list.get(position).getFORDHED_UPLOAD_TIME()
+                + "    Inv : " + new FOrdStatDS(context).getInvoicedState(list.get(position).getFORDHED_REFNO())+ "    OffIn : " +
+                new FOrdStatDS(context).getOfficeInState(list.get(position).getFORDHED_REFNO()));
+
+        if(list.get(position).getFORDHED_IS_SYNCED().equals("1")){
+            refno.setTextColor(Color.parseColor("#009800"));
+            date.setTextColor(Color.parseColor("#009800"));
+            route.setTextColor(Color.parseColor("#009800"));
+            amount.setTextColor(Color.parseColor("#009800"));
+            customer.setTextColor(Color.parseColor("#009800"));
+            starttime.setTextColor(Color.parseColor("#009800"));
+            endtime.setTextColor(Color.parseColor("#009800"));
+            uploadtime.setTextColor(Color.parseColor("#009800"));
+        }else{
+            refno.setTextColor(Color.parseColor("#000000"));
+            date.setTextColor(Color.parseColor("#000000"));
+            route.setTextColor(Color.parseColor("#000000"));
+            amount.setTextColor(Color.parseColor("#000000"));
+            customer.setTextColor(Color.parseColor("#000000"));
+            starttime.setTextColor(Color.parseColor("#000000"));
+            endtime.setTextColor(Color.parseColor("#000000"));
+            uploadtime.setTextColor(Color.parseColor("#000000"));
+        }
+
+
+
+        return row;
+    }
+}

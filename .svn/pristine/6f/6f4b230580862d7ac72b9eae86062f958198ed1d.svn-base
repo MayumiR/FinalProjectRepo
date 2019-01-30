@@ -1,0 +1,8 @@
+package com.kandanafd.kfd_medi.DataControl;
+
+/**
+ * Created by Sathiyaraja on 6/25/2018.
+ */
+
+public interface UploadTaskListener {
+}

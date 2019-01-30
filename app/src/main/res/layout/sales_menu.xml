@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="4dp">
+
+        <com.bit.sfa.DefView.FinacBtn
+            android:id="@+id/presale"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:drawableLeft="@drawable/ic_presale"
+            android:padding="5dp"
+            android:gravity="center"
+            android:text="PreSale"
+        android:textAllCaps="false" />
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:elevation="4dp">
+
+
+        <com.bit.sfa.DefView.FinacBtn
+            android:id="@+id/dinfo"
+            android:layout_width="300dp"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:padding="5dp"
+            android:drawableLeft="@drawable/ic_day_info"
+            android:text="DayInfo"
+            android:textAllCaps="false" />
+    </android.support.v7.widget.CardView>
+
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:elevation="4dp">
+
+
+        <com.bit.sfa.DefView.FinacBtn
+            android:id="@+id/expense"
+            android:layout_width="300dp"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:padding="5dp"
+            android:drawableLeft="@drawable/ic_expense"
+            android:text="Expense"
+            android:textAllCaps="false" />
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:elevation="4dp">
+
+
+        <com.bit.sfa.DefView.FinacBtn
+            android:id="@+id/new_cus"
+            android:layout_width="300dp"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:padding="5dp"
+            android:drawableLeft="@drawable/ic_new_customer"
+            android:text="New Customer Registration"
+            android:textAllCaps="false" />
+    </android.support.v7.widget.CardView>
+</LinearLayout>

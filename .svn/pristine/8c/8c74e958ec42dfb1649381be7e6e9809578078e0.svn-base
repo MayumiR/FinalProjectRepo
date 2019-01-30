@@ -1,0 +1,164 @@
+package com.kandanafd.kfd_medi.DataControl;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
+
+import com.kandanafd.kfd_medi.Models.OrdStat;
+import com.kandanafd.kfd_medi.Settings.DatabaseHelper;
+
+import java.util.ArrayList;
+
+public class FOrdStatDS {
+	
+	private SQLiteDatabase dB;
+	private DatabaseHelper dbHelper;
+	Context context;
+	private String TAG="kandanafd";
+
+	public FOrdStatDS (Context context){
+		this.context = context;
+		dbHelper = new DatabaseHelper(context);
+	}
+	
+	public void open() throws SQLException {
+		dB = dbHelper.getWritableDatabase();
+	}
+	
+	@SuppressWarnings("static-access")
+	public int createOrUpdateFOrdStat(ArrayList<OrdStat>  list) {
+		int count =0;		
+		if(dB == null){
+			open();
+		}else if(!dB.isOpen()){
+			open();
+		}
+		
+	try{
+		
+		dB.beginTransaction();
+
+		String sql = "Insert or Replace into " + dbHelper.TABLE_FORDSTAT + " (" + dbHelper.FORDSTAT_ORDREFNO + ", " + dbHelper.FORDSTAT_INVREFNO 
+				+ ", " + dbHelper.FORDSTAT_OFINREFNO + ") values(?,?,?)";
+		
+		SQLiteStatement insert = dB.compileStatement(sql);
+		
+		for (OrdStat ordStat : list) {
+			
+			insert.bindString(1, ordStat.getFORDSTAT_ORDREF());
+			insert.bindString(2, ordStat.getFORDSTAT_INVREF());
+			insert.bindString(3, ordStat.getFORDSTAT_OFINREF());
+			insert.execute();
+			
+			count = 1;
+	
+		}
+		
+		dB.setTransactionSuccessful();
+		
+		}finally {  
+			dB.endTransaction();
+			dB.close();
+		}
+		return count;
+	}
+
+	@SuppressWarnings("static-access")
+	public int deleteAll(){
+		
+		int count =0;
+		
+		if(dB == null){
+			open();
+		}else if(!dB.isOpen()){
+			open();
+		}
+		Cursor cursor = null;
+		try{
+			
+			cursor = dB.rawQuery("SELECT * FROM " + dbHelper.TABLE_FORDSTAT, null);
+			count =cursor.getCount();
+			if(count>0){
+				int success = dB.delete(dbHelper.TABLE_FORDSTAT, null, null);
+				Log.v("Success", success+"");
+			}
+		}catch (Exception e){
+
+			Log.v(TAG+" Exception", e.toString());
+			
+		}finally{  
+			if (cursor !=null) {
+				cursor.close();
+			}
+			dB.close();
+		}
+		
+		return count;
+		
+	}
+	
+	public String getInvoicedState(String RefNo) {
+		if (dB == null) {
+			open();
+		} else if (!dB.isOpen()) {
+			open();
+		}
+
+		String InvoiceState = "";
+
+		String selectQuery = "SELECT * FROM " + DatabaseHelper.TABLE_FORDSTAT + " WHERE "+DatabaseHelper.FORDSTAT_ORDREFNO + "='" + RefNo + "'";
+		Cursor cursor = dB.rawQuery(selectQuery, null);
+		try {
+			while (cursor.moveToNext()) {
+				
+				InvoiceState = (cursor.getString(cursor.getColumnIndex(DatabaseHelper.FORDSTAT_INVREFNO))).length() > 0 ? "YES" : "NO";
+							
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
+			dB.close();
+		}
+
+		return InvoiceState;
+	}
+	
+	public String getOfficeInState(String RefNo) {
+		if (dB == null) {
+			open();
+		} else if (!dB.isOpen()) {
+			open();
+		}
+
+		String OfficeInState = "";
+
+		String selectQuery = "SELECT * FROM " + DatabaseHelper.TABLE_FORDSTAT + " WHERE "+DatabaseHelper.FORDSTAT_ORDREFNO + "='" + RefNo + "'";
+		Cursor cursor = dB.rawQuery(selectQuery, null);
+		try {
+			while (cursor.moveToNext()) {
+				
+				OfficeInState = (cursor.getString(cursor.getColumnIndex(DatabaseHelper.FORDSTAT_OFINREFNO))).length() > 0 ? "YES" : "NO";
+							
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
+			dB.close();
+		}
+
+		return OfficeInState;
+	}
+}

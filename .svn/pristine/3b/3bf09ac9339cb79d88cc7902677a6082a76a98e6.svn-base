@@ -1,0 +1,123 @@
+package com.kandanafd.kfd_medi.PromoSale;
+
+
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.kandanafd.kfd_medi.DefView.Home;
+import com.kandanafd.kfd_medi.R;
+import com.kandanafd.kfd_medi.Settings.ReferenceNum;
+import com.kandanafd.kfd_medi.Settings.StaticData;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class FragPromoSaleHeader extends Fragment {
+
+
+    View view;
+    private FloatingActionButton next;
+
+    public static EditText ordno, date, mNo, deldate, remarks, route, costcenter;
+    private TextView cusName;
+
+
+    public FragPromoSaleHeader() {
+        // Required empty public constructor
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        view = inflater.inflate(R.layout.fragment_frag_promo_sale_header, container, false);
+
+        next = (FloatingActionButton) view.findViewById(R.id.fab);
+
+        Date d = Calendar.getInstance().getTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-M-yyyy"); //change this
+        String formattedDate = simpleDateFormat.format(d);
+
+        ReferenceNum referenceNum = new ReferenceNum(getActivity());
+
+
+        ordno = (EditText) view.findViewById(R.id.editTextOrdno);
+        date = (EditText) view.findViewById(R.id.editTextDate);
+        mNo = (EditText) view.findViewById(R.id.editTextManualNo);
+        deldate = (EditText) view.findViewById(R.id.editTextdelDate);
+        remarks = (EditText) view.findViewById(R.id.editTextRemarks);
+        costcenter = (EditText) view.findViewById(R.id.editTextcostCenter);
+        route = (EditText) view.findViewById(R.id.editTextRoute);
+        cusName = (TextView) view.findViewById(R.id.textViewCustomer);
+
+        cusName.setText(Home.SAcustomer);
+        route.setText(StaticData.Route);
+        date.setText(formattedDate);
+        ordno.setText(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+
+
+        deldate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                MDatePicker newFragment = new MDatePicker();
+                newFragment.show(getFragmentManager(), "date picker");
+            }
+        });
+
+
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //validate tabs
+                if (PromoSaleManagement.isheader == true) {
+                    PromoSaleManagement.viewPager.setCurrentItem(2);
+                }
+
+            }
+        });
+
+
+        return view;
+    }
+
+    public static class MDatePicker extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            return new DatePickerDialog(getActivity(), dateSetListener, year, month, day);
+        }
+
+        private DatePickerDialog.OnDateSetListener dateSetListener =
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(android.widget.DatePicker view, int i, int i1, int i2) {
+
+                        deldate.setText(view.getDayOfMonth() + "-" + (view.getMonth() + 1) + "-" + view.getYear());
+                    }
+
+                };
+    }
+
+
+}

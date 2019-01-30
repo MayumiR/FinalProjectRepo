@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.bit.sfa.DefView.FinacFont
+                android:id="@+id/customerName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="customer name"
+                android:textAllCaps="true"
+                android:textColor="@color/greenColor"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#f3f6f5"></View>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:weightSum="2">
+
+                <com.bit.sfa.DefView.FinacFont
+                    android:id="@+id/textView1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:text="Total Outstanding (Rs.)"
+                    android:textColor="#000"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+                <com.bit.sfa.DefView.FinacFont
+                    android:id="@+id/sa_header_outstanding_amt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:enabled="true"
+                    android:gravity="left"
+                    android:text="00.00"
+                    android:textColor="#000"
+                    android:textSize="19dp" />
+
+            </TableRow>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#f3f6f5"></View>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:weightSum="2">
+
+                <com.bit.sfa.DefView.FinacFont
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:text="Last Bill value        (Rs.)"
+                    android:textColor="#000"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+                <com.bit.sfa.DefView.FinacFont
+                    android:id="@+id/sa_header_last_bill_amt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:enabled="false"
+                    android:gravity="left"
+                    android:text="00.00"
+                    android:textColor="@android:color/black"
+                    android:textSize="19dp" />
+            </TableRow>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#f3f6f5"></View>
+
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp">
+
+                <com.bit.sfa.DefView.FinacFont
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="ORDER NO"
+                    android:textColor="@color/greenColor"
+                    android:textSize="18dp"
+                    android:textStyle="italic" />
+
+                <com.bit.sfa.DefView.FinacText
+                    android:id="@+id/sa_header_order_no"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edittextstyle"
+                    android:enabled="false"
+                    android:gravity="center"
+                    android:textColor="@android:color/black"
+                    android:textSize="18dp"></com.bit.sfa.DefView.FinacText>
+            </TableRow>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#f3f6f5"></View>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:padding="5dp">
+
+                <com.bit.sfa.DefView.FinacFont
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="DATE"
+                    android:textColor="@color/greenColor"
+                    android:textSize="18dp"
+                    android:textStyle="italic" />
+
+                <com.bit.sfa.DefView.FinacText
+                    android:id="@+id/sa_header_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edittextstyle"
+                    android:enabled="false"
+                    android:gravity="center"
+                    android:textColor="@android:color/black"></com.bit.sfa.DefView.FinacText>
+            </TableRow>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#f3f6f5"></View>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:padding="5dp">
+
+                <com.bit.sfa.DefView.FinacFont
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="MANUAL NO"
+                    android:textColor="@color/greenColor"
+                    android:textSize="18dp"
+                    android:textStyle="italic" />
+
+                <com.bit.sfa.DefView.FinacText
+                    android:id="@+id/sa_header_manual_no"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edittextstyle"
+                    android:gravity="center"
+                    android:textColor="@android:color/black"></com.bit.sfa.DefView.FinacText>
+            </TableRow>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#f3f6f5"></View>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:padding="5dp">
+
+                <com.bit.sfa.DefView.FinacFont
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="DELIVERY DATE"
+                    android:textColor="@color/greenColor"
+                    android:textSize="18dp"
+                    android:textStyle="italic" />
+
+                <com.bit.sfa.DefView.FinacBtn
+                    android:id="@+id/sa_header_del_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_default_bg"
+                    android:ems="10"></com.bit.sfa.DefView.FinacBtn>
+            </TableRow>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#f3f6f5"></View>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:padding="5dp">
+
+                <com.bit.sfa.DefView.FinacFont
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:text="REMARKS"
+                    android:textColor="@color/greenColor"
+                    android:textSize="18dp"
+                    android:textStyle="italic" />
+
+                <com.bit.sfa.DefView.FinacText
+                    android:id="@+id/sa_header_remark"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/edittextstyle"
+                    android:gravity="center"></com.bit.sfa.DefView.FinacText>
+            </TableRow>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#f3f6f5"></View>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:padding="5dp">
+
+                <com.bit.sfa.DefView.FinacFont
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="ROUTE"
+                    android:textColor="@color/greenColor"
+                    android:textSize="18dp"
+                    android:textStyle="italic" />
+
+                <com.bit.sfa.DefView.FinacText
+                    android:id="@+id/sa_header_route"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edittextstyle"
+                    android:gravity="center"
+                    android:textColor="@android:color/black"></com.bit.sfa.DefView.FinacText>
+            </TableRow>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#f3f6f5"></View>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:weightSum="2">
+
+                <com.bit.sfa.DefView.FinacFont
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="COST CENTER"
+                    android:textColor="@color/greenColor"
+                    android:textSize="18dp"
+                    android:textStyle="italic" />
+
+                <Spinner
+                    android:id="@+id/spnCostCenter"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edittextstyle"
+                    android:gravity="center" />
+            </TableRow>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#f3f6f5"></View>
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom">
+
+        <com.bit.sfa.DefView.FinacBtn
+            android:id="@+id/button3"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/colorAccent"
+            android:text="SELECT ITEMS >>"
+            android:textColor="@android:color/white"
+            android:textSize="20dp"
+            android:textStyle="normal" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,6 @@
+package com.kandanafd.kfd_medi.DataControl;
+
+public interface IResponseListener {
+
+    void moveNextFragment_Pre();
+}

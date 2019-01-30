@@ -1,0 +1,104 @@
+package com.bit.sfa.DataControl;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
+
+import com.bit.sfa.Models.FinvDetL3;
+import com.bit.sfa.Settings.DatabaseHelper;
+
+import java.util.ArrayList;
+
+public class FinvDetL3DS {
+    private SQLiteDatabase dB;
+    private DatabaseHelper dbHelper;
+    Context context;
+    private String TAG = "swadeshi";
+
+    public FinvDetL3DS(Context context) {
+        this.context = context;
+        dbHelper = new DatabaseHelper(context);
+    }
+
+    public void open() throws SQLException {
+        dB = dbHelper.getWritableDatabase();
+    }
+
+    @SuppressWarnings("static-access")
+    public int createOrUpdateFinvDetL3(ArrayList<FinvDetL3> list) {
+        int count = 0;
+        if (dB == null) {
+            open();
+        } else if (!dB.isOpen()) {
+            open();
+        }
+
+        try {
+
+            String sql = "Insert or Replace into " + dbHelper.TABLE_FINVDETL3 + " (" + dbHelper.FINVDETL3_AMT + ", " + dbHelper.FINVDETL3_ITEM_CODE + ", " + dbHelper.FINVDETL3_QTY + ", " + dbHelper.FINVDETL3_REF_NO + ", " + dbHelper.FINVDETL3_SEQ_NO + ", " + dbHelper.FINVDETL3_TAX_AMT + ", " + dbHelper.FINVDETL3_TAX_COM_CODE + ", " + dbHelper.FINVDETL3_TXN_DATE + ") values(?,?,?,?,?,?,?,?)";
+
+            SQLiteStatement insert = dB.compileStatement(sql);
+            dB.beginTransaction();
+            for (int i = 0; i < list.size(); i++) {
+
+                FinvDetL3 item = list.get(i);
+
+                insert.bindString(1, item.getFINVDETL3_AMT());
+                insert.bindString(2, item.getFINVDETL3_ITEM_CODE());
+                insert.bindString(3, item.getFINVDETL3_QTY());
+                insert.bindString(4, item.getFINVDETL3_REF_NO());
+                insert.bindString(5, item.getFINVDETL3_SEQ_NO());
+                insert.bindString(6, item.getFINVDETL3_TAX_AMT());
+                insert.bindString(7, item.getFINVDETL3_TAX_COM_CODE());
+                insert.bindString(8, item.getFINVDETL3_TXN_DATE());
+
+                insert.execute();
+            }
+
+            dB.setTransactionSuccessful();
+            Log.w(TAG, "Done");
+        } catch (Exception e) {
+            Log.w("XML:", e);
+        } finally {
+            dB.endTransaction();
+
+            dB.close();
+        }
+        return count;
+    }
+
+    @SuppressWarnings("static-access")
+    public int deleteAll() {
+        int count = 0;
+
+        if (dB == null) {
+            open();
+        } else if (!dB.isOpen()) {
+            open();
+        }
+        Cursor cursor = null;
+        try {
+            cursor = dB.rawQuery("SELECT * FROM " + dbHelper.TABLE_FINVDETL3, null);
+            count = cursor.getCount();
+            if (count > 0) {
+                int success = dB.delete(dbHelper.TABLE_FINVDETL3, null, null);
+                Log.v("Success", success + "");
+            }
+        } catch (Exception e) {
+
+            Log.v(TAG + " Exception", e.toString());
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            dB.close();
+        }
+
+        return count;
+
+    }
+}

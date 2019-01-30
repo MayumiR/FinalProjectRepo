@@ -1,0 +1,294 @@
+package com.kandanafd.kfd_medi.Sales;
+
+import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.RequiresApi;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
+import android.widget.Toast;
+
+import com.kandanafd.kfd_medi.Adapter.InvoiceHistoryAdapter;
+import com.kandanafd.kfd_medi.Adapter.SalesPrintPreviewAlertBox;
+import com.kandanafd.kfd_medi.DataControl.ItemLocDS;
+import com.kandanafd.kfd_medi.DataControl.OrdDetDS;
+import com.kandanafd.kfd_medi.DataControl.OrdHedDS;
+import com.kandanafd.kfd_medi.Models.OrdDet;
+import com.kandanafd.kfd_medi.Models.OrdHed;
+import com.kandanafd.kfd_medi.R;
+
+import java.util.ArrayList;
+
+public class FragmentSalesManagementPreSalesInvoice extends Fragment {
+	View view;
+	
+	ListView lvInvoiceList;
+	
+	//InvoiceDS invoiceDS;
+	//InvoiceItemAdapter invoiceItemAdapter;
+	ArrayList<OrdHed> arrayList;
+	//Customer nearbyCustomer;
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		view = inflater.inflate(R.layout.sales_mangement_pre_sales_invoice, container, false);
+		
+		lvInvoiceList = (ListView) view.findViewById(R.id.lvPhoneInvoiceList);
+		registerForContextMenu(lvInvoiceList);
+		
+		getActivity().getActionBar().removeAllTabs();
+		getActivity().getActionBar().setNavigationMode(0);
+		
+		setHasOptionsMenu(true);
+       
+//		SetTitleAdapter adapter =new SetTitleAdapter();
+//		adapter.createCutomActionBarTitle("Pre Sale Invoice", getActivity());
+		
+		//display
+		displayInvoiceHistory();
+	
+		lvInvoiceList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			//	MainActivity activity = (MainActivity) getActivity();
+			//	activity.currentlySelectedInvoice = invoiceDS.getInvoiceByID(invoiceList.get(position).getInvoice_id());
+				
+				/*FragmentTransaction transaction = getFragmentManager().beginTransaction();
+				transaction.replace(R.id.frame_container, new PhoneInvoiceInfoFragment());
+				transaction.addToBackStack(null);
+				transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+				transaction.commit();*/
+				
+			}
+		});
+//		lvInvoiceList.setOnItemLongClickListener(new OnItemLongClickListener() {
+//
+//			@Override
+//			public boolean onItemLongClick(AdapterView<?> parent, View view,
+//					int position, long id) {
+//				
+//				
+//				
+//				return false;
+//			}
+//		});
+		
+		
+		
+		//back button disable 
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
+        view.setOnKeyListener(new View.OnKeyListener() {
+		        @Override
+		        public boolean onKey(View v, int keyCode, KeyEvent event) {
+		            Log.i("", "keyCode: " + keyCode);
+		            if( keyCode == KeyEvent.KEYCODE_BACK ) {
+		            	Toast.makeText(getActivity(),"Back Navigationid is disable", Toast.LENGTH_SHORT).show();
+		               // getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+		                return true;
+		            }else if ((keyCode == KeyEvent.KEYCODE_HOME)) {
+		    			
+		    			getActivity().finish();
+		    			
+		    			return true;
+
+		    		} else {
+		                return false;
+		            }
+		        }
+		    });
+        
+        
+		return view;
+	}
+	
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+	      super.onCreateContextMenu(menu, v, menuInfo);
+	      if (v.getId()==R.id.lvPhoneInvoiceList) {
+	          MenuInflater inflater = getActivity().getMenuInflater();
+	          inflater.inflate(R.menu.menu_list, menu);
+	      }
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+	     AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+	     OrdHed ordHed = arrayList.get(info.position);
+	      switch(item.getItemId()) {
+	         case R.id.cancel:
+	        	// TODO Auto-generated method stub
+	        	 String issync = new OrdHedDS(getActivity()).getRefnoToDelete(ordHed.getFORDHED_REFNO());
+				if(issync.equals("1")){
+					Toast.makeText(getActivity(), "UnAuthorised Delete !", Toast.LENGTH_SHORT).show();
+				}else{
+					
+					delete(getActivity(), ordHed.getFORDHED_REFNO(),ordHed.getFORDHED_LOC_CODE());
+				}
+				
+	            return true;
+	            
+	          case R.id.print:
+	            // print stuff here
+	        	 // setBluetooth(true);
+	        	  SalesPrintPreviewAlertBox alertBox=new SalesPrintPreviewAlertBox(getActivity());
+				  alertBox.PrintDetailsDialogbox(getActivity(), "",ordHed.getFORDHED_REFNO());
+	        	  
+	          return true;
+	            default:
+	                return super.onContextItemSelected(item);
+	      }
+	}
+	
+	private void delete(final Context context,final String refno,final String loccode){
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+		//alertDialogBuilder.setTitle(title);
+		alertDialogBuilder.setMessage("Are you sure you want to cancel this entry?");
+		final OrdHedDS ordHedDS = new OrdHedDS(getActivity());
+		final OrdDetDS detDS = new OrdDetDS(getActivity());
+		final ItemLocDS itemLocDS = new ItemLocDS(getActivity());
+		final ArrayList<OrdDet> delorddet = detDS.getAllOrderDetails(refno);;
+		alertDialogBuilder.setIcon(android.R.drawable.ic_dialog_alert);
+		alertDialogBuilder
+				.setCancelable(false)
+				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								
+								//delete data
+								try {
+									ordHedDS.restData(refno); //FORDHED DATA
+								}catch(Exception e){
+									Log.w(" Erorrrr ", e.toString());
+								}
+								try {
+									for(OrdDet orddet : delorddet){
+										itemLocDS.UpdateFinalQOHFromHedReturn(orddet.getFORDDET_QTY(), orddet.getFORDDET_ITEM_CODE(),loccode);
+									}
+									
+									detDS.restData(refno); // FORDDET DATA
+								}catch(Exception e){
+									Log.w("Erorrrr ", e.toString());
+								}finally{
+									displayInvoiceHistory();
+								}
+
+							}
+					})
+				.setNegativeButton("No",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,	int id) {
+								dialog.cancel();
+							}
+						});
+		
+		AlertDialog alertD = alertDialogBuilder.create();
+
+		alertD.show();
+	}
+	
+	private void displayInvoiceHistory() {
+		// TODO Auto-generated method stub
+		lvInvoiceList = (ListView) view.findViewById(R.id.lvPhoneInvoiceList);
+		lvInvoiceList.clearTextFilter();
+		OrdHedDS hedDS = new OrdHedDS(getActivity());
+		arrayList = hedDS.getAllUnsyncedOrdHed("");
+		lvInvoiceList.setAdapter(new InvoiceHistoryAdapter(getActivity(), arrayList));
+	}
+
+
+
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		
+		for(int i = 0; i < menu.size(); ++i){
+			menu.removeItem(menu.getItem(i).getItemId());
+		}
+		
+		menu.clear();
+		inflater.inflate(R.menu.frag_invoice_phone_menu, menu);
+		SearchView searchView = (SearchView) menu.findItem(R.id.action_customer_search_phone).getActionView();
+		searchView.setOnQueryTextListener(new OnQueryTextListener() {
+			
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				return false;
+			}
+			
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				
+				lvInvoiceList = (ListView) view.findViewById(R.id.lvPhoneInvoiceList);
+				lvInvoiceList.clearTextFilter();
+				OrdHedDS hedDS = new OrdHedDS(getActivity());
+				arrayList = hedDS.getAllUnsyncedOrdHed(newText);
+				lvInvoiceList.setAdapter(new InvoiceHistoryAdapter(getActivity(), arrayList));
+
+				return false;
+			}
+		});
+		
+		//getActivity().getActionBar().setTitle("Invoice List");
+		//getActivity().getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#288dab")));
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+	
+	@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if(item.getItemId() == R.id.action_invoice_phone_new){
+			
+			int i = android.provider.Settings.Global.getInt(getActivity().getContentResolver(), android.provider.Settings.Global.AUTO_TIME, 0);
+			if (i > 0) {
+				FragmentTransaction transaction = getFragmentManager().beginTransaction();
+				transaction.replace(R.id.frame_container, new FragmentSalesManagementPreSales());
+				transaction.addToBackStack(null);
+				transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+				transaction.commit();				
+			}else
+			{
+				Toast.makeText(getActivity(), "Please tick the 'Automatic Date and Time' option to continue..", Toast.LENGTH_LONG).show();
+				/* Show Date/time settings dialog */
+				startActivityForResult(new Intent(android.provider.Settings.ACTION_DATE_SETTINGS), 0);
+			}
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+//	public static boolean setBluetooth(boolean enable) {
+//	    BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//	    boolean isEnabled = bluetoothAdapter.isEnabled();
+//	    if (enable && !isEnabled) {
+//	        return bluetoothAdapter.enable(); 
+//	    }
+//	    else if(!enable && isEnabled) {
+//	        return bluetoothAdapter.disable();
+//	    }
+//	    // No need to change bluetooth state
+//	    return true;
+//	}
+	
+
+}

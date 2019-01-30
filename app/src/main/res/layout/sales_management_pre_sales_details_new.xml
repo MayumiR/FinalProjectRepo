@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:padding="2dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:weightSum="2"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"
+                android:orientation="horizontal">
+
+                <com.bit.sfa.DataControl.FinacFont
+                    android:id="@+id/textView_hed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/custom_textbox"
+                    android:text="PRODUCTS"
+                    android:textColor="@color/greenColor"
+                    android:textSize="18sp" />
+
+                <ImageButton
+                    android:id="@+id/btnPreSalesProduct"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/product" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:orientation="horizontal">
+
+                <com.bit.sfa.DataControl.FinacFont
+                    android:id="@+id/add"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="1dp"
+                    android:layout_marginRight="1dip"
+                    android:layout_weight="3"
+                    android:background="@drawable/custom_label"
+                    android:gravity="center"
+                    android:text="PRODUCT"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/unselected"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <com.bit.sfa.DataControl.FinacFont
+                    android:id="@+id/indexhistory3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="1dip"
+                    android:layout_marginRight="1dip"
+                    android:layout_weight="1"
+                    android:background="@drawable/custom_label"
+                    android:gravity="center"
+                    android:text="QTY"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/unselected"
+                    android:textSize="14sp" />
+
+                <com.bit.sfa.DataControl.FinacFont
+                    android:id="@+id/indexmanual3"
+                    android:layout_width="0dp"
+                    android:visibility="gone"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="1dip"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1.5"
+                    android:background="@drawable/custom_label"
+                    android:gravity="center"
+                    android:text="AMOUNT"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/unselected"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/lvProducts_Pre"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/custom_textbox"
+                android:divider="@color/list_view_diveder"
+                android:dividerHeight="1dp" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal">
+
+                <com.bit.sfa.DataControl.FinacFont
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@drawable/custom_textbox"
+                    android:text="GIFT ITEMS"
+                    android:textColor="@color/greenColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/btnPreSalesDisc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/discount" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:orientation="horizontal">
+
+                <com.bit.sfa.DataControl.FinacFont
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="1dip"
+                    android:layout_marginRight="1dp"
+                    android:layout_weight="1.5"
+                    android:background="@drawable/custom_label"
+                    android:gravity="center"
+                    android:text="REFNO"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/unselected"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <com.bit.sfa.DataControl.FinacFont
+                    android:id="@+id/textView13"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="1dp"
+                    android:layout_marginRight="1dip"
+                    android:layout_weight="3"
+                    android:background="@drawable/custom_label"
+                    android:gravity="center"
+                    android:text="ITEM"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/unselected"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <com.bit.sfa.DataControl.FinacFont
+                    android:id="@+id/textView12"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="1dip"
+                    android:layout_marginRight="1dip"
+                    android:layout_weight="1"
+                    android:background="@drawable/custom_label"
+                    android:gravity="center"
+                    android:text="STATUS"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/unselected"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/lvFreeIssue_Pre"
+                android:layout_width="match_parent"
+                android:layout_height="230dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_textbox"
+                android:divider="@color/list_view_diveder"
+                android:dividerHeight="1dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal">
+
+                    <com.bit.sfa.DataControl.FinacFont
+                        android:layout_width="match_parent"
+                        android:visibility="invisible"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:background="@drawable/custom_textbox"
+                        android:text="GIFT ITEMS"
+                        android:textColor="@color/greenColor"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/btnSave"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/ic_action_upload" />
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+
+</FrameLayout>

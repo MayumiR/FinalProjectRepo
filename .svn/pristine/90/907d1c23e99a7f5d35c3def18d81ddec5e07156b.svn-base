@@ -1,0 +1,165 @@
+package com.kandanafd.kfd_medi.DataControl;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
+
+import com.kandanafd.kfd_medi.Models.FmItem;
+import com.kandanafd.kfd_medi.Models.FmItems;
+import com.kandanafd.kfd_medi.Settings.DatabaseHelper;
+
+import java.util.ArrayList;
+
+/**
+ * Created by Sathiyaraja on 7/20/2018.
+ */
+
+public class FmItemDS {
+
+    private SQLiteDatabase dB;
+    private DatabaseHelper dbHelper;
+    Context context;
+    private String TAG = "FmItemDS";
+
+    public static SharedPreferences localSP;
+
+    public FmItemDS(Context context) {
+        this.context = context;
+        dbHelper = new DatabaseHelper(context);
+    }
+
+    public void open() throws SQLException {
+        dB = dbHelper.getWritableDatabase();
+    }
+
+    public long InsertFmItems(ArrayList<FmItems> fmItems) {
+
+        int count = 0;
+
+        if (dB == null) {
+            open();
+        } else if (!dB.isOpen()) {
+            open();
+        }
+        Cursor cursor = null;
+        try {
+            dB.beginTransaction();
+            String sql = "Insert or Replace into " + dbHelper.TABLE_FMITEMS + " (" + dbHelper.GITEM_CODE + ", "
+                    + dbHelper.GITEM_NAME + ", "
+                    + dbHelper.UOM + ", "
+                    + dbHelper.GITYPE + ", "
+                    + dbHelper.GITYPES + ", "
+                    + dbHelper.GITEM_NAMED + ", "
+                    + dbHelper.REMARKS + ", "
+                    + dbHelper.ADD_USER + ", "
+                    + dbHelper.ADD_DATE + ", "
+                    + dbHelper.ADD_MACH + ", "
+                    + dbHelper.RECORD_ID + ") values(?,?,?,?,?,?,?,?,?,?,? )";
+
+            SQLiteStatement insert = dB.compileStatement(sql);
+
+            for (FmItems fitem : fmItems) {
+
+                insert.bindString(1, fitem.getGITEM_CODE());
+                insert.bindString(2, fitem.getGITEM_NAME());
+                insert.bindString(3, fitem.getUOM());
+                insert.bindString(4, fitem.getGITYPE());
+                insert.bindString(5, fitem.getGITYPES());
+                insert.bindString(6, fitem.getGITEM_NAMED());
+                insert.bindString(7, fitem.getREMARKS());
+                insert.bindString(8, fitem.getADD_USER());
+                insert.bindString(9, fitem.getADD_DATE());
+                insert.bindString(10, fitem.getADD_MACH());
+                insert.bindString(11, fitem.getRECORD_ID());
+                insert.execute();
+
+                count = 1;
+            }
+
+            dB.setTransactionSuccessful();
+            Log.w(TAG, "Done");
+        } catch (Exception e) {
+
+            Log.v(TAG + " FmItemDS", e.toString());
+
+        } finally {
+            dB.endTransaction();
+
+            dB.close();
+        }
+        return count;
+
+
+    }
+
+    public ArrayList<FmItem> getAllItems() {
+
+        if (dB == null) {
+            open();
+        } else if (!dB.isOpen()) {
+            open();
+        }
+        Cursor cursor = null;
+        ArrayList<FmItem> list = new ArrayList<FmItem>();
+        try {
+
+
+            String searchsql = "";
+            searchsql = "SELECT * FROM " + DatabaseHelper.TABLE_FMITEMS;
+            cursor = dB.rawQuery(searchsql, null);
+
+
+            while (cursor.moveToNext()) {
+
+                FmItem item = new FmItem();
+                item.setGITEM_CODE(cursor.getString(cursor.getColumnIndex(DatabaseHelper.GITEM_CODE)));
+                item.setGITEM_NAME(cursor.getString(cursor.getColumnIndex(DatabaseHelper.GITEM_NAME)));
+                list.add(item);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            cursor.close();
+            dB.close();
+        }
+
+        return list;
+    }
+    public ArrayList<FmItem> findAllItems(String key) {
+
+        if (dB == null) {
+            open();
+        } else if (!dB.isOpen()) {
+            open();
+        }
+        Cursor cursor = null;
+        ArrayList<FmItem> list = new ArrayList<FmItem>();
+        try {
+
+
+            String searchsql = "";
+            searchsql = "SELECT * FROM " + DatabaseHelper.TABLE_FMITEMS + " WHERE GItemName LIKE '" + key + "%'";
+            cursor = dB.rawQuery(searchsql, null);
+
+
+            while (cursor.moveToNext()) {
+
+                FmItem item = new FmItem();
+                item.setGITEM_CODE(cursor.getString(cursor.getColumnIndex(DatabaseHelper.GITEM_CODE)));
+                item.setGITEM_NAME(cursor.getString(cursor.getColumnIndex(DatabaseHelper.GITEM_NAME)));
+                list.add(item);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            cursor.close();
+            dB.close();
+        }
+
+        return list;
+    }
+}

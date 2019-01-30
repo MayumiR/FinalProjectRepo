@@ -1,0 +1,52 @@
+package com.kandanafd.kfd_medi.Adapter;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
+import com.kandanafd.kfd_medi.Models.FmItem;
+import com.kandanafd.kfd_medi.PromoSale.FragPromoSaleHeaderDet;
+import com.kandanafd.kfd_medi.R;
+
+import java.util.ArrayList;
+
+/**
+ * Created by Sathiyaraja on 8/2/2018.
+ */
+
+public class ItemsAdapter extends ArrayAdapter<FmItem> {
+    Context context;
+    ArrayList<FmItem> list;
+
+    public ItemsAdapter(Context context, ArrayList<FmItem> list) {
+
+        super(context, R.layout.item_row, list);
+        this.context = context;
+        this.list = list;
+      //  this.list.addAll(FragPromoSaleHeaderDet.fmItems);
+    }
+
+    @Override
+    public View getView(final int position, View row, final ViewGroup parent) {
+
+        LayoutInflater inflater = null;
+
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        row = inflater.inflate(R.layout.item_row, parent, false);
+
+
+        TextView textViewName = (TextView) row.findViewById(R.id.textViewName);
+        TextView et_qty = (TextView) row.findViewById(R.id.et_qty);
+
+        FmItem item = list.get(position);
+        textViewName.setText(item.getGITEM_NAME());
+        et_qty.setText(item.getUOM());
+
+        return row;
+    }
+
+
+}

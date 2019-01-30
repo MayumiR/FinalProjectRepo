@@ -1,0 +1,420 @@
+package com.kandanafd.kfd_medi.Sales;
+
+import android.app.Dialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.kandanafd.kfd_medi.DataControl.CostDS;
+import com.kandanafd.kfd_medi.DataControl.DebtorDS;
+import com.kandanafd.kfd_medi.DataControl.LocationsDS;
+import com.kandanafd.kfd_medi.DataControl.OrdDetDS;
+import com.kandanafd.kfd_medi.DataControl.OrdHedDS;
+import com.kandanafd.kfd_medi.DataControl.ProductDS;
+import com.kandanafd.kfd_medi.DataControl.RouteDS;
+import com.kandanafd.kfd_medi.DataControl.SalRepDS;
+import com.kandanafd.kfd_medi.DefView.Home;
+import com.kandanafd.kfd_medi.Models.Cost;
+import com.kandanafd.kfd_medi.Models.OrdHed;
+import com.kandanafd.kfd_medi.R;
+import com.kandanafd.kfd_medi.Settings.GPSTracker;
+import com.kandanafd.kfd_medi.Settings.ReferenceNum;
+import com.kandanafd.kfd_medi.Settings.SharedPref;
+import com.kandanafd.kfd_medi.Settings.SharedPreferencesClass;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+
+public class FragmentSalesManagementPreSalesSAHeader extends Fragment implements OnClickListener{
+	
+	View view;
+	TextView customerName,outStandingAmt,lastBillAmt;
+	EditText orderNo,currnentDate,route,manual,remarks;
+	Button selectItem,deliveryDate;
+	Spinner spnCostCenter;
+	String CostPos, CosLocation;
+	SharedPref mSharedPref;
+	ArrayList<Cost> costList;
+	Home activity;
+	//ReferenceNum referenceNum;
+	Toast toast;
+	public static final String SETTINGS = "SETTINGS";
+	public static SharedPreferences localSP;
+	//public static String sdelDate="",sManual="",sRemarks="";
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		
+		view = inflater.inflate(R.layout.sales_management_pre_sales_header, container, false);
+		activity =(Home) getActivity();
+		
+//		SetTitleAdapter adapter =new SetTitleAdapter();
+//		adapter.createCutomActionBarTitle("Order Header", getActivity());
+		
+//		toast = new Toast();
+		mSharedPref = new SharedPref(getActivity());
+		
+		GPSTracker gpsTracker = new GPSTracker(getActivity());
+		if (!(gpsTracker.canGetLocation())) {
+			gpsTracker.showSettingsAlert();
+		}
+		
+		customerName = (TextView) view.findViewById(R.id.customerName);
+		outStandingAmt = (TextView) view.findViewById(R.id.sa_header_outstanding_amt);
+		lastBillAmt = (TextView) view.findViewById(R.id.sa_header_last_bill_amt);
+		
+		orderNo=(EditText) view.findViewById(R.id.sa_header_order_no);
+		currnentDate=(EditText) view.findViewById(R.id.sa_header_date);
+		route=(EditText) view.findViewById(R.id.sa_header_route);
+		manual=(EditText) view.findViewById(R.id.sa_header_manual_no);
+		remarks =(EditText) view.findViewById(R.id.sa_header_remark);
+		
+		selectItem = (Button) view.findViewById(R.id.button3);
+		deliveryDate=(Button) view.findViewById(R.id.sa_header_del_date);
+		
+		spnCostCenter = (Spinner) view.findViewById(R.id.spnCostCenter);
+		
+		costList = new CostDS(getActivity()).getAllCostCenters();
+		
+		List<String> costNames = new ArrayList<String>();
+		/* Merge group code with group name to the list */
+		for (Cost cost : costList) {
+			costNames.add(cost.getFCOST_COST_CODE() + " - " + cost.getFCOST_COST_NAME());
+		}
+
+		ArrayAdapter<String> dataAdapter3 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, costNames);
+		dataAdapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spnCostCenter.setAdapter(dataAdapter3);
+		
+		SalRepDS repds = new SalRepDS(getActivity());
+		LocationsDS locds = new LocationsDS(getActivity());
+		
+		CosLocation = locds.getRepLocation(mSharedPref.getGlobalVal("PrekeyCost"));
+		
+		if(CosLocation.isEmpty())
+		{
+			String cost = String.valueOf(getIndexByname(repds.getCurrentCostCode()));
+			
+			CostPos = cost;
+		}else
+		{
+			CostPos = mSharedPref.getGlobalVal("PrekeyCostPos");
+		}
+				
+		if (!(CostPos.equals("***")))
+			spnCostCenter.setSelection(Integer.parseInt(CostPos));
+		
+		//button fonts changing code
+		Typeface tf = Typeface.createFromAsset(activity.getAssets(), "fonts/Cuprum-Regular.ttf");
+		selectItem.setText("Select Items >>");
+		selectItem.setTypeface(tf);
+		
+		currentDate();
+		
+		localSP = activity.getSharedPreferences(SETTINGS,Context.MODE_WORLD_READABLE+Context.MODE_WORLD_WRITEABLE);
+		
+		ReferenceNum referenceNum=new  ReferenceNum(getActivity());
+		
+		orderNo.setText(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+		
+		if(mSharedPref.getGlobalVal("OldCostPos") != null){
+			
+		}else{
+			mSharedPref.setGlobalVal("OldCostPos", "");
+		}
+		
+		
+	
+		OrdHedDS hedDS =new OrdHedDS(getActivity());
+		ArrayList<OrdHed> getOrdHed = hedDS.getAllActiveOrdHed(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+		
+		if(!getOrdHed.isEmpty()){
+			
+			for (OrdHed ordHed : getOrdHed)
+			{
+								
+				deliveryDate.setText(ordHed.getFORDHED_DELV_DATE());
+				manual.setText(ordHed.getFORDHED_MANU_REF());
+				remarks.setText(ordHed.getFORDHED_REMARKS());
+				
+				activity.selectedOrdHed=ordHed;
+				
+				if(activity.selectedDebtor==null){
+					DebtorDS debtorDS =new DebtorDS(getActivity());
+					activity.selectedDebtor=debtorDS.getSelectedCustomerByCode(ordHed.getFORDHED_DEB_CODE());
+				}
+			}
+			
+		}else{
+			
+			try {
+				if(activity.selectedOrdHed !=null)
+				{
+					deliveryDate.setText(activity.selectedOrdHed.getFORDHED_DELV_DATE());
+					manual.setText(activity.selectedOrdHed.getFORDHED_MANU_REF());
+					remarks.setText(activity.selectedOrdHed.getFORDHED_REMARKS());
+				}
+			}catch (Exception e){
+				Log.v("OrdHed ", e.toString());
+			}
+			
+		}
+		
+		
+		selectItem.setOnClickListener(this);
+		deliveryDate.setOnClickListener(this);
+		
+	
+		
+		///------ testing amount---------
+		
+		/// -----------------------------
+		
+		try{
+			//MainActivity activity =(MainActivity) getActivity();
+			if(activity.selectedDebtor !=null)
+			{
+				RouteDS routeDS = new  RouteDS(getActivity());
+				customerName.setText(activity.selectedDebtor.getFDEBTOR_NAME());
+				route.setText(routeDS.getRouteNameByCode(activity.selectedDebtor.getFDEBTOR_CODE()));
+				
+//				outStandingAmt.setText(String.format("%,.2f", new FDDbNoteDS(getActivity()).getDebtorBalance(activity.selectedDebtor.getFDEBTOR_CODE())));
+//				lastBillAmt.setText(String.format("%,.2f", new FDDbNoteDS(getActivity()).getDebtorLastBill(activity.selectedDebtor.getFDEBTOR_CODE())));
+//
+				
+				outStandingAmt.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+ 
+//						LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+//						View promptView = layoutInflater.inflate(R.layout.customer_debtor, null);
+//						AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+//						alertDialogBuilder.setTitle("Customer outstandings...");
+//						alertDialogBuilder.setView(promptView);
+//
+//						final ListView listView = (ListView) promptView.findViewById(R.id.lvCusDebt);
+//
+//						ArrayList<FDDbNote> list = new FDDbNoteDS(getActivity()).getDebtInfo(activity.selectedDebtor.getFDEBTOR_CODE());
+//
+//						listView.setAdapter(new CustomerDebAdapter(getActivity(), list));
+//
+//						alertDialogBuilder.setCancelable(false).setNegativeButton("OK", new DialogInterface.OnClickListener() {
+//							public void onClick(DialogInterface dialog, int id) {
+//								dialog.cancel();
+//							}
+//						});
+//
+//						AlertDialog alertDialog = alertDialogBuilder.create();
+//						alertDialog.show();
+//						Window window = alertDialog.getWindow();
+//						window.setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+					}
+				});
+				
+			}else{
+			
+				//toast.createToastMessage("Please select a customer", getActivity());
+				getActivity().getActionBar().setSelectedNavigationItem(0);
+			}
+		}catch (NumberFormatException e){
+			getActivity().getActionBar().setSelectedNavigationItem(0);
+			e.printStackTrace();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		
+		spnCostCenter.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				/* if spinner item changed by user */
+				CostPos = mSharedPref.getGlobalVal("PrekeyCostPos");
+				ReferenceNum referenceNumRSet = new  ReferenceNum(getActivity());
+				if (!(CostPos.equals(String.valueOf(spnCostCenter.getSelectedItemPosition())))) {
+
+					//new OrdDetDS(getActivity()).DeleteOrderByRefNo(orderNo.getText().toString());
+					//new FOrdDiscountDS(getActivity()).DeletetByRefNO(orderNo.getText().toString());
+					//SaveSalesHeader();
+					
+//					if (!(mSharedPref.getGlobalVal("PrekeyDiscount").equals("")) || (mSharedPref.getGlobalVal("PrekeyDiscount").equals("***"))) {
+//						mSharedPref.setGlobalVal("PrekeyDiscount", "0");
+//					}
+
+				}
+
+				if (new OrdDetDS(getActivity()).getAllOrderDetails(referenceNumRSet.getCurrentRefNo(getResources().getString(R.string.NumVal))).size() > 0 )
+				{
+					
+				}else{
+					
+					new ProductDS(getActivity()).mClearTables();
+				}
+				
+				
+				mSharedPref.setGlobalVal("PrekeyCostPos", String.valueOf(spnCostCenter.getSelectedItemPosition()));
+				
+				mSharedPref.setGlobalVal("PrekeyCost", costList.get(spnCostCenter.getSelectedItemPosition()).getFCOST_COST_CODE());
+				//new OrdDetDS(getActivity()).restData(referenceNumRSet.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+			}		
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+
+			}
+
+		});
+		
+		
+		return view;
+	}
+	
+	
+	
+	public int getIndexByname(String pName)
+    {
+        for(Cost _item : costList)
+        {
+            if(_item.getFCOST_COST_CODE().equals(pName))
+                return costList.indexOf(_item);
+        }
+        return -1;
+    }
+	
+	public void datetimepicker()
+	{		
+		final Dialog dialog = new Dialog(getActivity());
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(R.layout.date_picker);
+		final DatePicker dtp  = (DatePicker)dialog.findViewById(R.id.dpResult);
+		dialog.setCancelable(true);
+		Button button = (Button)dialog.findViewById(R.id.btnok);	
+		button.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v)
+			{
+				// TODO Auto-generated method stub
+			int month = dtp.getMonth()+1;
+			int year = dtp.getYear();
+			int date = dtp.getDayOfMonth();
+			deliveryDate.setText(year+"-0"+month+"-"+date);
+			//sdelDate=year+"/0"+month+"/"+date;
+			dialog.dismiss();
+				
+			}
+		});
+				
+		dialog.show();
+	}
+		
+
+	private void currentDate() {
+		// TODO Auto-generated method stub
+		//current date and time 
+				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				Date date = new Date();
+				currnentDate.setText(dateFormat.format(date));
+				deliveryDate.setText(dateFormat.format(date));
+	}
+	
+	private String currentTime(){
+		Calendar cal = Calendar.getInstance();
+    	cal.getTime();
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
+    	return sdf.format(cal.getTime());
+	}
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		switch (v.getId()) {
+		case R.id.button3://next
+		
+			if(!customerName.getText().toString().equals("") && 
+					!orderNo.getText().toString().equals("") &&	!route.getText().toString().equals("")){
+				
+				//referenceNum.nNumValueInsertOrUpdate("EXPR");
+				mSharedPref.setGlobalVal("PrekeyCostPos", String.valueOf(spnCostCenter.getSelectedItemPosition()));
+				
+				Home activity = (Home) getActivity();
+				RouteDS routeDS = new  RouteDS(getActivity());
+				SalRepDS repDS=new SalRepDS(activity);
+				LocationsDS locDS = new LocationsDS(activity);
+				OrdHed hed =new OrdHed();
+				 String AppVersion = "";
+				 
+				try{
+					 PackageInfo pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
+				        AppVersion = pInfo.versionName;
+				        
+					}catch (Exception e){
+						e.printStackTrace();
+					}
+				
+				if(activity.selectedOrdHed !=null)
+					hed =activity.selectedOrdHed;//set already enter values objects
+				
+				hed.setFORDHED_REFNO(orderNo.getText().toString());
+				hed.setFORDHED_DEB_CODE(activity.selectedDebtor.getFDEBTOR_CODE());
+				hed.setFORDHED_ADD_DATE(currnentDate.getText().toString());
+				hed.setFORDHED_DELV_DATE(deliveryDate.getText().toString());
+				hed.setFORDHED_ROUTE_CODE(routeDS.getRouteCodeByRoute(route.getText().toString()));
+				hed.setFORDHED_MANU_REF(manual.getText().toString());
+				hed.setFORDHED_REMARKS(remarks.getText().toString());
+				hed.setFORDHED_ADD_MACH(localSP.getString("MAC_Address", "No MAC Address").toString());
+				hed.setFORDHED_ADD_USER(repDS.getCurrentRepCode());
+				hed.setFORDHED_APP_DATE("9999-12-31");
+				hed.setFORDHED_APPSTS("1");
+				hed.setFORDHED_APP_USER(repDS.getCurrentRepCode());
+				hed.setFORDHED_CUR_CODE("LKR");
+				hed.setFORDHED_CUR_RATE("1.00");
+				hed.setFORDHED_IS_ACTIVE("1");
+				hed.setFORDHED_LOC_CODE(locDS.getRepLocation(mSharedPref.getGlobalVal("PrekeyCost")));
+				hed.setFORDHED_RECORD_ID(AppVersion);
+				
+				activity.selectedOrdHed = hed;//new updated object (new data + already enter data)
+				
+				SharedPreferencesClass.setLocalSharedPreference(activity, "SO_Start_Time",currentTime());
+				
+				ArrayList<OrdHed> ordHedList=new ArrayList<OrdHed>();
+				OrdHedDS ordHedDS =new  OrdHedDS(getActivity());
+				//head
+				ordHedList.add(activity.selectedOrdHed);
+				if(ordHedDS.createOrUpdateOrdHed(ordHedList)>0)
+				   getActivity().getActionBar().setSelectedNavigationItem(2);
+				
+			}
+		break;
+		
+		case R.id.sa_header_del_date:
+			datetimepicker();
+			break;
+		default:
+			break;
+		}
+	}
+	
+
+}

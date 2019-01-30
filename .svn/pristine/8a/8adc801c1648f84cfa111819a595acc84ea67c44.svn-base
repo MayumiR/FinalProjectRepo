@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0091ea</color>
+    <color name="colorPrimaryDark">#0064b7</color>
+    <color name="colorAccent">#64c1ff</color>
+    <color name="textColor">#4682B4</color>
+    <color name="bgColor">#FFFFFF</color>
+
+    <color name="list_item_title">#ffffff</color>
+    <color name="list_background">#303030</color>
+    <color name="list_background_pressed">#000000</color>
+    <color name="list_divider">#000000</color>
+    <color name="counter_text_bg">#626262</color>
+    <color name="counter_text_color">#c5c4c4</color>
+    <color name="layout_text_bg">#bebebe</color>
+
+    <color name="greenColor">#4682B4</color> <!-- 006e17 -->
+    <color name="back_connection_url">#d8d8d8</color>
+    <color name="blueColor">#336699</color>
+    <color name="selected">#66FFFF</color>
+    <color name="unselected">#ffffff</color>
+
+    <color name="blue_c">#303f9f</color>
+
+    <color name="lightgray">#AFFFFFFF</color>
+    <color name="btn_colour">#40C4FF</color>
+    <color name="list_view_diveder">#b5b5b5</color>
+    <color name="menucolor">#F32104</color>
+
+    <color name="btn_disabled">#FF4444</color>
+</resources>

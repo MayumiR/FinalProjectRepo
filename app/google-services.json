@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "962686684769",
+    "firebase_url": "https://kfd-medi.firebaseio.com",
+    "project_id": "kfd-medi",
+    "storage_bucket": "kfd-medi.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:962686684769:android:fda54cf7856f58df",
+        "android_client_info": {
+          "package_name": "com.kandanafd.kfd_medi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "962686684769-a6ijk37o9t0ql42vbebcion5tp1dujun.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kandanafd.kfd_medi",
+            "certificate_hash": "88aa607530c95f1284b37f7e4f00b92b08b8015b"
+          }
+        },
+        {
+          "client_id": "962686684769-pfn2fnq82nd9tc0oh2942spcervj9kf2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5Q_YKLfqsWESasKSki29mcaF0SD5kEfA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "962686684769-pfn2fnq82nd9tc0oh2942spcervj9kf2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

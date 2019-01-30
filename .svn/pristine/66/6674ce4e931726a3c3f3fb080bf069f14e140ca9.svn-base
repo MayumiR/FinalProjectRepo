@@ -1,0 +1,163 @@
+package com.kandanafd.kfd_medi.Sales;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.app.Fragment;
+import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.kandanafd.kfd_medi.Adapter.SalesOrderViewPagerAdapter;
+import com.kandanafd.kfd_medi.Adapter.SlidingTabLayout;
+import com.kandanafd.kfd_medi.DefView.Home;
+import com.kandanafd.kfd_medi.R;
+
+public class FragmentSalesManagementPreSales extends Fragment {
+
+	private ActionBar actionBar;
+
+	SalesOrderViewPagerAdapter adapter;
+	CharSequence Titles[]={"Customer","Order Header (SA)","Order Details (SA)","Summary"};
+	int Numboftabs =4;
+	Bundle args;
+	ViewPager pager;
+	SlidingTabLayout tabs;
+	private FragmentActivity myContext;
+    private Toolbar toolbar2;
+    private int backpress=0;
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+		View view = inflater.inflate(R.layout.sales_management_pre_sales, container, false);
+
+		//hide bottom tabview
+		Home.navigation.setVisibility(View.GONE);
+		getActivity().setTitle("New Sales Order");
+
+		//set toolbar
+//		toolbar2=(Toolbar) view.findViewById(R.id.toolbar2);
+//		toolbar2.setTitle("Pre Sale Invoice");
+//		toolbar2.setNavigationIcon(getResources().getDrawable(R.drawable.ic_back));
+//		toolbar2.setNavigationOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View view) {
+//				myContext.finish();
+//			}
+//		});
+
+		TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabs);
+		tabLayout.addTab(tabLayout.newTab().setText("Customer"));
+		tabLayout.addTab(tabLayout.newTab().setText("Order Header (SA)"));
+		tabLayout.addTab(tabLayout.newTab().setText("Order Details (SA)"));
+		tabLayout.addTab(tabLayout.newTab().setText("Summary"));
+
+		final ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);
+
+		// mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+		//mRecyclerView.setLayoutManager(mLayoutManager);
+		viewPager.setAdapter(new PagerAdapter(myContext.getSupportFragmentManager(), tabLayout.getTabCount()));
+
+		viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+//		tabLayout.setupWithViewPager(viewPager);
+//		tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+		tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
+			@Override
+			public void onTabSelected(TabLayout.Tab tab) {
+				viewPager.setCurrentItem(tab.getPosition());
+			}
+
+			@Override
+			public void onTabUnselected(TabLayout.Tab tab) {
+
+			}
+
+			@Override
+			public void onTabReselected(TabLayout.Tab tab) {
+
+			}
+		});
+
+		//DISABLED BACK NAVIGATION
+		view.setFocusableInTouchMode(true);
+		view.requestFocus();
+		view.setOnKeyListener(new View.OnKeyListener() {
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				Log.i("", "keyCode: " + keyCode);
+				Home.navigation.setVisibility(View.VISIBLE);
+
+				if( keyCode == KeyEvent.KEYCODE_BACK ) {
+
+//					if(backpress == 2){
+//						Home.navigation.setVisibility(View.VISIBLE);
+//					}else{
+//						Toast.makeText(getActivity(),"Back Navigationid is disable,Press again to enable Home menu", Toast.LENGTH_SHORT).show();
+//					}
+
+					return true;
+				}else if ((keyCode == KeyEvent.KEYCODE_HOME)) {
+
+					getActivity().finish();
+
+					return true;
+
+				} else {
+					return false;
+				}
+			}
+		});
+
+		return view;
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		myContext=(FragmentActivity) activity;
+		super.onAttach(activity);
+	}
+	public class PagerAdapter extends FragmentStatePagerAdapter {
+		int mNumOfTabs;
+
+		public PagerAdapter(FragmentManager fm, int NumOfTabs) {
+			super(fm);
+			this.mNumOfTabs = NumOfTabs;
+		}
+
+
+		@Override
+		public android.support.v4.app.Fragment getItem(int position) {
+
+			switch (position) {
+				case 0:
+					return new FragmentSalesManagementPreSalesCustomer();
+				case 1:
+					return new FragmentSalesManagementPreSalesSAHeader();
+				case 2:
+					return new FragmentSalesManagementPreSalesOrderDetails();
+				case 3:
+					return new FragmentSalesManagementSummary();
+				default:
+					return new FragmentSalesManagementPreSalesCustomer();
+			}
+		}
+
+		@Override
+		public int getCount() {
+			return mNumOfTabs;
+		}
+	}
+
+}

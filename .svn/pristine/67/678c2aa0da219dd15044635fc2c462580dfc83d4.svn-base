@@ -1,0 +1,70 @@
+package com.kandanafd.kfd_medi.Adapter;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
+import com.kandanafd.kfd_medi.Models.ItemSearchList;
+import com.kandanafd.kfd_medi.R;
+
+import java.util.ArrayList;
+
+/**
+ * Created by Sathiyaraja on 6/21/2018.
+ */
+
+public class ProductAdapter extends ArrayAdapter<ItemSearchList> {
+    Context context;
+    ArrayList<ItemSearchList> list;
+    double QOH;
+    double dZero = 0;
+
+    public ProductAdapter(Context context, ArrayList<ItemSearchList> list){
+
+        super(context, R.layout.row_item_listview, list);
+        this.context = context;
+        this.list = list;
+
+    }
+
+
+    @Override
+    public View getView(final int position, final View convertView, final ViewGroup parent) {
+        LayoutInflater inflater = null;
+        View row = null;
+
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        row = inflater.inflate(R.layout.row_item_listview, parent, false);
+
+        //TextView itemCode = (TextView) row.findViewById(R.id.tv_item_code);
+        TextView ItemName = (TextView) row.findViewById(R.id.tv_item_name);
+        TextView HoQ=(TextView) row.findViewById(R.id.TextView01);
+
+        //itemCode.setText(list.get(position).getFITEM_ITEM_CODE());
+        ItemName.setText(list.get(position).getFITEM_ITEM_NAME());
+        HoQ.setText("0");
+        HoQ.setText(list.get(position).getQOH());
+// Original 04-07-2016		QOH = Double.parseDouble(list.get(position).getQOH());
+// Original 04-07-2016	int compvalue = Double.compare(QOH, dZero);
+//
+//	Original 04-07-2016	if(compvalue<0 || list.get(position).getQOH().equals("0")){
+//	Original 04-07-2016		ItemName.setTextColor(Color.parseColor("#FF0000"));
+//	Original 04-07-2016		HoQ.setTextColor(Color.parseColor("#FF0000"));
+//	Original 04-07-2016	}
+
+        //QOH = Double.parseDouble(list.get(position).getQOH());
+        int compvalue = 0;
+        compvalue = Integer.parseInt(list.get(position).getQOH());
+//
+        if(compvalue<0 || list.get(position).getQOH().equals("0")){
+            ItemName.setTextColor(Color.parseColor("#FF0000"));
+            HoQ.setTextColor(Color.parseColor("#FF0000"));
+        }
+
+        return row;
+    }
+}

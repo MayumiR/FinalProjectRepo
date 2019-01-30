@@ -1,0 +1,729 @@
+package com.kandanafd.kfd_medi.Sales;
+
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.kandanafd.kfd_medi.Adapter.SalesPrintPreviewAlertBox;
+import com.kandanafd.kfd_medi.DataControl.DebtorDS;
+import com.kandanafd.kfd_medi.DataControl.ItemLocDS;
+import com.kandanafd.kfd_medi.DataControl.LocationsDS;
+import com.kandanafd.kfd_medi.DataControl.OrdDetDS;
+import com.kandanafd.kfd_medi.DataControl.OrdHedDS;
+import com.kandanafd.kfd_medi.DataControl.ProductDS;
+import com.kandanafd.kfd_medi.DataControl.SalRepDS;
+import com.kandanafd.kfd_medi.DefView.Home;
+import com.kandanafd.kfd_medi.DefView.MainActivity;
+import com.kandanafd.kfd_medi.Models.OrdDet;
+import com.kandanafd.kfd_medi.Models.OrdHed;
+import com.kandanafd.kfd_medi.R;
+import com.kandanafd.kfd_medi.Settings.ReferenceNum;
+import com.kandanafd.kfd_medi.Settings.SharedPref;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+/**
+ * Created by Sathiyaraja on 7/13/2018.
+ */
+
+public class FragmentSalesManagementSummary extends Fragment {
+
+    View view;
+    EditText etHeaderDisVal, etHeaderDisPer,etGrossVal,etTotalReturn,etHeaderDis,etLineDis,etTotalDis,etTotalInvVal;
+
+    Spinner paymentType;
+
+    double sTotalGrossVal=0.00, sHeaderDisPer=0.00, sHeaderDisVal=0.00, sTotHeaderDiscount=0.00, sTotalDis=0.00, sTotalInvVal=0.00, sLineDis=0.00, sTotalReturn=0.00;
+
+    //Shared Preferences variables
+    public static final String SETTINGS = "SETTINGS";
+    public static SharedPreferences localSP;
+    Toast toast;
+    SharedPref mSharedPref;
+    String RefNo = null;
+    Activity activity;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        view = inflater.inflate(R.layout.sales_management_pre_sales_summary, container, false);
+
+        localSP = getActivity().getSharedPreferences(SETTINGS, Context.MODE_WORLD_READABLE+Context.MODE_WORLD_WRITEABLE);
+        RefNo = new ReferenceNum(getActivity()).getCurrentRefNo(getResources().getString(R.string.NumVal));
+        setHasOptionsMenu(true);
+
+        getActivity().setTitle("Summery");
+
+        //etHeaderDisPer = (EditText) view.findViewById(R.id.et_cus_dis);
+        //etHeaderDisVal=(EditText) view.findViewById(R.id.et_invoice_dis);
+
+        mSharedPref = new SharedPref(getActivity());
+
+        etGrossVal=(EditText) view.findViewById(R.id.et_gross_val);
+        //etTotalReturn=(EditText) view.findViewById(R.id.et_total_mr);
+        //etHeaderDis=(EditText) view.findViewById(R.id.et_header_dis);
+        etLineDis=(EditText) view.findViewById(R.id.et_line_dis);
+        etTotalDis=(EditText) view.findViewById(R.id.et_total_dis);
+        etTotalInvVal=(EditText) view.findViewById(R.id.et_total_invoice_val);
+
+        //paymentType=(Spinner) view.findViewById(R.id.spinner1);
+        // Menaka 16-05-2016 setPaymentType();
+
+        mSharedPref = new SharedPref(getActivity());
+
+        //set current summary
+        setCurrentSummary();
+
+        //cases
+		/* Menaka Commented on 16-05-2016
+		etHeaderDisPer.addTextChangedListener(new TextWatcher(){
+		    public void afterTextChanged(Editable s) {
+
+		    	headerDisPer();
+
+		    }
+		   	public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		    public void onTextChanged(CharSequence s, int start, int before, int count){}
+		});
+
+
+		etHeaderDisVal.addTextChangedListener(new TextWatcher(){
+		    public void afterTextChanged(Editable s) {
+
+		    	headerDisValue();
+
+		    }
+		    public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		    public void onTextChanged(CharSequence s, int start, int before, int count){}
+		});
+		*/
+
+//        try {
+//
+//            if (activity.FreeTapped == false) {
+//                // Toast.makeText(getActivity(),"Please select a customer",
+//                // Toast.LENGTH_SHORT).show();
+//                //toast.createToastMessage("Please Tap Free Button", getActivity());
+//
+//                android.widget.Toast.makeText(getActivity(), "Please Tap Free Button",
+//                        android.widget.Toast.LENGTH_LONG).show();
+//                getActivity().getActionBar().setSelectedNavigationItem(2);
+//            } else {
+//                if (activity.FreeTapped == true) {
+//                    getActivity().getActionBar().setSelectedNavigationItem(3);
+//                }
+//            }
+//        } catch (NumberFormatException e) {
+//            getActivity().getActionBar().setSelectedNavigationItem(2);
+//            e.printStackTrace();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+
+        return view;
+
+    }
+
+	/* Menaka Commented on 16-05-2016
+	private void headerDisPer() {
+		// TODO Auto-generated method stub
+		if(!(etGrossVal.equals("0.00"))){
+
+			if(!(etHeaderDisPer.length() == 0)){
+
+				if(!(etHeaderDisPer.equals("0.00"))){
+
+					if(etHeaderDisPer.getText().toString().equals(".")){
+
+						etHeaderDisPer.setText("0.");
+	   					//Set cursor position to end of the text after updating the text of EditText
+	   					int position = etHeaderDisPer.length();
+	   					Editable etext = etHeaderDisPer.getText();
+	   					Selection.setSelection(etext, position);
+
+					}
+
+					sTotalGrossVal = Double.parseDouble(etGrossVal.getText().toString().replaceAll(",", "")) -
+								 (Double.parseDouble(etTotalReturn.getText().toString().replaceAll(",", "")) + Double.parseDouble(etLineDis.getText().toString().replaceAll(",", "")));
+
+					if((etHeaderDisPer.length() == 0))
+						sHeaderDisPer = 0.00;
+					else
+						sHeaderDisPer = sTotalGrossVal * Double.parseDouble(etHeaderDisPer.getText().toString())/100.00;
+
+					if((etHeaderDisVal.length() == 0))
+						sHeaderDisVal = 0.00;
+					else
+						sHeaderDisVal = Double.parseDouble(etHeaderDisVal.getText().toString());
+
+					sTotHeaderDiscount = sHeaderDisPer + sHeaderDisVal;
+
+					etHeaderDis.setText(String.format("%,.2f",sTotHeaderDiscount));
+
+					if(sTotalGrossVal <= sTotHeaderDiscount){
+						etHeaderDis.setText("0.00");
+						etHeaderDisPer.setText("0.00");
+						etHeaderDisVal.setText("0");
+
+						sTotalGrossVal=0.00;
+						sTotHeaderDiscount=0.00;
+
+						Toast toast=new Toast();
+						toast.createToastErrorMessage("Maximum Discount Amount Exceed...", getActivity());
+					}
+
+					setCurrentSummary();
+				}
+			}else{
+				if(!(etHeaderDisPer.equals("0.00"))){
+
+					if(etHeaderDisPer.getText().toString().equals(".")){
+
+						etHeaderDisPer.setText("0.");
+	   					//Set cursor position to end of the text after updating the text of EditText
+	   					int position = etHeaderDisPer.length();
+	   					Editable etext = etHeaderDisPer.getText();
+	   					Selection.setSelection(etext, position);
+
+					}
+
+					sTotalGrossVal = Double.parseDouble(etGrossVal.getText().toString().replaceAll(",", "")) -
+								 (Double.parseDouble(etTotalReturn.getText().toString().replaceAll(",", "")) + Double.parseDouble(etLineDis.getText().toString().replaceAll(",", "")));
+
+
+					if((etHeaderDisPer.length() == 0))
+						sHeaderDisPer = 0.00;
+					else
+						sHeaderDisPer = sTotalGrossVal * Double.parseDouble(etHeaderDisPer.getText().toString())/100.00;
+
+					Log.v("sHeader Dis Per", sHeaderDisPer+"");
+
+						if((etHeaderDisVal.length() == 0))
+							sHeaderDisVal = 0.00;
+						else
+							sHeaderDisVal = Double.parseDouble(etHeaderDisVal.getText().toString());
+
+					sTotHeaderDiscount = sHeaderDisPer + sHeaderDisVal;
+
+					etHeaderDis.setText(String.format("%,.2f",sTotHeaderDiscount));
+
+
+
+					if(sTotalGrossVal <= sTotHeaderDiscount){
+
+						etHeaderDis.setText("0.00");
+						etHeaderDisPer.setText("0.00");
+						etHeaderDisVal.setText("0");
+
+						sTotalGrossVal=0.00;
+						sTotHeaderDiscount=0.00;
+
+						Toast toast=new Toast();
+						toast.createToastErrorMessage("Maximum Discount Amount Exceed...", getActivity());
+					}
+
+					setCurrentSummary();
+				}
+			}
+		}
+
+
+	}
+	*/
+
+	/* Menaka Commented on 16-05-2016
+	private void headerDisValue() {
+		// TODO Auto-generated method stub
+		if(!(etGrossVal.equals("0.00"))){
+
+			if(!(etHeaderDisVal.length() == 0)){
+
+				if(!(etHeaderDisVal.equals("0.00"))){
+
+					sTotalGrossVal = Double.parseDouble(etGrossVal.getText().toString().replaceAll(",", "")) -
+								 (Double.parseDouble(etTotalReturn.getText().toString().replaceAll(",", "")) + Double.parseDouble(etLineDis.getText().toString().replaceAll(",", "")));
+
+					if((etHeaderDisPer.length() == 0))
+						sHeaderDisPer = 0.00;
+					else
+						sHeaderDisPer = sTotalGrossVal * Double.parseDouble(etHeaderDisPer.getText().toString())/100.00;
+
+					sHeaderDisVal = Double.parseDouble(etHeaderDisVal.getText().toString());
+
+					sTotHeaderDiscount = sHeaderDisPer + sHeaderDisVal;
+
+					etHeaderDis.setText(String.format("%,.2f",sTotHeaderDiscount));
+
+					if(sTotalGrossVal <= sTotHeaderDiscount){
+						etHeaderDis.setText("0.00");
+						etHeaderDisPer.setText("0.00");
+						etHeaderDisVal.setText("0");
+
+						sTotalGrossVal=0.00;
+						sTotHeaderDiscount=0.00;
+
+						Toast toast=new Toast();
+						toast.createToastErrorMessage("Maximum Discount Amount Exceed...", getActivity());
+					}
+
+					setCurrentSummary();
+				}
+			}else{
+				if(!(etHeaderDisVal.equals("0.00"))){
+
+
+					sTotalGrossVal = Double.parseDouble(etGrossVal.getText().toString().replaceAll(",", "")) -
+								 (Double.parseDouble(etTotalReturn.getText().toString().replaceAll(",", "")) + Double.parseDouble(etLineDis.getText().toString().replaceAll(",", "")));
+
+					if((etHeaderDisPer.length() == 0))
+							sHeaderDisPer = 0.00;
+					else
+						sHeaderDisPer = sTotalGrossVal * Double.parseDouble(etHeaderDisPer.getText().toString())/100.00;
+
+					Log.v("sHeader Dis Per", sHeaderDisPer+"");
+
+
+					if((etHeaderDisVal.length() == 0))
+						sHeaderDisVal = 0.00;
+					else
+						sHeaderDisVal = Double.parseDouble(etHeaderDisVal.getText().toString());
+
+					sTotHeaderDiscount = sHeaderDisPer + sHeaderDisVal;
+
+					etHeaderDis.setText(String.format("%,.2f",sTotHeaderDiscount));
+
+
+
+					if(sTotalGrossVal <= sTotHeaderDiscount){
+
+						etHeaderDis.setText("0.00");
+						etHeaderDisPer.setText("0.00");
+						etHeaderDisVal.setText("0");
+
+						sTotalGrossVal=0.00;
+						sTotHeaderDiscount=0.00;
+
+						Toast toast=new Toast();
+						toast.createToastErrorMessage("Maximum Discount Amount Exceed...", getActivity());
+					}
+
+					setCurrentSummary();
+				}
+			}
+		}
+	}
+	*/
+
+    private void setCurrentSummary() {
+
+        Home home = new Home();
+        OrdDetDS ordDetDS=new OrdDetDS(activity);
+        ReferenceNum referenceNum =new  ReferenceNum(getActivity());
+        OrdHedDS hedDS =new OrdHedDS(getActivity());
+
+        ArrayList<OrdHed> getOrdHed = hedDS.getAllActiveOrdHed(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+
+        if(getOrdHed.isEmpty()){
+
+//            Toast toast=new Toast();
+//            toast.createToastMessage("You must enter at least one sales item", activity);
+//            getActivity().getActionBar().setSelectedNavigationItem(1);
+
+        }
+
+
+
+
+        etGrossVal.setText(String.format("%,.2f",Double.parseDouble(ordDetDS.getGrossValue(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal))))));
+
+        etLineDis.setText(String.format("%,.2f",Double.parseDouble(ordDetDS.getTotalLineDiscount(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal))))));
+        sLineDis=Double.parseDouble(ordDetDS.getTotalLineDiscount(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal))));
+
+			/* Menaka 16-05-2016
+			etTotalReturn.setText(String.format("%,.2f",Double.parseDouble(ordDetDS.getTotalReturns(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal))))));
+			sTotalReturn = Double.parseDouble(ordDetDS.getTotalReturns(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal))));
+
+
+			Double totDiscount=Double.parseDouble(etHeaderDis.getText().toString().replaceAll(",", "")) + Double.parseDouble(ordDetDS.getTotalLineDiscount(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal))));
+			etTotalDis.setText(String.format("%,.2f",totDiscount));
+			sTotalDis = totDiscount;
+			*/
+
+        Double totalInvoiceVal=Double.parseDouble(ordDetDS.getGrossValue(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal))))-(Double.parseDouble(ordDetDS.getTotalReturns(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)))));
+        etTotalInvVal.setText(String.format("%,.2f",totalInvoiceVal));
+        sTotalInvVal = totalInvoiceVal;
+
+        //If gross amount is Zero then disable header discount
+			/* Menaka 16-05-2016
+			if(Double.parseDouble(etGrossVal.getText().toString().replaceAll(",", "")) == 0.00) {
+
+				etHeaderDisVal.setEnabled(false);
+				etHeaderDisPer.setEnabled(false);
+
+				etHeaderDisVal.setTextColor(Color.parseColor("#CACACA"));
+				etHeaderDisPer.setTextColor(Color.parseColor("#CACACA"));
+
+			}else{
+
+				etHeaderDisVal.setEnabled(true);
+				etHeaderDisPer.setEnabled(true);
+
+				etHeaderDisVal.setTextColor(Color.parseColor("#000000"));
+				etHeaderDisPer.setTextColor(Color.parseColor("#000000"));
+
+			}
+			*/
+
+    }
+
+
+	/*
+	private void setPaymentType() {
+		// TODO Auto-generated method stub
+		List<String> list = new ArrayList<String>();
+		list.add("Cash");
+		list.add("Bill to Bill");
+		list.add("Cheque");
+
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, list);
+		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		paymentType.setAdapter(dataAdapter);
+
+	}
+	*/
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        for(int i = 0; i < menu.size(); ++i){
+            menu.removeItem(menu.getItem(i).getItemId());
+        }
+
+        menu.clear();
+        inflater.inflate(R.menu.frag_per_sales_summary, menu);
+        //getActivity().getActionBar().setTitle("Invoice List");
+        //getActivity().getActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#288dab")));
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_pre_sales_save){
+
+            if(Double.parseDouble(etGrossVal.getText().toString().replaceAll(",", "")) != 0.00){
+                //setBluetooth(true);
+                saveSummaryDialog(getActivity());
+            }
+
+        }
+
+        if(item.getItemId() == R.id.action_pre_sale_undo){
+
+            undoEditingData(getActivity());
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private String currentTime(){
+        Calendar cal = Calendar.getInstance();
+        cal.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        return sdf.format(cal.getTime());
+    }
+
+    private String currentDate() {
+        // TODO Auto-generated method stub
+        //current date and time
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        return dateFormat.format(date);
+
+    }
+
+    private void undoEditingData(final Context context){
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        //alertDialogBuilder.setTitle(title);
+        alertDialogBuilder.setMessage("Are you sure you want to Undo this entry?");
+        final OrdHedDS ordHedDS =new OrdHedDS(getActivity());
+        final OrdDetDS detDS=new OrdDetDS(getActivity());
+        alertDialogBuilder.setIcon(android.R.drawable.ic_dialog_alert);
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        ReferenceNum referenceNum =new  ReferenceNum(getActivity());
+                        MainActivity activity =(MainActivity) getActivity();
+
+                        //delete data
+                        try {
+                            ordHedDS.restData(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal))); //FORDHED DATA
+                        }catch(Exception e){
+                            Log.w("Reset", e.toString());
+                        }
+                        try {
+                            detDS.restData(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal))); // FORDDET DATA
+                        }catch(Exception e){
+                            Log.w("Reset", e.toString());
+                        }
+                        new ProductDS(getActivity()).mClearTables();
+//                        activity.cusPosition=0;
+//                        activity.selectedDebtor=null;
+//                        activity.selectedOrdHed=null;
+//
+//                        Toast toast=new Toast();
+//                        toast.createToastMessage("Undo Success", getActivity());
+                        getActivity().getActionBar().setSelectedNavigationItem(0);
+                    }
+                })
+                .setNegativeButton("No",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,	int id) {
+
+                                dialog.cancel();
+
+
+                            }
+                        });
+
+        AlertDialog alertD = alertDialogBuilder.create();
+
+        alertD.show();
+    }
+
+    private void saveSummaryDialog(final Context context){
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        //alertDialogBuilder.setTitle(title);
+        alertDialogBuilder.setMessage("Are you sure you want to save this entry?");
+        alertDialogBuilder.setIcon(android.R.drawable.ic_dialog_alert);
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+
+
+                        OrdHed hed =new OrdHed();
+                        OrdHedDS ordHedDS =new OrdHedDS(getActivity());
+                        OrdDetDS detDS=new OrdDetDS(getActivity());
+                        ArrayList<OrdHed> ordHedList=new ArrayList<OrdHed>();
+                        ArrayList<OrdDet> ordDetList=new ArrayList<OrdDet>();
+                        //GPSTracker gpsTracker=new GPSTracker(getActivity());
+                        ReferenceNum referenceNum =new  ReferenceNum(getActivity());
+                        SalRepDS repDS=new SalRepDS(getActivity());
+                        DebtorDS debDS = new DebtorDS(getActivity());
+                        ItemLocDS itemLocDS = new ItemLocDS(getActivity());
+                        LocationsDS locationDS = new LocationsDS(getActivity());
+                        String Location = "";
+                        String sLongi = "";
+                        String sLati = "";
+                        //Location = locationDS.getRepLocation(repDS.getCurrentCostCode());
+                        Location = locationDS.getRepLocation(mSharedPref.getGlobalVal("PrekeyCost"));
+                        ArrayList<OrdHed> getOrdHed = ordHedDS.getAllActiveOrdHed(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+                        ArrayList<OrdDet> getOrdDet = detDS.getAllOrderDetails(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+
+                        if(!getOrdHed.isEmpty()){
+
+                            for (OrdHed ordHed : getOrdHed) {
+                                //hed=ordHed;
+                                hed.setFORDHED_REFNO(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+                                hed.setFORDHED_DEB_CODE(ordHed.getFORDHED_DEB_CODE());
+                                hed.setFORDHED_ADD_DATE(ordHed.getFORDHED_ADD_DATE());
+                                hed.setFORDHED_DELV_DATE(ordHed.getFORDHED_DELV_DATE());
+                                hed.setFORDHED_ROUTE_CODE(ordHed.getFORDHED_ROUTE_CODE());
+                                hed.setFORDHED_MANU_REF(ordHed.getFORDHED_MANU_REF());
+                                hed.setFORDHED_REMARKS(ordHed.getFORDHED_REMARKS());
+                                hed.setFORDHED_ADD_MACH(ordHed.getFORDHED_ADD_MACH());
+                                hed.setFORDHED_ADD_USER(ordHed.getFORDHED_ADD_USER());
+                                hed.setFORDHED_APP_DATE(ordHed.getFORDHED_APP_DATE());
+                                hed.setFORDHED_APPSTS(ordHed.getFORDHED_APPSTS());
+                                hed.setFORDHED_APP_USER(ordHed.getFORDHED_APP_USER());
+                                hed.setFORDHED_CUR_CODE(ordHed.getFORDHED_CUR_CODE());
+                                hed.setFORDHED_CUR_RATE(ordHed.getFORDHED_CUR_RATE());
+                                hed.setFORDHED_LOC_CODE(Location);
+                                hed.setFORDHED_TAX_REG(debDS.getTaxRegStatus(ordHed.getFORDHED_DEB_CODE()));
+                                hed.setFORDHED_RECORD_ID(ordHed.getFORDHED_RECORD_ID());
+                            }
+                        }
+
+                        hed.setFORDHED_REFNO(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+                        hed.setFORDHED_BP_TOTAL_DIS(String.format("%.2f",sTotalDis)+""); // String.format("%.2f",sHeaderDisPer)+""
+                        hed.setFORDHED_B_TOTAL_AMT(String.format("%.2f",sTotalInvVal)+"");
+                        hed.setFORDHED_B_TOTAL_DIS(String.format("%.2f",sTotalDis)+"");
+                        hed.setFORDHED_B_TOTAL_TAX("0.00");
+                        hed.setFORDHED_DIS_PER(String.format("%.2f",sHeaderDisPer)+"");
+                        hed.setFORDHED_END_TIME_SO(currentTime());
+                        hed.setFORDHED_START_TIME_SO(localSP.getString("SO_Start_Time", "").toString());
+                        sLongi = mSharedPref.getGlobalVal("Longitude");
+                        sLati = mSharedPref.getGlobalVal("Latitude");
+                        hed.setFORDHED_LATITUDE(sLongi == "***" ? "0.00" : sLongi);
+                        hed.setFORDHED_LONGITUDE(sLati == "***" ? "0.00" : sLati);
+                        hed.setFORDHED_ADDRESS(localSP.getString("GPS_Address", "").toString());
+                        hed.setFORDHED_COST_CODE(mSharedPref.getGlobalVal("PrekeyCost"));
+                        //hed.setFORDHED_RECORD_ID("");
+
+                        hed.setFORDHED_TOTAL_TAX("0.00");
+                        hed.setFORDHED_TOTALDIS(String.format("%.2f",sHeaderDisVal)+"");
+                        hed.setFORDHED_TOTAL_ITM_DIS(String.format("%.2f",sLineDis)+"");
+                        hed.setFORDHED_TOT_MKR_AMT(String.format("%.2f",sTotalReturn)+"");
+                        hed.setFORDHED_TIMESTAMP_COLUMN("");
+                        hed.setFORDHED_TOTAL_AMT(String.format("%.2f",sTotalInvVal)+"");
+                        hed.setFORDHED_TXN_DATE(currentDate());
+                        hed.setFORDHED_TXN_TYPE("21");
+                        hed.setFORDHED_REPCODE(repDS.getCurrentRepCode());
+                        hed.setFORDHED_IS_ACTIVE("1");
+                        hed.setFORDHED_HED_DIS_VAL(String.format("%.2f",sHeaderDisVal)+"");
+                        hed.setFORDHED_HED_DIS_PER_VAL(String.format("%.2f",sHeaderDisPer)+"");//String.format("%,.2f",sHeaderDisPer)
+
+                        hed.setFORDHED_PAYMENT_TYPE("");
+
+                        ordHedList.add(hed);
+
+                        if(ordHedDS.createOrUpdateOrdHed(ordHedList)>0){
+
+                            //update status
+                            ordHedDS.InactiveStatusUpdate(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+                            detDS.InactiveStatusUpdate(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+
+                            MainActivity activity =(MainActivity) getActivity();
+
+//                            activity.cusPosition=0;
+//                            activity.selectedDebtor=null;
+//                            activity.selectedOrdHed=null;
+                            new ProductDS(getActivity()).mClearTables();
+                            SalesPrintPreviewAlertBox alertBox=new SalesPrintPreviewAlertBox(getActivity());
+                            alertBox.PrintDetailsDialogbox(getActivity(), "",referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+
+                            //next refno
+                            referenceNum.nNumValueInsertOrUpdate(getResources().getString(R.string.NumVal));
+
+                            getActivity().getActionBar().setSelectedNavigationItem(0);
+
+                            // resetting values for a new invoice
+                            activity.getActionBar().removeAllTabs();
+                            // setting navigation mode to standard
+                           // activity.getActionBar().setNavigationMode(0);
+
+
+                            if(!getOrdDet.isEmpty() && !Location.isEmpty()){
+
+                                for (OrdDet orddet : getOrdDet) {
+
+                                    itemLocDS.UpdateFinalQOHFromDeleteReturn(orddet.getFORDDET_QTY(), orddet.getFORDDET_ITEM_CODE(),Location);
+                                }
+                            }
+
+//										GPSLocDS  gpslocDS = new GPSLocDS(getActivity());
+//										ArrayList<GPSLoc> list = gpslocDS.getAllGPSLocsDetails();
+//										new UploadRepGpsLoc(getActivity(), FragmentSalesManagementSummary.this, TaskType.UPLOADREPGPSLOC).execute(list);
+//
+//                            Toast toast=new Toast();
+//                            toast.createToastMessage("Invoice saved to database.", getActivity());
+
+
+                            //toast.createToastErrorMessage("Print Report..", getActivity());
+
+
+                            getActivity().getFragmentManager().popBackStack();
+
+                            dialog.dismiss();
+
+
+                        }else{
+//                            Toast toast=new Toast();
+//                            toast.createToastErrorMessage("Faild", getActivity());
+                        }
+                    }
+                })
+                .setNegativeButton("No",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,	int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        AlertDialog alertD = alertDialogBuilder.create();
+
+        alertD.show();
+    }
+
+
+    private void clearTextfields(){
+
+        //etHeaderDisPer.setText("0.00");
+        //etHeaderDisVal.setText("0.00");
+        etGrossVal.setText("0.00");
+        //etTotalReturn.setText("0.00");
+        //etHeaderDis.setText("0.00");
+        etLineDis.setText("0.00");
+        etTotalDis.setText("0.00");
+        etTotalInvVal.setText("0.00");
+
+        // Menaka 16-05-2016 setPaymentType();
+
+
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        this.activity = activity;
+        super.onAttach(activity);
+    }
+
+//	@Override
+//	public void onTaskCompleted(TaskType taskType) {
+//		// TODO Auto-generated method stub
+//		android.widget.Toast.makeText(getActivity(), "completed !", android.widget.Toast.LENGTH_LONG).show();
+//		new SalesPrintPreviewAlertBox(getActivity()).PrintDetailsDialogbox(getActivity(), "Sales Order", RefNo);
+//		//getActivity().getActionBar().setSelectedNavigationItem(0);
+//		activity.getActionBar().removeAllTabs();
+//		activity.getActionBar().setNavigationMode(0);
+//		getActivity().getFragmentManager().popBackStack();
+//		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//		transaction.replace(R.id.frame_container, new FragmentSalesManagementPreSalesInvoice());
+//		transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//		transaction.commit();
+//	}
+
+
+
+//		public static boolean setBluetooth(boolean enable) {
+//		    BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//		    boolean isEnabled = bluetoothAdapter.isEnabled();
+//		    if (enable && !isEnabled) {
+//		        return bluetoothAdapter.enable();
+//		    }
+//		    else if(!enable && isEnabled) {
+//		        return bluetoothAdapter.disable();
+//		    }
+//		    // No need to change bluetooth state
+//		    return true;
+//		}
+
+
+}

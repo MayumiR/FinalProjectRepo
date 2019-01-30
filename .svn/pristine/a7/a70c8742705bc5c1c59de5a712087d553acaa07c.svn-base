@@ -1,0 +1,13 @@
+package com.kandanafd.kfd_medi.DataControl;
+
+import com.kandanafd.kfd_medi.Settings.TaskType;
+
+import java.util.List;
+
+/**
+ * Created by Rashmi on 8/31/2018.
+ */
+
+public interface UploadTaskListener {
+    void onTaskCompleted(TaskType taskType, List<String> list);
+}

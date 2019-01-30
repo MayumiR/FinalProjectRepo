@@ -1,0 +1,113 @@
+package com.kandanafd.kfd_medi.DataControl;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
+
+import com.kandanafd.kfd_medi.Models.Fmisshed;
+import com.kandanafd.kfd_medi.Settings.DatabaseHelper;
+
+import java.util.ArrayList;
+
+/**
+ * Created by Sathiyaraja on 7/26/2018.
+ */
+
+public class FmisshedDS {
+    private SQLiteDatabase dB;
+    private DatabaseHelper dbHelper;
+    Context context;
+    private String TAG = "FmisshedDS";
+
+    public static SharedPreferences localSP;
+
+    public FmisshedDS(Context context) {
+        this.context = context;
+        dbHelper = new DatabaseHelper(context);
+    }
+
+    public void open() throws SQLException {
+        dB = dbHelper.getWritableDatabase();
+    }
+
+    public long InsertFmisshed(ArrayList<Fmisshed> fmissheds) {
+
+        int count = 0;
+
+        if (dB == null) {
+            open();
+        } else if (!dB.isOpen()) {
+            open();
+        }
+        Cursor cursor = null;
+        try {
+            dB.beginTransaction();
+            String sql = "Insert or Replace into " + dbHelper.TABLE_FMISS_HED + " (" + dbHelper.FMISS_REFNO + ", "
+                    + dbHelper.FMISS_TXNDATE + ","
+                    + dbHelper.FMISS_MANUREF + ","
+                    + dbHelper.FMISS_COSTCODE + ","
+                    + dbHelper.FMISS_LOCCODE + ","
+                    + dbHelper.FMISS_DEBCODEM + ","
+                    + dbHelper.FMISS_REPCODEM + ","
+                    + dbHelper.FMISS_REMARKS + ","
+                    + dbHelper.FMISS_TXNTYPE + ","
+                    + dbHelper.FMISS_TOTALAMT + ","
+                    + dbHelper.FMISS_GITYPE + ","
+                    + dbHelper.FMISS_GITYPES + ","
+                    + dbHelper.FMISS_PRTCOPY + ","
+                    + dbHelper.FMISS_GIPOST + ","
+                    + dbHelper.FMISS_GIBATCH + ","
+                    + dbHelper.FMISS_ADDUSER + ","
+                    + dbHelper.FMISS_ADD_DATE + ","
+                    + dbHelper.FMISS_ADD_MACH + ","
+                    + dbHelper.FMISS_RECORDID +") values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+            SQLiteStatement insert = dB.compileStatement(sql);
+
+            for (Fmisshed fmisshed : fmissheds) {
+
+                insert.bindString(1, fmisshed.getRefNo());
+                insert.bindString(2, fmisshed.getTxnDate());
+                insert.bindString(3, fmisshed.getManuRef());
+                insert.bindString(4, fmisshed.getCostCode());
+                insert.bindString(5, fmisshed.getLocCode());
+                insert.bindString(6, fmisshed.getDebCodeM());
+                insert.bindString(7, fmisshed.getRepCodeM());
+                insert.bindString(8, fmisshed.getRemarks());
+                insert.bindString(9, fmisshed.getTxnType());
+                insert.bindString(10, fmisshed.getTotalAmt());
+                insert.bindString(11, fmisshed.getGIType());
+                insert.bindString(12, fmisshed.getGITypeS());
+                insert.bindString(13, fmisshed.getPrtcopy());
+                insert.bindString(14, fmisshed.getGlPost());
+                insert.bindString(15, fmisshed.getGlBatch());
+                insert.bindString(16, fmisshed.getAddUser());
+                insert.bindString(17, fmisshed.getTxnDate());
+                insert.bindString(18, fmisshed.getAddMach());
+                insert.bindString(19, fmisshed.getRecordId());
+
+                insert.execute();
+
+                count = 1;
+            }
+
+            dB.setTransactionSuccessful();
+            Log.w(TAG, "Done");
+        } catch (Exception e) {
+
+            Log.v(TAG + " Exception", e.toString());
+
+        } finally {
+            dB.endTransaction();
+
+            dB.close();
+        }
+        return count;
+
+
+    }
+}

@@ -1,0 +1,686 @@
+package com.kandanafd.kfd_medi.Sales;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
+import android.widget.Spinner;
+import android.widget.TableRow;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.kandanafd.kfd_medi.Adapter.OrderDetailsAdapter;
+import com.kandanafd.kfd_medi.Adapter.ProductAdapter;
+import com.kandanafd.kfd_medi.DataControl.DebtorDS;
+import com.kandanafd.kfd_medi.DataControl.ItemPriDS;
+import com.kandanafd.kfd_medi.DataControl.ItemsDS;
+import com.kandanafd.kfd_medi.DataControl.OrdDetDS;
+import com.kandanafd.kfd_medi.DataControl.OrdHedDS;
+import com.kandanafd.kfd_medi.DataControl.ReasonDS;
+import com.kandanafd.kfd_medi.DataControl.SalRepDS;
+import com.kandanafd.kfd_medi.DefView.Home;
+import com.kandanafd.kfd_medi.Models.ItemSearchList;
+import com.kandanafd.kfd_medi.Models.OrdDet;
+import com.kandanafd.kfd_medi.Models.OrdHed;
+import com.kandanafd.kfd_medi.R;
+import com.kandanafd.kfd_medi.Settings.ReferenceNum;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public class FragmentSalesManagementPreSalesOthers extends Fragment implements OnClickListener{
+	
+	View view;
+	Spinner spTranType,spReason;
+	Button itemSearch, btnAdd;
+	EditText et_item,et_unit,et_price,et_cases,et_pieces;
+	TableRow reasonTableRow;
+	TextView tv_value;
+	ItemSearchList items=null;
+//	Items items=null;
+	
+	//calculation variables
+	int totPieces =0, seqno=0, index=0;
+	double values=0.00;
+	
+	ListView lv_orddet_other;
+	ArrayList<OrdDet> orderList;
+	
+	ReferenceNum referenceNum;
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		
+		view = inflater.inflate(R.layout.sales_management_pre_sales_other, container, false);
+		
+		spTranType= (Spinner) view.findViewById(R.id.sp_trans_type);
+		spReason=(Spinner) view.findViewById(R.id.sp_reason);
+		
+		itemSearch = (Button) view.findViewById(R.id.btn_other_item_search);
+		btnAdd=(Button) view.findViewById(R.id.btn_add);
+		lv_orddet_other=(ListView) view.findViewById(R.id.lv_orddet_other);
+		
+		itemSearch.setOnClickListener(this);
+		btnAdd.setOnClickListener(this);
+		
+		et_item=(EditText) view.findViewById(R.id.et_other_item);
+		et_unit=(EditText) view.findViewById(R.id.et_other_unit);
+		et_price=(EditText) view.findViewById(R.id.et_other_price);
+		et_cases=(EditText) view.findViewById(R.id.et_other_cases);
+		et_pieces=(EditText) view.findViewById(R.id.et_other_pieces);
+		
+		reasonTableRow=(TableRow) view.findViewById(R.id.table_row_reason);
+		
+		tv_value=(TextView) view.findViewById(R.id.tv_other_value);
+		
+		//transation type spinner realated method
+		setTransType();
+		
+		seqno=0; 
+		//index=0;
+		
+		Home activity =(Home) getActivity();
+		
+		referenceNum=new  ReferenceNum(getActivity());
+		OrdHedDS hedDS =new OrdHedDS(getActivity());
+		ArrayList<OrdHed> getOrdHed = hedDS.getAllActiveOrdHed(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+		
+		if(!getOrdHed.isEmpty()){
+			
+			for (OrdHed ordHed : getOrdHed) {
+								
+				activity.selectedOrdHed=ordHed;
+				
+				if(activity.selectedDebtor==null){
+					DebtorDS debtorDS =new DebtorDS(getActivity());
+					activity.selectedDebtor=debtorDS.getSelectedCustomerByCode(ordHed.getFORDHED_DEB_CODE());
+				}
+			}
+			
+		}
+		
+		try{
+			
+			if(activity.selectedDebtor == null){
+				//Toast.makeText(getActivity(),"Please select a customer", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getActivity(),"Please select a customer",Toast.LENGTH_SHORT).show();
+				getActivity().getActionBar().setSelectedNavigationItem(0);
+			}else{
+				if(activity.selectedOrdHed == null){
+					getActivity().getActionBar().setSelectedNavigationItem(1);
+				}
+			}
+		}catch (NumberFormatException e){
+			getActivity().getActionBar().setSelectedNavigationItem(0);
+			e.printStackTrace();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		
+		fatchDataOthers();
+		
+		et_price.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				casesCalc();
+			}
+			public void beforeTextChanged(CharSequence s, int start, int count,int after) {}
+			public void afterTextChanged(Editable s) {}
+		});
+		
+		//cases
+		et_cases.addTextChangedListener(new TextWatcher(){
+		    public void afterTextChanged(Editable s) {
+		      	casesCalc();
+		    }
+		    public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		    public void onTextChanged(CharSequence s, int start, int before, int count){}
+		}); 
+		
+		//Pieces
+		et_pieces.addTextChangedListener(new TextWatcher(){
+			public void afterTextChanged(Editable s) {
+				piecesCalc();
+		    }
+		    public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		    public void onTextChanged(CharSequence s, int start, int before, int count){}
+		}); 
+		
+		lv_orddet_other.setOnItemLongClickListener(new OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				OrdDet ordDet = orderList.get(position);
+				deleteOrderDialog(getActivity(), "Order Details(SA)",ordDet.getFORDDET_ID());
+				
+				return false;
+			}
+		});
+		
+		lv_orddet_other.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view2,int position, long id) {
+				OrdDet ordDet = orderList.get(position);
+				ItemsDS ds =new ItemsDS(getActivity());
+				
+				items=new ItemSearchList("");
+				items.setFITEM_ITEM_CODE(ordDet.getFORDDET_ITEM_CODE());
+				
+				index= Integer.parseInt(ordDet.getFORDDET_ID());
+				btnAdd.setText("Edit");
+				if(ordDet.getFORDDET_TYPE().equals("MR")){
+					
+					ArrayAdapter myAdap = (ArrayAdapter) spTranType.getAdapter();
+					int spinnerPosition = myAdap.getPosition("MR - Market Return");
+					spTranType.setSelection(spinnerPosition);
+					
+					ReasonDS reasonDS=new ReasonDS(getActivity());
+					ArrayAdapter myAdapReason = (ArrayAdapter) spReason.getAdapter();
+					int spinnerPosReason = myAdapReason.getPosition(reasonDS.getReasonByReaCode(ordDet.getFORDDET_REA_CODE()));
+					spReason.setSelection(spinnerPosReason);
+					
+					
+				}else if(ordDet.getFORDDET_TYPE().equals("UR")){
+					
+					ArrayAdapter myAdap = (ArrayAdapter) spTranType.getAdapter();
+					int spinnerPosition = myAdap.getPosition("UR - Re Usable Return");
+					spTranType.setSelection(spinnerPosition);
+					
+				}else if(ordDet.getFORDDET_TYPE().equals("FD")){
+					
+					ArrayAdapter myAdap = (ArrayAdapter) spTranType.getAdapter();
+					int spinnerPosition = myAdap.getPosition("FD - Free Issues");
+					spTranType.setSelection(spinnerPosition);
+					
+				}
+				
+				et_item.setText(ds.getItemNameByCode(ordDet.getFORDDET_ITEM_CODE()));
+				et_unit.setText(ds.getUnitByCode(ordDet.getFORDDET_ITEM_CODE()));
+				et_price.setText(ordDet.getFORDDET_B_SELL_PRICE());
+				et_cases.setText(ordDet.getFORDDET_CASE_QTY());
+				et_pieces.setText(ordDet.getFORDDET_PICE_QTY());
+				
+			}
+		});
+		//Highlight text when edittext
+				//Cases
+				et_cases.setOnFocusChangeListener(new OnFocusChangeListener() {
+					
+					@Override
+					public void onFocusChange(View v, boolean hasFocus) {
+						// TODO Auto-generated method stub
+						et_cases.setSelectAllOnFocus(true);
+					}
+				});
+				
+				//Pieces
+				et_pieces.setOnFocusChangeListener(new OnFocusChangeListener()
+				{
+					@Override
+					public void onFocusChange(View v, boolean hasFocus)
+					{
+						
+						
+							et_pieces.setSelectAllOnFocus(true);
+						
+					}
+				});
+				
+				//dis amount
+				et_price.setOnFocusChangeListener(new OnFocusChangeListener()
+				{
+					@Override
+					public void onFocusChange(View v, boolean hasFocus)
+					{
+						
+						
+						et_price.setSelectAllOnFocus(true);
+					
+					}
+				});
+				
+			
+	return view;	
+}
+	
+	private void deleteOrderDialog(final Context context,String title, final String recordId){
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+		//alertDialogBuilder.setTitle(title);
+		alertDialogBuilder.setMessage("Are you sure you want to delete this entry?");
+		alertDialogBuilder.setIcon(android.R.drawable.ic_dialog_alert);
+		alertDialogBuilder
+				.setCancelable(false)
+				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+							
+								int count =new OrdDetDS(context).deleteOrdDetByID(recordId);
+								if(count >0){
+									//android.widget.Toast.makeText(context, "Deleted successfully",android.widget.Toast.LENGTH_LONG).show();
+									Toast.makeText(getActivity(),"Deleted successfully",Toast.LENGTH_SHORT).show();
+									fatchDataOthers();
+									clearTextFields();
+								}
+							}
+						})
+				.setNegativeButton("No",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,	int id) {
+								dialog.cancel();
+								
+								
+							}
+						});
+		
+		AlertDialog alertD = alertDialogBuilder.create();
+
+		alertD.show();
+	}
+	
+	private void setTransType() {
+		// TODO Auto-generated method stub
+		List<String> list = new ArrayList<String>();
+		list.add("MR - Market Return");
+		list.add("UR - Re Usable Return");
+		list.add("FR - Free Issue Returns");
+		list.add("FD - Free Issues");
+		
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, list);
+		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spTranType.setAdapter(dataAdapter);
+		
+		spTranType.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+		        String currentRoute = spTranType.getSelectedItem().toString();
+		       
+		        //toast.createToastMessage(currentRoute, getActivity());
+		        
+		    	//set title 
+				setTitle(currentRoute);
+		        //clear method
+		        //clearTextFields();
+		        
+		        if(currentRoute.equals("MR - Market Return")){
+		        	
+		        	reasonTableRow.setVisibility(View.VISIBLE);
+		        	ReasonDS reasonDS =new ReasonDS(getActivity());
+		        	List<String> list = reasonDS.getReasonName() ;
+
+		    		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, list);
+		    		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		    		spReason.setAdapter(dataAdapter);
+		    		
+		    		et_price.setEnabled(true);
+		    		
+		        }else if(currentRoute.equals("UR - Re Usable Return")){
+		        	
+		        	reasonTableRow.setVisibility(View.GONE);
+		    		et_price.setEnabled(true);
+		    		
+		        }else{
+		        	reasonTableRow.setVisibility(View.GONE);
+		        	et_price.setEnabled(false);
+		        }
+		       
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
+
+
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		switch (v.getId()) {
+		case R.id.btn_other_item_search:
+			
+			clearTextFields();
+			prodcutDetailsDialogbox();
+			
+			break;
+		case R.id.btn_add:
+			
+			if(!et_item.getText().toString().equals("")){	
+				if(values > 0.0 && totPieces >0 ){
+					
+					//det
+					OrdDet ordDet=new OrdDet();
+					OrdDetDS detDS=new OrdDetDS(getActivity());
+					ArrayList< OrdDet> ordList=new ArrayList<OrdDet>();
+					//hed
+					OrdHedDS ordHedDS =new  OrdHedDS(getActivity());
+					SalRepDS repDS=new SalRepDS(getActivity());
+					ArrayList<OrdHed> ordHedList=new ArrayList<OrdHed>();
+					
+					ItemPriDS priDS=new ItemPriDS(getActivity());
+					
+					Home activity =(Home) getActivity();
+					//head
+					ordHedList.add(activity.selectedOrdHed);
+				
+					if(ordHedDS.createOrUpdateOrdHed(ordHedList)>0){
+						//details 
+						seqno++;
+						
+						ordDet.setFORDDET_ID(index+"");
+						ordDet.setFORDDET_AMT(String.format("%,.2f",values));
+						ordDet.setFORDDET_BAL_QTY(totPieces+"");
+						ordDet.setFORDDET_B_AMT(String.format("%,.2f",values));
+						ordDet.setFORDDET_B_DIS_AMT("0");
+						ordDet.setFORDDET_BP_DIS_AMT("0");
+						ordDet.setFORDDET_B_SELL_PRICE(et_price.getText().toString());
+						ordDet.setFORDDET_BT_TAX_AMT("0");
+						ordDet.setFORDDET_BT_SELL_PRICE("0");
+						ordDet.setFORDDET_CASE((new Double(totPieces/Integer.parseInt(et_unit.getText().toString()))).intValue()+"");
+						ordDet.setFORDDET_CASE_QTY((new Double(totPieces/Integer.parseInt(et_unit.getText().toString()))).intValue()+"");
+						ordDet.setFORDDET_DIS_AMT("0");
+						ordDet.setFORDDET_DIS_PER("0");
+						ordDet.setFORDDET_FREE_QTY("0");
+						ordDet.setFORDDET_ITEM_CODE(items.getFITEM_ITEM_CODE());
+						ordDet.setFORDDET_P_DIS_AMT("0");
+						ordDet.setFORDDET_PRIL_CODE(priDS.getPrilCodeByItemCode(items.getFITEM_ITEM_CODE()));
+						ordDet.setFORDDET_QTY(totPieces+"");
+						ordDet.setFORDDET_DIS_VAL_AMT("0");
+						ordDet.setFORDDET_PICE_QTY(totPieces % Integer.parseInt(et_unit.getText().toString())+"");
+						
+						String currentRoute = spTranType.getSelectedItem().toString();
+						ReasonDS reasonDS=new ReasonDS(getActivity());
+						
+//							if(currentRoute.equals("MR - Un Market Return")){
+//								
+//								
+//								
+//							}else{
+//								
+//								
+//								
+//							}
+//					     //----------------------------------------------------
+							if(currentRoute.equals("MR - Market Return")){
+								
+								ordDet.setFORDDET_TYPE("MR");
+								ordDet.setFORDDET_TAX_TYPE("31");
+								ordDet.setFORDDET_REA_CODE(reasonDS.getReaCodeByName(spReason.getSelectedItem().toString()));
+								
+							}else if(currentRoute.equals("UR - Re Usable Return")){
+								
+								ordDet.setFORDDET_TYPE("UR");
+								ordDet.setFORDDET_TAX_TYPE("25");
+								ordDet.setFORDDET_REA_CODE("");
+								
+							}else if(currentRoute.equals("FD - Free Issues")){
+								
+								ordDet.setFORDDET_TYPE("FD");
+								ordDet.setFORDDET_TAX_TYPE("27");
+								ordDet.setFORDDET_REA_CODE("");
+								
+							}else if(currentRoute.equals("FR - Free Issue Returns")){
+								
+								ordDet.setFORDDET_TYPE("FR");
+								ordDet.setFORDDET_TAX_TYPE("35");
+								ordDet.setFORDDET_REA_CODE("");
+								
+							}
+						
+						ordDet.setFORDDET_RECORD_ID("");
+						ordDet.setFORDDET_REFNO(activity.selectedOrdHed.getFORDHED_REFNO());
+						ordDet.setFORDDET_SELL_PRICE(et_price.getText().toString());
+						ordDet.setFORDDET_SEQNO(seqno+"");
+						ordDet.setFORDDET_TAX_AMT("0.00");
+						ordDet.setFORDDET_TAX_COM_CODE("");
+						ordDet.setFORDDET_TIMESTAMP_COLUMN("");
+						ordDet.setFORDDET_T_SELL_PRICE("0");
+						
+						DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+						Date date = new Date();
+						ordDet.setFORDDET_TXN_DATE(dateFormat.format(date));
+					
+						ordDet.setFORDDET_IS_ACTIVE("1");
+						
+						ordList.add(ordDet);
+						
+						if(detDS.createOrUpdateOrdDet(ordList)>0){
+							
+							clearTextFields();
+							Toast.makeText(getActivity(),"Added successfully",Toast.LENGTH_SHORT).show();
+							fatchDataOthers();
+							
+						}
+				}		
+					
+			}
+		}	
+						
+			break;
+		default:
+			break;
+		}
+	}
+
+	
+	public void fatchDataOthers(){
+		try {
+			Home activity =(Home) getActivity();
+			lv_orddet_other = (ListView) view.findViewById(R.id.lv_orddet_other);
+			lv_orddet_other.clearTextFilter();
+			OrdDetDS detDS = new OrdDetDS(getActivity());
+			orderList = detDS.getAllOrderDetailOthers(activity.selectedOrdHed.getFORDHED_REFNO());
+			lv_orddet_other.setAdapter(new OrderDetailsAdapter(getActivity(), orderList));
+		} catch (Exception e) {
+			Log.v("Order detail Others", e.toString());
+		}
+	}
+	//----------Cases Calcuation -----------
+	private void casesCalc(){
+    	
+		if(!(et_unit.length() == 0)){	
+		    
+    		if(!(et_cases.length() == 0)){
+    		
+    			if(et_pieces.length() == 0){
+    				et_pieces.setText("0");
+    			}
+    		
+    			totPieces=(Integer.parseInt(et_cases.getText().toString()) * Integer.parseInt(et_unit.getText().toString())) +  Integer.parseInt(et_pieces.getText().toString());
+    		
+    			Log.v("Total Pieces (cases)", totPieces+"");
+    		}else{
+	    		
+    			if(et_pieces.length() == 0){
+		    		et_pieces.setText("0");
+	    		}
+    		
+    			totPieces=( 0 * Integer.parseInt(et_unit.getText().toString())) +  Integer.parseInt(et_pieces.getText().toString());
+    		
+    			Log.v("Total Pieces (cases)", totPieces+"");
+    		}
+    		
+    		if(et_price.length() == 0){
+    			et_price.setText("0");
+			}
+    		values= (Double.parseDouble(et_price.getText().toString())* ((double) totPieces)); 
+    		
+    		setValues(String.format("%,.2f",values));
+   	}
+}
+//------------- Pieces Calcuation ----------
+	private void piecesCalc(){
+	    if(!(et_unit.length() == 0)){	
+			
+	    	if(!(et_pieces.length() == 0)){
+		
+	    			if(et_cases.length() == 0){
+		    			et_cases.setText("0");
+		    		}
+		    		
+	    			totPieces=(Integer.parseInt(et_cases.getText().toString()) * Integer.parseInt(et_unit.getText().toString())) +  Integer.parseInt(et_pieces.getText().toString());
+		    		
+	    			Log.v("Total Pieces (Pieces)", totPieces+"");
+	    		}else{
+	    			
+	    			if(et_cases.length() == 0){
+		    			et_cases.setText("0");
+		    		}
+		    		
+	    			totPieces=(Integer.parseInt(et_cases.getText().toString()) * Integer.parseInt(et_unit.getText().toString())) + 0;
+		    		
+	    			Log.v("Total Pieces (Pieces)", totPieces+"");
+	    		}
+	    	
+		    	if(et_price.length() == 0){
+	    			et_price.setText("0");
+				}
+	    		values= (Double.parseDouble(et_price.getText().toString())* ((double) totPieces)); 
+	    		setValues(String.format("%,.2f", values));
+	    	}	
+	}
+	
+	private void setValues(String val){
+		tv_value.setText(val);
+		
+	}
+	
+//	ArrayList<Items> ArrayList = null;
+	ArrayList<ItemSearchList> ArrayList = null;
+	public void prodcutDetailsDialogbox()
+	{		
+		final Dialog dialog = new Dialog(getActivity());
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(R.layout.order_details_search_item);
+		
+		final SearchView search = (SearchView) dialog.findViewById(R.id.et_search);
+		final ListView productList=(ListView) dialog.findViewById(R.id.lv_product_list); 
+		
+		
+		dialog.setCancelable(true);
+		
+		final ItemsDS itemsDS =new ItemsDS(getActivity());
+		final ItemPriDS priDS=new ItemPriDS(getActivity());
+		productList.clearTextFilter();
+		String currentRoute = spTranType.getSelectedItem().toString();
+		
+		referenceNum=new  ReferenceNum(getActivity());
+		if(currentRoute.equals("MR - Market Return")){
+			ArrayList= itemsDS.getAllItem("","txntype ='31'",referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)),"MS");
+		}
+		else if(currentRoute.equals("UR - Re Usable Return")){
+			ArrayList= itemsDS.getAllItem("","txntype ='25'",referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)),"MS");
+		}
+		else if(currentRoute.equals("FD - Free Issues")){
+			ArrayList= itemsDS.getAllItem("","txntype ='27'",referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)),"MS");
+		}
+		
+		//final ArrayList<Items> list = ArrayList;
+		
+		productList.setAdapter(new ProductAdapter(getActivity(), ArrayList));
+
+		productList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				//MainActivity activity = (MainActivity) getActivity();
+				items = ArrayList.get(position);
+				//activity.selectedDebtor = debtor;
+				//activity.cusPosition=position;
+				et_item.setText(items.getFITEM_ITEM_NAME());
+				et_unit.setText(items.getFITEM_NOU_CASE());
+				
+				double unitPrice= Double.parseDouble(priDS.getProductPriceByCode(items.getFITEM_ITEM_CODE(),""))/Double.parseDouble(items.getFITEM_NOU_CASE());
+				//int unitPrice=priDS.getProductPriceByCode(items.getFITEM_ITEM_CODE())/Integer.parseInt(items.getFITEM_NOU_CASE());
+				Log.v("unit price", unitPrice+"");
+				et_price.setText(String.format("%.2f", unitPrice));
+				//Toast.makeText(getActivity(), items.getFITEM_ITEM_NAME() + " selected", Toast.LENGTH_SHORT).show();
+
+				Toast.makeText(getActivity(),items.getFITEM_ITEM_NAME(),Toast.LENGTH_SHORT).show();
+				
+				dialog.dismiss();
+			}
+		});
+		
+			
+		search.setOnQueryTextListener(new OnQueryTextListener() {
+			
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				return false;
+			}
+			
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				ItemsDS itemsDS =new ItemsDS(getActivity());
+				productList.clearTextFilter();
+				//final ArrayList<Items> list= itemsDS.getAllItem(newText,"txntype !='22'");
+				String currentRoute = spTranType.getSelectedItem().toString();
+				//ArrayList<Items> ArrayList = null;
+				ArrayList.clear();
+				if(currentRoute.equals("MR - Market Return")){
+					ArrayList= itemsDS.getAllItem(newText,"txntype ='31'",referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)),"MS");
+				}
+				else if(currentRoute.equals("UR - Re Usable Return")){
+					ArrayList= itemsDS.getAllItem(newText,"txntype ='25'",referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)),"MS");
+				}
+				else if(currentRoute.equals("FD - Free Issues")){
+					ArrayList= itemsDS.getAllItem(newText,"txntype ='27'",referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)),"MS");
+				}
+				productList.setAdapter(new ProductAdapter(getActivity(), ArrayList));
+				return false;
+			}
+		});				
+		dialog.show();
+	}
+	
+	private void clearTextFields() {
+		// TODO Auto-generated method stub
+		index=0;
+		
+		et_item.setText("");
+		et_unit.setText("0");
+		et_price.setText("0.00");
+		et_cases.setText("0");
+		et_pieces.setText("0");
+		
+		btnAdd.setText("Add");
+		
+	}
+	
+	private void setTitle(String title){
+//		SetTitleAdapter adapter =new SetTitleAdapter();
+//		adapter.createCutomActionBarTitle(title, getActivity());
+	}
+}

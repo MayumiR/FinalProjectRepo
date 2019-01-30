@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/custom_textbox"
+    android:orientation="vertical"
+    android:padding="10dp" >
+
+    <com.kandanafd.kfd_medi.DefView.FinacText
+        android:id="@+id/et_server_url"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/textView1"
+        android:layout_toRightOf="@+id/textView3"
+        android:hint="123.231.13.199:1025"
+        android:inputType="text"
+        android:enabled="true"
+        android:textStyle="italic" />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/et_server_url"
+        android:background="@color/colorAccent"></View>
+
+    <com.kandanafd.kfd_medi.DefView.FinacFont
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/et_server_url"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="Console DB Configuration"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="16dp"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/spinner_server_db"
+        android:layout_width="fill_parent"
+        android:padding="10dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/textView2" />
+
+    <com.kandanafd.kfd_medi.DefView.FinacFont
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/et_server_url"
+        android:layout_below="@+id/textView1"
+        android:gravity="center"
+        android:text="http://"
+        android:textSize="18dp"
+        android:textStyle="italic" />
+
+
+    <com.kandanafd.kfd_medi.DefView.FinacFont
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView3"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="14dp"
+        android:padding="5dp"
+        android:gravity="center"
+        android:text="Server Configuration URL"
+        android:textSize="16dp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

@@ -1,0 +1,84 @@
+package com.kandanafd.kfd_medi.PromoSale;
+
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.SearchView;
+
+import com.kandanafd.kfd_medi.Adapter.ItemsAdapter;
+import com.kandanafd.kfd_medi.DataControl.FmItemDS;
+import com.kandanafd.kfd_medi.DataControl.ProductDS;
+import com.kandanafd.kfd_medi.Models.FmItem;
+import com.kandanafd.kfd_medi.R;
+
+import java.util.ArrayList;
+
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class FragPromoSaleHeaderDet extends Fragment implements SearchView.OnQueryTextListener {
+
+
+    private View view;
+    ArrayList<ProductDS> productList = null, selectedItemList = null;
+    public static ArrayList<FmItem> fmItems = null;
+    public static ArrayList<FmItem> fmItemsFitered = null;
+    private ListView itemsList;
+    private SearchView searchView;
+    private ItemsAdapter itemsAdapter;
+
+
+    public FragPromoSaleHeaderDet() {
+        // Required empty public constructor
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        view = inflater.inflate(R.layout.fragment_frag_promo_sale_header_det, container, false);
+
+
+        itemsList = (ListView) view.findViewById(R.id.headItems);
+        searchView = (SearchView) view.findViewById(R.id.itemSearch);
+        searchView.setOnQueryTextListener(this);
+        //load items
+        FmItemDS itemDS = new FmItemDS(getActivity());
+        fmItems = itemDS.getAllItems();
+
+        fmItemsFitered = new ArrayList<>();
+        fmItemsFitered.clear();
+        itemsAdapter = new ItemsAdapter(getActivity(), fmItems);
+        itemsList.setAdapter(itemsAdapter);
+
+
+        return view;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        String chars = s;
+        System.out.println("keys"+s);
+        filterItems(chars);
+        return false;
+    }
+
+    public void filterItems(String keywords) {
+        FmItemDS itemDS = new FmItemDS(getActivity());
+
+        fmItemsFitered = itemDS.findAllItems(keywords);
+        itemsAdapter = new ItemsAdapter(getActivity(), fmItemsFitered);
+        itemsList.setAdapter(itemsAdapter);
+    }
+}

@@ -1,0 +1,112 @@
+<resources>
+    <string name="app_name">KFD MEDI</string>
+    <string name="kandana_foods_and_drugs_pvt_ltd">Kandana Foods &amp; Drugs (Pvt) Ltd</string>
+    <string name="developed_by_datamation_systems_n_94_11_2_501202_n_www_datamation_lk">Developed by Datamation Systems.  \n +94 11 2 501202   \nwww.datamation.lk</string>
+    <string name="title_activity_home">Home</string>
+    <string name="title_home">Home</string>
+    <string name="title_sa">Sales Management</string>
+    <string name="title_tools">Management Tools</string>
+    <string name="title_logout">Logout</string>
+
+
+    <!--  Num Value -->
+    <string name="NumVal">PDAPO</string>
+    <string name="VanNumVal">SECINV</string>
+    <string name="LodNumVal">STRLO</string>
+    <string name="NonProd">DAYNPSO</string>
+    <string name="UnLodNumVal">STRUN</string>
+    <string name="DamagNumVal">SDTRAN</string>
+    <string name="ExpenseNumVal">EXPR</string>
+    <string name="AdjAddNumVal">SADJA</string>
+    <string name="AdjDedNumVal">SADJD</string>
+    <string name="VanReturnNumVal">PDASR</string>
+    <string name="RecNumVal">PDARC</string>
+    <string name="MRecNumVal">PDAMR</string>
+    <string name="newCusVal">PDAREG</string>
+
+    <!-- Nav Drawer Menu Items -->
+    <string-array name="nav_drawer_items">
+        <item>Dashboard</item>
+        <item>Sales Management</item>
+        <item>Reports</item>
+        <item>Management Tools</item>
+        <item>Inventory Control </item>
+        <item>Master Info</item>
+        <item>Planning</item>
+        <item>Logout</item>
+    </string-array>
+
+    <!-- Nav Drawer List Item Icons -->
+    <!-- Keep them in order as the titles are in -->
+
+
+    <array name="listView_icons_for_settingd">
+        <item>@drawable/sync</item>
+        <item>@drawable/printer</item>
+        <item>@drawable/reschedule</item>
+        <item>@drawable/database</item>
+        <item>@drawable/salesreps</item>
+        <item>@drawable/route</item>
+    </array>
+
+
+    <!-- Content Description -->
+    <string name="desc_list_item_icon">Item Icon</string>
+
+    <!-- Print Preview Descrption -->
+
+    <string name="head_comp_name">Company Name</string>
+    <string name="head_address1">Company Address1,</string>
+    <string name="head_address2">Company Address2</string>
+    <string name="head_comp_tele">Telephone</string>
+    <string name="head_comp_website">web site</string>
+    <string name="head_comp_email">email</string>
+    <string name="printheadingline">-------------------------------------------------------------------------------------------</string>
+
+    <string name="head_distributor">Distributor</string>
+    <string name="head_dist_address1">Address1</string>
+    <string name="head_dist_address2">Address2</string>
+    <string name="head_dist_phone">Phone #</string>
+
+    <string name="head_repname">Rep Name</string>
+
+    <string name="head_cuscode">Customer Code</string>
+    <string name="head_cusname">Customer Name</string>
+
+    <string name="head_sal_ord_date">Sales Order Date</string>
+    <string name="head_sal_delv_date">Delivery Date</string>
+    <string name="head_sal_refno">Order Number</string>
+    <string name="head_sal_remarks">Remarks</string>
+
+    <string name="trans_detail_Product_name">Product Name</string>
+    <string name="trans_detail_Product_Discount">Disc</string>
+    <string name="trans_detail_Product_CSPC">(QTY)</string>
+    <string name="trans_detail_Product_Units">Units</string>
+    <string name="trans_detail_Product_UnitPrice">UnitPrice</string>
+    <string name="trans_detail_Product_Price">(RS)</string>
+
+    <string name="trans_summary_total_qty">Total Quantity</string>
+    <string name="trans_summary_total_value">Total Value</string>
+    <string name="trans_summary_total_mkt_ret">Total Market Return</string>
+    <string name="trans_summary_header_disc">Header Discount</string>
+    <string name="trans_summary_line_disc">Line Discount</string>
+    <string name="trans_summary_total_disc">Total Discount</string>
+    <string name="trans_summary_net_value">Net Total</string>
+    <string name="trans_summary_caseqty">Cases</string>
+    <string name="trans_summary_pieceqty">Pieces</string>
+
+    <string name="trans_summary_previewvalue">0000</string>
+
+    <!-- Print Preview Loading Descrption -->
+    <string name="refno">RefNo</string>
+    <string name="date">Date</string>
+
+    <!-- Print Preview Van Sale Invoice -->
+    <string name="head_van_sal_date">Invoice Date</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="compulsory">Compulsory</string>
+    <string name="customer_registrtion">Customer Registrtion</string>
+    <string name="forgot_password"><u>Forgot Password?</u></string>
+</resources>

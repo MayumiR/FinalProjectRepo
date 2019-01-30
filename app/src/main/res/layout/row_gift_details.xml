@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <com.bit.sfa.DataControl.FinacFont
+            android:id="@+id/row_free_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dip"
+            android:layout_marginRight="1dip"
+            android:layout_weight="0.2"
+            android:gravity="left"
+            android:paddingLeft="5dp"
+            android:textColor="@color/unselected"
+            android:background="@color/unselected"
+            android:textAllCaps="true"
+            android:visibility="gone"
+            android:textSize="14sp" />
+        <com.bit.sfa.DataControl.FinacFont
+            android:id="@+id/row_refno"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dip"
+            android:layout_marginRight="1dip"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:paddingRight="5dp"
+            android:text="RefNo"
+            android:textAllCaps="true"
+            android:textColor="@color/blue_c"
+            android:textSize="14sp" />
+
+        <com.bit.sfa.DataControl.FinacFont
+            android:id="@+id/row_item"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dip"
+            android:layout_marginRight="1dip"
+            android:layout_weight="1.5"
+            android:gravity="center_horizontal"
+            android:paddingLeft="5dp"
+            android:text="Product"
+            android:textAllCaps="true"
+            android:textColor="@color/blue_c"
+            android:textSize="14sp" />
+
+        <com.bit.sfa.DataControl.FinacFont
+            android:id="@+id/row_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dip"
+            android:layout_marginRight="1dip"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:text="Status"
+            android:textAllCaps="true"
+            android:textColor="@color/blue_c"
+            android:textSize="14sp" />
+
+
+
+    </LinearLayout>
+
+</LinearLayout>

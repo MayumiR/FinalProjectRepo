@@ -1,0 +1,1505 @@
+package com.kandanafd.kfd_medi.Sales;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager.LayoutParams;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.kandanafd.kfd_medi.Adapter.ItemAdapter;
+import com.kandanafd.kfd_medi.Adapter.NewProduct_Adapter;
+import com.kandanafd.kfd_medi.Adapter.OrderDetailsAdapter;
+import com.kandanafd.kfd_medi.Adapter.ProductAdapter;
+import com.kandanafd.kfd_medi.DataControl.DebtorDS;
+import com.kandanafd.kfd_medi.DataControl.DefaultTaskListener;
+import com.kandanafd.kfd_medi.DataControl.FSupplierDS;
+import com.kandanafd.kfd_medi.DataControl.FreeMslabDS;
+import com.kandanafd.kfd_medi.DataControl.ItemLocDS;
+import com.kandanafd.kfd_medi.DataControl.ItemPriDS;
+import com.kandanafd.kfd_medi.DataControl.ItemsDS;
+import com.kandanafd.kfd_medi.DataControl.LocationsDS;
+import com.kandanafd.kfd_medi.DataControl.OrdDetDS;
+import com.kandanafd.kfd_medi.DataControl.OrdHedDS;
+import com.kandanafd.kfd_medi.DataControl.OrderDiscDS;
+import com.kandanafd.kfd_medi.DataControl.ProductDS;
+import com.kandanafd.kfd_medi.DataControl.SalRepDS;
+import com.kandanafd.kfd_medi.DefView.Home;
+import com.kandanafd.kfd_medi.Models.FSupplier;
+import com.kandanafd.kfd_medi.Models.FreeQohStatus;
+import com.kandanafd.kfd_medi.Models.ItemFreeIssue;
+import com.kandanafd.kfd_medi.Models.ItemSearchList;
+import com.kandanafd.kfd_medi.Models.OrdDet;
+import com.kandanafd.kfd_medi.Models.OrdHed;
+import com.kandanafd.kfd_medi.Models.Product;
+import com.kandanafd.kfd_medi.R;
+import com.kandanafd.kfd_medi.Settings.AddressAyncTask;
+import com.kandanafd.kfd_medi.Settings.ReferenceNum;
+import com.kandanafd.kfd_medi.Settings.SharedPref;
+import com.kandanafd.kfd_medi.Settings.SharedPreferencesClass;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+
+
+public class FragmentSalesManagementPreSalesOrderDetails extends Fragment implements OnClickListener, DefaultTaskListener {
+
+	View view;
+	Button itemSearch, bAdd, bFreeIssue;
+	EditText et_item, et_unit, et_price, et_cases, et_pieces, et_dis_amt,
+			et_dis_per;
+
+	// calculation variables
+	int totPieces = 0;
+	int listcnt = 0;
+	int listfreecnt = 0;
+	double values = 0.00;
+	double totalDiscount = 0.00;
+
+	String searchtext = "";
+	int QOHEnough = 0;
+	
+	TextView tv_value, tv_total_discount_amt, tv_Free_Detail;
+	// Items selectedItem=null;
+	ItemSearchList selectedItem = null;
+	int seqno = 0, index_id = 0;
+	Toast toast;
+	public static SharedPreferences localSP;
+	public static final String SETTINGS = "SETTINGS";
+
+	ListView lv_order_det;
+	ArrayList<OrdDet> orderList;
+	OrdDetDS detDS = null;
+	ReferenceNum referenceNum;
+	String Refno, SalRep,QOH = "0", NewCost="", OldCost="" ,SupCode="";
+
+	ItemAdapter adaptor;
+	Activity mActivity;
+	//protected FragmentActivity mActivity;
+
+	ArrayList<ItemFreeIssue> newFreeList;
+	ArrayList<FreeQohStatus> FreeList = new ArrayList<FreeQohStatus>();
+	ArrayList<ItemSearchList> list = null;
+
+	private ProgressDialog progressBar;
+	private int progressBarStatus = 0;
+	private static ProgressDialog progressDialog;
+    ArrayList<Product> productList = null, selectedItemList = null;
+	SharedPref mSharedPref;
+	Home activity ;
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+		view = inflater.inflate(R.layout.sales_management_pre_sales_details, container, false);
+
+		seqno = 0;
+		totPieces = 0;
+
+		localSP = getActivity().getSharedPreferences(SETTINGS, Context.MODE_WORLD_READABLE + Context.MODE_WORLD_WRITEABLE);
+
+		mSharedPref = new SharedPref(getActivity());
+		
+		// button
+		itemSearch = (Button) view.findViewById(R.id.btn_item_search);
+		bAdd = (Button) view.findViewById(R.id.btn_add);
+		bFreeIssue = (Button) view.findViewById(R.id.btn_free);
+		et_item = (EditText) view.findViewById(R.id.et_item);
+		et_unit = (EditText) view.findViewById(R.id.et_unit);
+		et_price = (EditText) view.findViewById(R.id.et_price);
+		lv_order_det = (ListView) view.findViewById(R.id.lv_order_det);
+
+		et_cases = (EditText) view.findViewById(R.id.et_cases);
+		et_pieces = (EditText) view.findViewById(R.id.et_pieces);
+
+		// Menaka 28-07-2016 et_dis_amt = (EditText)
+		// view.findViewById(R.id.et_dis_amt);
+		// Menaka 28-07-2016 et_dis_per = (EditText)
+		// view.findViewById(R.id.et_dis_per);
+
+		// TextView
+		tv_value = (TextView) view.findViewById(R.id.tv_value);
+		// Menaka 28-07-2016 tv_total_discount_amt = (TextView)
+		// view.findViewById(R.id.tv_total_discount_amt);
+
+		
+		tv_Free_Detail = (TextView) view.findViewById(R.id.tv_freedetails);
+
+		referenceNum = new ReferenceNum(getActivity());
+
+		Refno = referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal));
+
+		SalRep = new SalRepDS(getActivity()).getCurrentRepCode();
+		// button action
+		itemSearch.setOnClickListener(this);
+
+		bAdd.setOnClickListener(this);
+		bFreeIssue.setOnClickListener(this);
+
+        activity = (Home) getActivity();
+
+		// AutoCompleteTextView acItemsearch = (AutoCompleteTextView)
+		// view.findViewById(R.id.autoCompleteTextView1);
+		// ////////////////////////// list = new
+		// ItemsDS(getActivity()).getAllItem(searchtext, "txntype ='21'",
+		// referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)),
+		// new SalRepDS(getActivity()).getCurrentRepCode());
+		// //adaptor = new ProductAdapter(getActivity(), list);
+		// acItemsearch.setThreshold(1);
+		// adaptor = new ItemAdapter(getActivity(),R.id.tv_item_name, list);
+		// acItemsearch.setAdapter(adaptor);
+
+		OrdHedDS hedDS = new OrdHedDS(getActivity());
+		ArrayList<OrdHed> getOrdHed = hedDS.getAllActiveOrdHed(Refno);
+		
+		NewCost = "";
+		
+		NewCost = mSharedPref.getGlobalVal("PrekeyCost");
+		
+		OldCost = mSharedPref.getGlobalVal("OldCostPos");
+		
+		if(!NewCost.equals(OldCost)){
+			//new OrdDetDS(getActivity()).restData(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+			new OrdDetDS(getActivity()).restFreeIssueData(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+			UpdateOrdDet(new OrdDetDS(mActivity).getAllOrderDetails(Refno), new LocationsDS(mActivity).getRepLocation(mSharedPref.getGlobalVal("PrekeyCost")));
+			
+		}
+
+		mSharedPref.setGlobalVal("OldCostPos", NewCost);
+		
+		OldCost = mSharedPref.getGlobalVal("OldCostPos");
+		
+		if (!getOrdHed.isEmpty()) {
+
+			for (OrdHed ordHed : getOrdHed) {
+
+				activity.selectedOrdHed = ordHed;
+
+				if (activity.selectedDebtor == null) {
+					DebtorDS debtorDS = new DebtorDS(getActivity());
+					activity.selectedDebtor = debtorDS.getSelectedCustomerByCode(ordHed.getFORDHED_DEB_CODE());
+				}
+			}
+
+		}
+
+		// set title
+		setTitle("Order Details (SA)");
+
+		try {
+
+			if (activity.selectedDebtor == null) {
+				// Toast.makeText(getActivity(),"Please select a customer",
+				// Toast.LENGTH_SHORT).show();
+				Toast.makeText(getActivity(),"Please select a customer",Toast.LENGTH_LONG).show();
+				getActivity().getActionBar().setSelectedNavigationItem(0);
+			} else {
+				if (activity.selectedOrdHed == null) {
+					getActivity().getActionBar().setSelectedNavigationItem(1);
+				}
+			}
+		} catch (NumberFormatException e) {
+			getActivity().getActionBar().setSelectedNavigationItem(0);
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// address
+		try {
+			if (activity.selectedOrdHed.getFORDHED_ADDRESS() == null) {
+				new AddressAyncTask(getActivity(), this).execute();
+			} else {
+				Log.v("GPS address", activity.selectedOrdHed.getFORDHED_ADDRESS().toString());
+			}
+		} catch (Exception e) {
+			Log.v("Exception", e.toString());
+		}
+
+		// Set data in the ListView.
+		fatchData();
+
+		// cases
+		et_cases.addTextChangedListener(new TextWatcher() {
+			public void afterTextChanged(Editable s) {
+
+				// if(totPieces>0)
+				casesCalc();
+
+				if (totPieces > 0) {
+
+					new OrdDetDS(getActivity()).restFreeIssueData(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+					new OrdDetDS(getActivity()).setCheckQOHFree(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)), "","N");
+					bFreeIssue.setBackgroundResource(R.drawable.button_default_bg);
+					bFreeIssue.setClickable(true);
+					Home activity = (Home) getActivity();
+					activity.FreeTapped = false;
+					// Menaka et_dis_amt.setEnabled(true);
+					// Menaka et_dis_per.setEnabled(true);
+				}
+
+			}
+
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			}
+		});
+
+		// Pieces
+		et_pieces.addTextChangedListener(new TextWatcher() {
+			public void afterTextChanged(Editable s) {
+
+				piecesCalc();
+
+				if (totPieces > 0) {
+					// Menaka et_dis_amt.setEnabled(true);
+					// Menaka et_dis_per.setEnabled(true);
+				}
+
+			}
+
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			}
+		});
+
+		// ** Discount values **//
+		// discount value
+		// Menaka 28-07-2016 et_dis_amt.addTextChangedListener(new TextWatcher()
+		// {
+		// Menaka 28-07-2016 public void afterTextChanged(Editable s) {
+
+		// Menaka 28-07-2016 if (totPieces > 0) {
+		// et_dis_amt.setEnabled(true);
+		// Menaka 28-07-2016 discountAmountCalc();
+		// Menaka 28-07-2016 }
+		// Menaka 28-07-2016 }
+
+		// Menaka 28-07-2016 public void beforeTextChanged(CharSequence s, int
+		// start, int count, int after) {
+		// Menaka 28-07-2016 }
+
+		// Menaka 28-07-2016 public void onTextChanged(CharSequence s, int
+		// start, int before, int count) {
+		// Menaka 28-07-2016 }
+		// Menaka 28-07-2016 });
+
+		// discount %
+		// Menaka 28-07-2016 et_dis_per.addTextChangedListener(new TextWatcher()
+		// {
+		// Menaka 28-07-2016 public void afterTextChanged(Editable s) {
+
+		// Menaka 28-07-2016 if (totPieces > 0) {
+		// Menaka 28-07-2016 discountpercentageCalc();
+		// Menaka 28-07-2016 }
+		// Menaka 28-07-2016 }
+
+		// Menaka 28-07-2016 public void beforeTextChanged(CharSequence s, int
+		// start, int count, int after) {
+		// Menaka 28-07-2016 }
+
+		// Menaka 28-07-2016 public void onTextChanged(CharSequence s, int
+		// start, int before, int count) {
+		// Menaka 28-07-2016 }
+		// Menaka 28-07-2016 });
+
+		lv_order_det.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				// TODO Auto-generated method stub
+				OrdDet ordDet = orderList.get(position);
+				new OrderDiscDS(getActivity()).RemoveOrderDiscRecord(ordDet.getFORDDET_REFNO(), ordDet.getFORDDET_ITEM_CODE());
+				deleteOrderDialog(getActivity(), "Order Details (SA)", ordDet.getFORDDET_ID(),position);
+
+				return false;
+			}
+		});
+
+		lv_order_det.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view2, int position, long id) {
+				OrdDet ordDet = orderList.get(position);
+
+				if (!ordDet.getFORDDET_TYPE().equals("FI")) {
+
+					selectedItem = new ItemSearchList("");
+					selectedItem.setFITEM_ITEM_CODE(ordDet.getFORDDET_ITEM_CODE());
+
+					index_id = Integer.parseInt(ordDet.getFORDDET_ID());
+					bAdd.setText("Edit");
+					bAdd.setBackgroundResource(R.drawable.button_default_bgcustom);
+
+					ItemsDS ds = new ItemsDS(getActivity());
+					et_item.setText(ds.getItemNameByCode(ordDet.getFORDDET_ITEM_CODE()));
+					et_unit.setText(ds.getPackSizeByCode(ordDet.getFORDDET_ITEM_CODE()));
+					et_price.setText(ordDet.getFORDDET_B_SELL_PRICE());
+					et_cases.setText(ordDet.getFORDDET_QTY());
+					QOH = new ItemLocDS(getActivity()).getProductQOH(ordDet.getFORDDET_ITEM_CODE(),new LocationsDS(mActivity).getRepLocation(mSharedPref.getGlobalVal("PrekeyCost")));
+					new OrdDetDS(getActivity()).setCheckQOHFree(ordDet.getFORDDET_REFNO(), ordDet.getFORDDET_ITEM_CODE(),"N");
+					String debCode = new OrdHedDS(getActivity()).getRefnoByDebcode(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+					tv_Free_Detail.setText(new FreeMslabDS(getActivity()).getFreeDetails(ordDet.getFORDDET_ITEM_CODE(),debCode));
+					// et_pieces.setText(ordDet.getFORDDET_QTY());
+					// Menaka 28-07-2016
+					// et_dis_amt.setText(ordDet.getFORDDET_DIS_VAL_AMT());
+					// Menaka 28-07-2016
+					// et_dis_per.setText(ordDet.getFORDDET_DIS_PER());
+
+					et_cases.requestFocus();
+					InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+					if (imm != null) {
+						imm.showSoftInput(et_cases, InputMethodManager.SHOW_IMPLICIT);
+					}
+
+					et_cases.selectAll();
+
+				} else if (!ordDet.getFORDDET_TYPE().equals("FI")) {
+
+					clearTextFields();
+
+				}
+
+				OrderDiscDS orderDiscDS = new OrderDiscDS(getActivity());
+				Boolean Result = orderDiscDS.isRecordAvailable(ordDet.getFORDDET_REFNO(), ordDet.getFORDDET_ITEM_CODE());
+
+				if (Result) {
+					// Menaka 28-07-2016 et_dis_amt.setFocusable(false);
+					// Menaka 28-07-2016 et_dis_per.setFocusable(false);
+				} else {
+					// Menaka 28-07-2016
+					// et_dis_amt.setFocusableInTouchMode(true);
+					// Menaka 28-07-2016
+					// et_dis_per.setFocusableInTouchMode(true);
+				}
+
+			}
+		});
+
+		// ----Highlight text when edittext---
+
+		// --Cases--
+		et_cases.setOnFocusChangeListener(new OnFocusChangeListener() {
+
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				// TODO Auto-generated method stub
+
+				// et_cases.setSelectAllOnFocus(true);
+			}
+		});
+
+		// Pieces
+		et_pieces.setOnFocusChangeListener(new OnFocusChangeListener() {
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+
+				// et_pieces.setSelectAllOnFocus(true);
+
+			}
+		});
+
+		// dis amount
+		// Menaka 28-07-2016 et_dis_amt.setOnFocusChangeListener(new
+		// OnFocusChangeListener() {
+		// Menaka 28-07-2016 @Override
+		// Menaka 28-07-2016 public void onFocusChange(View v, boolean hasFocus)
+		// {
+
+		// et_dis_amt.setSelectAllOnFocus(true);
+
+		// Menaka 28-07-2016 }
+		// Menaka 28-07-2016 });
+
+		// dis %
+		// Menaka 28-07-2016 et_dis_per.setOnFocusChangeListener(new
+		// OnFocusChangeListener() {
+		// Menaka 28-07-2016 @Override
+		// Menaka 28-07-2016 public void onFocusChange(View v, boolean hasFocus)
+		// {
+
+		// et_dis_per.setSelectAllOnFocus(true);
+
+		// Menaka 28-07-2016 }
+		// Menaka 28-07-2016 });
+
+		// itemSearch.performClick();
+
+		return view;
+	}
+
+//	@Override
+//    public void onAttach(Activity activity) {
+//        super.onAttach(activity);
+//        mActivity = (FragmentActivity) activity;
+//    }
+	
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		switch (v.getId()) {
+		case R.id.btn_item_search:
+
+			clearTextFields();
+			 new LoardingProductFromDB().execute();
+			 
+			//prodcutDetailsDialogbox();
+
+			break;
+		case R.id.btn_free: {
+			Home activity = (Home) getActivity();
+			try {
+
+				//free issue code removed
+				
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.v("Exception", e.toString());
+			}finally {
+				if(QOHEnough<=0){
+					if(listcnt==listfreecnt){
+						android.widget.Toast.makeText(getActivity(), "Not Eligible  FREE ISSUES SCHEMA..!", android.widget.Toast.LENGTH_LONG).show();
+						getActivity().getActionBar().setSelectedNavigationItem(3);
+					}
+				}else{
+						activity.FreeTapped = false;
+				}
+			}
+		}
+			break;
+		case R.id.btn_add: {
+
+			if (!et_item.getText().toString().equals("") && values >= 0.0 && totPieces > 0) {
+
+				// OrdDet ordDet = new OrdDet();
+				// ArrayList<OrdDet> ordList = new ArrayList<OrdDet>();
+				//
+				
+				if (Integer.parseInt(QOH) >= totPieces){
+					Home activity = (Home) getActivity();
+
+				// head
+				// ordHedList.add(activity.selectedOrdHed);
+
+				if (activity.selectedOrdHed != null) {
+
+
+
+					bAdd.setClickable(false);
+
+
+					new SaveData().execute(et_price.getText().toString(), "0.00", "0.00");
+
+
+				}
+				}else{
+					et_cases.setText("0");
+					android.widget.Toast.makeText(getActivity(), "Not Enough Quantity On Hand..!", android.widget.Toast.LENGTH_LONG).show();
+				}
+			}
+
+			// itemSearch.performClick();
+		}
+			break;
+		default:
+			break;
+		}
+	}
+
+	
+
+	
+	/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*-**-**-*-*-*-*-*-*-*-***-*-*-*-*---*-*-*-*-*/
+
+
+	/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**-*-*-**-**-*-*-*-*-*-*-*-***-*-*-*-*---*-*-*-*-*/
+
+
+	private class showData extends AsyncTask<String, String, String> {
+
+		OrderDetailsAdapter adaptor;
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+
+		@Override
+		protected String doInBackground(String... params) {
+			orderList = new OrdDetDS(getActivity()).getAllOrderDetails(Refno);
+			adaptor = new OrderDetailsAdapter(getActivity(), orderList);
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			lv_order_det.clearTextFilter();
+			lv_order_det.setAdapter(null);
+			lv_order_det.setAdapter(adaptor);
+			
+		
+			//dhansuhika 
+			//commented by old code 
+			//new showDialog().execute();
+			clearTextFields();
+			bAdd.setClickable(true);
+			super.onPostExecute(result);
+		}
+	}
+
+	public void fatchData() {
+		//inActivity activity = (MainActivity) getActivity();
+		lv_order_det.clearTextFilter();
+		lv_order_det.setAdapter(null);
+		orderList = null;
+		orderList = new OrdDetDS(mActivity).getAllOrderDetails(Refno);
+		lv_order_det.setAdapter(new OrderDetailsAdapter(mActivity, orderList));
+	}
+
+	public void UpdateOrdDet(ArrayList<OrdDet> OrderList, String LocCode) {
+		OrdDet det = new OrdDet();
+		for (OrdDet ordDet : OrderList) {
+		 int NotEnoughQOH = 0;
+		 int OrdQty = 0;
+		 NotEnoughQOH = Integer.parseInt(new ItemLocDS(mActivity).getProductQOH(ordDet.getFORDDET_ITEM_CODE(), LocCode));
+		 OrdQty = Integer.parseInt(ordDet.getFORDDET_QTY());
+		 	if (OrdQty>NotEnoughQOH) {
+		 		new OrdDetDS(mActivity).UpdateQOHCases(ordDet.getFORDDET_REFNO(), ordDet.getFORDDET_ITEM_CODE(),NotEnoughQOH);
+		 		new OrdDetDS(mActivity).setCheckQOHFree(ordDet.getFORDDET_REFNO(), ordDet.getFORDDET_ITEM_CODE(),"Y");
+		 		//new OrdDetDS(mActivity).deleteOrdDetByItemCode(ordDet.getFORDDET_ITEM_CODE(), ordDet.getFORDDET_REFNO());
+		 	}else
+		 	{
+		 		new OrdDetDS(mActivity).setCheckQOHFree(ordDet.getFORDDET_REFNO(), ordDet.getFORDDET_ITEM_CODE(),"N");
+		 	}
+		}
+		
+	}
+	//--------------------dhanushika-------update orddet------------------------------------------------
+	
+	
+	 public void mUpdateSO(String id, String itemCode, String Qty, String price, String seqno1, String qoh) {
+
+		   ArrayList<OrdDet> ordList = new ArrayList<OrdDet>();
+
+	        double amt = Double.parseDouble(price) * Double.parseDouble(Qty);
+	        OrdDet ordDet = new OrdDet();
+	    	seqno++;
+			ordDet.setFORDDET_ID(index_id + "");
+			ordDet.setFORDDET_AMT(String.format("%.2f", amt));
+			ordDet.setFORDDET_BAL_QTY(Qty + "");
+			ordDet.setFORDDET_B_AMT(String.format("%.2f", amt));
+			ordDet.setFORDDET_B_DIS_AMT(String.format("%.2f", (Double.parseDouble(price) * ((double) totPieces)) * Double.parseDouble("0.00") / 100));
+			ordDet.setFORDDET_BP_DIS_AMT(String.format("%.2f", (Double.parseDouble(price) * ((double) totPieces)) * Double.parseDouble("0.00") / 100));
+			ordDet.setFORDDET_B_SELL_PRICE(price);
+			ordDet.setFORDDET_BT_TAX_AMT("0");
+			ordDet.setFORDDET_BT_SELL_PRICE(price);
+			ordDet.setFORDDET_CASE(new ItemLocDS(getActivity()).getProductQOH(itemCode,new LocationsDS(mActivity).getRepLocation(mSharedPref.getGlobalVal("PrekeyCost"))));
+			ordDet.setFORDDET_DIS_AMT(String.format("%.2f", (Double.parseDouble(price) * ((double) totPieces)) * Double.parseDouble("0.00") / 100));
+			ordDet.setFORDDET_DIS_PER("0.00");
+			ordDet.setFORDDET_FREE_QTY("0");
+			ordDet.setFORDDET_ITEM_CODE(itemCode);
+			ordDet.setFORDDET_P_DIS_AMT(String.format("%.2f", (Double.parseDouble(price) * ((double) totPieces)) * Double.parseDouble("0.00") / 100));
+			ordDet.setFORDDET_PRIL_CODE(new ItemPriDS(getActivity()).getPrilCodeByItemCode(itemCode));
+			ordDet.setFORDDET_QTY(Qty + "");
+			ordDet.setFORDDET_DIS_VAL_AMT("0.00");
+			ordDet.setFORDDET_PICE_QTY(Qty + "");
+			ordDet.setFORDDET_REA_CODE("");
+			ordDet.setFORDDET_TYPE("SA");
+			ordDet.setFORDDET_RECORD_ID("");
+			ordDet.setFORDDET_REFNO(Refno);
+			ordDet.setFORDDET_SELL_PRICE(price);
+			ordDet.setFORDDET_SEQNO(seqno + "");
+			ordDet.setFORDDET_TAX_AMT("0.00");
+			ordDet.setFORDDET_TAX_COM_CODE(new ItemsDS(getActivity()).getItemTaxComCode(itemCode));
+			ordDet.setFORDDET_TIMESTAMP_COLUMN("");
+			ordDet.setFORDDET_T_SELL_PRICE(price);
+			ordDet.setFORDDET_TXN_DATE(new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date()));
+			ordDet.setFORDDET_TAX_TYPE("21");
+			ordDet.setFORDDET_IS_ACTIVE("1");
+			ordDet.setFORDDET_ITEMNAME(new ItemsDS(getActivity()).getItemNameByCode(itemCode));
+			ordDet.setFORDDET_PACKSIZE(new ItemsDS(getActivity()).getPackSizeByCode(itemCode));
+
+			ordList.add(ordDet);
+			new OrdDetDS(getActivity()).createOrUpdateOrdDet(ordList);
+  
+	    }
+	
+	private class SaveData extends AsyncTask<String, String, String> {
+
+		@Override
+		protected void onPreExecute() {
+			// prodcutDetailsDialogbox();
+			super.onPreExecute();
+		}
+
+		@Override
+		protected String doInBackground(String... params) {
+
+			seqno++;
+			OrdDet ordDet = new OrdDet();
+			ArrayList<OrdDet> ordList = new ArrayList<OrdDet>();
+			ordDet.setFORDDET_ID(index_id + "");
+			ordDet.setFORDDET_AMT(String.format("%.2f", values));
+			ordDet.setFORDDET_BAL_QTY(totPieces + "");
+			ordDet.setFORDDET_B_AMT(String.format("%.2f", values));
+			ordDet.setFORDDET_B_DIS_AMT(String.format("%.2f", (Double.parseDouble(params[0]) * ((double) totPieces)) * Double.parseDouble(params[2]) / 100));
+			ordDet.setFORDDET_BP_DIS_AMT(String.format("%.2f", (Double.parseDouble(params[0]) * ((double) totPieces)) * Double.parseDouble(params[2]) / 100));
+			ordDet.setFORDDET_B_SELL_PRICE(params[0]);
+			ordDet.setFORDDET_BT_TAX_AMT("0");
+			ordDet.setFORDDET_BT_SELL_PRICE(params[0]);
+			ordDet.setFORDDET_CASE(new ItemLocDS(getActivity()).getProductQOH(selectedItem.getFITEM_ITEM_CODE(),new LocationsDS(mActivity).getRepLocation(mSharedPref.getGlobalVal("PrekeyCost"))));
+			ordDet.setFORDDET_DIS_AMT(String.format("%.2f", (Double.parseDouble(params[0]) * ((double) totPieces)) * Double.parseDouble(params[2]) / 100));
+			ordDet.setFORDDET_DIS_PER(params[2]);
+			ordDet.setFORDDET_FREE_QTY("0");
+			ordDet.setFORDDET_ITEM_CODE(selectedItem.getFITEM_ITEM_CODE());
+			ordDet.setFORDDET_P_DIS_AMT(String.format("%.2f", (Double.parseDouble(params[0]) * ((double) totPieces)) * Double.parseDouble(params[2]) / 100));
+			ordDet.setFORDDET_PRIL_CODE(new ItemPriDS(getActivity()).getPrilCodeByItemCode(selectedItem.getFITEM_ITEM_CODE()));
+			ordDet.setFORDDET_QTY(totPieces + "");
+			ordDet.setFORDDET_DIS_VAL_AMT(params[1]);
+			ordDet.setFORDDET_PICE_QTY(totPieces + "");
+			ordDet.setFORDDET_REA_CODE("");
+			ordDet.setFORDDET_TYPE("SA");
+			ordDet.setFORDDET_RECORD_ID("");
+			ordDet.setFORDDET_REFNO(Refno);
+			ordDet.setFORDDET_SELL_PRICE(params[0]);
+			ordDet.setFORDDET_SEQNO(seqno + "");
+			ordDet.setFORDDET_TAX_AMT("0.00");
+			ordDet.setFORDDET_TAX_COM_CODE(new ItemsDS(getActivity()).getItemTaxComCode(selectedItem.getFITEM_ITEM_CODE()));
+			ordDet.setFORDDET_TIMESTAMP_COLUMN("");
+			ordDet.setFORDDET_T_SELL_PRICE(params[0]);
+			ordDet.setFORDDET_TXN_DATE(new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date()));
+			ordDet.setFORDDET_TAX_TYPE("21");
+			ordDet.setFORDDET_IS_ACTIVE("1");
+			ordDet.setFORDDET_ITEMNAME(new ItemsDS(getActivity()).getItemNameByCode(selectedItem.getFITEM_ITEM_CODE()));
+			ordDet.setFORDDET_PACKSIZE(new ItemsDS(getActivity()).getPackSizeByCode(selectedItem.getFITEM_ITEM_CODE()));
+
+			ordList.add(ordDet);
+			new OrdDetDS(getActivity()).createOrUpdateOrdDet(ordList);
+			 new ProductDS(getActivity()).updateProductQty(ordDet.getFORDDET_ITEM_CODE(),totPieces + "");
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			// fatchData();
+			// clearTextFields();
+			// prodcutDetailsDialogbox();
+			new showData().execute();
+			super.onPostExecute(result);
+		}
+
+	}
+
+	private void deleteOrderDialog(final Context context, String title, final String recordId,final int position) {
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+		// alertDialogBuilder.setTitle(title);
+		alertDialogBuilder.setMessage("Are you sure you want to delete this entry?");
+		alertDialogBuilder.setIcon(android.R.drawable.ic_dialog_alert);
+		alertDialogBuilder.setCancelable(false).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+
+				int count = new OrdDetDS(context).deleteOrdDetByID(recordId);
+				if (count > 0) {
+					 new ProductDS(getActivity()).updateProductQty(orderList.get(position).getFORDDET_ITEM_CODE(), "0");
+					// android.widget.Toast.makeText(context,
+					// "Deleted
+					// successfully",android.widget.Toast.LENGTH_LONG).show();
+					Toast.makeText(getActivity(),"Deleted successfully",Toast.LENGTH_SHORT).show();
+					fatchData();
+					clearTextFields();
+				}
+			}
+		}).setNegativeButton("No", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+
+			}
+		});
+
+		AlertDialog alertD = alertDialogBuilder.create();
+		alertD.show();
+	}
+
+
+
+	/*-*-*-*-*-*-*-*-*-*-*-*-*-*- Method to calculate remaining discount values -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+	public double getAvailableTotal(double discVal, ArrayList<OrdDet> OrderList) {
+		double avQTY = 0;
+
+		for (OrdDet mOrdDet : OrderList) {
+
+			avQTY = avQTY + Double.parseDouble(mOrdDet.getFORDDET_DIS_AMT());
+			System.out.println(mOrdDet.getFORDDET_DIS_AMT() + " - " + mOrdDet.getFORDDET_ITEM_CODE());
+		}
+
+		return (discVal - avQTY);
+
+	}
+
+	/*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
+	// @SuppressWarnings("unused")
+	// private void setFreeIssueQtyDialog(ItemFreeIssue freeIssue,
+	// FreeItemDetails itemDetails){
+	//
+	// LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+	//
+	// View promptView = layoutInflater.inflate(R.layout.set_free_issue_dialog,
+	// null);
+	//
+	// final TextView leftQty= (TextView)
+	// promptView.findViewById(R.id.tv_free_item_left_qty);
+	// final EditText enteredQty=(EditText)
+	// promptView.findViewById(R.id.et_free_qty);
+	//
+	// AlertDialog.Builder alertDialogBuilder = new
+	// AlertDialog.Builder(getActivity());
+	// alertDialogBuilder.setTitle(freeIssue.getItems().getFITEM_ITEM_NAME());
+	// alertDialogBuilder.setView(promptView);
+	//
+	// leftQty.setText("Free Items Left = "+itemDetails.getFreeQty());
+	//
+	// alertDialogBuilder
+	// .setCancelable(false)
+	// .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+	// public void onClick(DialogInterface dialog, int id) {
+	//
+	//
+	// }
+	// })
+	// .setNegativeButton("Cancel",
+	// new DialogInterface.OnClickListener() {
+	// public void onClick(DialogInterface dialog, int id) {
+	// dialog.cancel();
+	//
+	//
+	// }
+	// });
+	//
+	// AlertDialog alertD = alertDialogBuilder.create();
+	//
+	// alertD.show();
+	// }
+
+	/*
+	 * -----------------------------------------calcuations---------------------
+	 * - ------------
+	 */
+	// -- pieces --
+	private void piecesCalc() {
+		if (!(et_unit.length() == 0)) {
+
+			if (!(et_pieces.length() == 0)) {
+
+				if (et_cases.length() == 0) {
+					et_cases.setText("0");
+				}
+
+				totPieces = (Integer.parseInt(et_cases.getText().toString())) + Integer.parseInt(et_pieces.getText().toString());
+				// Menaka Orginal
+				// totPieces=(Integer.parseInt(et_cases.getText().toString()) *
+				// Integer.parseInt(et_unit.getText().toString())) +
+				// Integer.parseInt(et_pieces.getText().toString());
+
+				Log.v("Total Pieces (Pieces)", totPieces + "");
+			} else {
+
+				if (et_cases.length() == 0) {
+					et_cases.setText("0");
+				}
+
+				totPieces = (Integer.parseInt(et_cases.getText().toString())) + 0;
+				// Menaka Original
+				// totPieces=(Integer.parseInt(et_cases.getText().toString()) *
+				// Integer.parseInt(et_unit.getText().toString())) + 0;
+
+				Log.v("Total Pieces (Pieces)", totPieces + "");
+			}
+
+			values = (Double.parseDouble(et_price.getText().toString()) * ((double) totPieces)) - totalDiscount;
+			// Menaka 28-07-2016 discountAmountCalc();
+			setValues(String.format("%,.2f", values), String.format("%,.2f", totalDiscount));
+		}
+	}
+
+	// ---cases---
+	private void casesCalc() {
+		if (!(et_unit.length() == 0)) {
+
+			if (!(et_cases.length() == 0)) {
+
+				if (et_pieces.length() == 0) {
+					et_pieces.setText("0");
+				}
+
+				totPieces = (Integer.parseInt(et_cases.getText().toString())) + Integer.parseInt(et_pieces.getText().toString());
+				// Menaka Original
+				// totPieces=(Integer.parseInt(et_cases.getText().toString()) *
+				// Integer.parseInt(et_unit.getText().toString())) +
+				// Integer.parseInt(et_pieces.getText().toString());
+
+				Log.v("Total Pieces (cases)", totPieces + "");
+			} else {
+
+				if (et_pieces.length() == 0) {
+					et_pieces.setText("0");
+				}
+
+				totPieces = Integer.parseInt(et_pieces.getText().toString());
+
+				// Original 04/08/2016
+				// totPieces = (0 *
+				// Integer.parseInt(et_unit.getText().toString()))
+				// + Integer.parseInt(et_pieces.getText().toString());
+
+				Log.v("Total Pieces (cases)", totPieces + "");
+			}
+
+			// if(et_price.getText().toString() == "")
+			// {
+			// et_price.setText("0");
+			// }else
+			// {
+			//
+			// }
+			if(Integer.parseInt(QOH) >= totPieces)
+			{
+				
+				values = (Double.parseDouble(et_price.getText().toString()) * ((double) totPieces)) - totalDiscount;
+				// Menaka 28-07-2016 discountAmountCalc();
+				setValues(String.format("%,.2f", values), String.format("%,.2f", totalDiscount));
+				
+			}else{
+				et_pieces.setText("0");
+				//et_cases.setText("0");
+				android.widget.Toast.makeText(getActivity(), "Not Enough Quantity On Hand..!", android.widget.Toast.LENGTH_LONG).show();
+			}
+			
+		}
+	}
+
+
+	private void clearTextFields() {
+		values = 0.0;
+		totalDiscount = 0.0;
+		index_id = 0;
+		totPieces = 0;
+		// Menaka 28-07-2016 et_dis_amt.setText("0.00");
+		// Menaka 28-07-2016 et_dis_per.setText("0.00");
+		et_item.setText("");
+		et_unit.setText("0");
+		et_price.setText("0.00");
+		et_cases.setText("0");
+		et_pieces.setText("0");
+		tv_value.setText("0.00");
+		tv_Free_Detail.setText("");
+		// Menaka 28-07-2016 tv_total_discount_amt.setText("0.00");
+		bAdd.setText("Add");
+		bAdd.setBackgroundResource(R.drawable.button_default_bg);
+
+		if (totPieces == 0) {
+			// Menaka 28-07-2016 et_dis_amt.setEnabled(false);
+			// Menaka 28-07-2016 et_dis_per.setEnabled(false);
+			et_cases.requestFocus();
+		}
+	}
+
+	/*-*-*-*-*-*-*-*-**-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
+	private class showDialog extends AsyncTask<String, String, String> {
+
+		ListView productList;
+		SearchView search;
+		Dialog dialog;
+		ProductAdapter adaptor;
+		double unitPrice;
+		ArrayList<ItemSearchList> sortEmpList = new ArrayList<ItemSearchList>();
+
+		@Override
+		protected void onPreExecute() {
+
+			dialog = new Dialog(getActivity());
+			dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			dialog.setContentView(R.layout.order_details_search_item);
+			search = (SearchView) dialog.findViewById(R.id.et_search);
+			productList = (ListView) dialog.findViewById(R.id.lv_product_list);
+			dialog.setCancelable(true);
+			search.setQuery(searchtext, false);
+			// ~~~~~~~~~~~~~~~~~~~~~~ Menaka
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			int id = search.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+			EditText editText = (EditText) search.findViewById(id);
+			editText.selectAll();
+			// ~~~~~~~~~~~~~~~~~~~~~~ Menaka
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			super.onPreExecute();
+		}
+
+		@Override
+		protected String doInBackground(String... params) {
+
+			String strLoccode="";
+			
+			strLoccode = new LocationsDS(getActivity()).getRepLocation(mSharedPref.getGlobalVal("PrekeyCost"));
+			
+			list = new ItemsDS(getActivity()).getAllItem(searchtext, "txntype ='21'", Refno, strLoccode);
+
+			// ArrayList<ItemSearchList> empList = new
+			// ArrayList<ItemSearchList>();
+
+			// ********************** Menaka
+			// Test*************************************
+			// Filter<ItemSearchList,String> filter = new
+			// Filter<ItemSearchList,String>() {
+			// public boolean isMatched(ItemSearchList object, String text) {
+			// return
+			// object.getFITEM_ITEM_NAME().toUpperCase().startsWith(String.valueOf(text.toUpperCase()));
+			// }
+			// };
+			//
+			// @SuppressWarnings("unchecked")
+			// //final ArrayList<ItemSearchList>
+			//
+			// sortEmpList = new FilterList().filterList(list, filter,
+			// searchtext.toUpperCase());
+
+			// adaptor = new ProductAdapter(getActivity(), sortEmpList);
+
+			// ********************** Menaka
+			// Test*************************************
+
+			adaptor = new ProductAdapter(getActivity(), list);
+			productList.setAdapter(adaptor);
+			productList.setOnItemClickListener(new OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+
+					selectedItem = list.get(position);
+					unitPrice = Double.parseDouble(new ItemPriDS(getActivity()).getProductPriceByCode(selectedItem.getFITEM_ITEM_CODE(),mSharedPref.getGlobalVal("PrekeyCost"))) / Double.parseDouble(selectedItem.getFITEM_NOU_CASE());
+
+					getActivity().runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							et_item.setText(selectedItem.getFITEM_ITEM_NAME());
+							et_unit.setText(selectedItem.getFITEM_PACK());
+							et_price.setText(String.format("%.2f", unitPrice));
+							String debCode = new OrdHedDS(getActivity()).getRefnoByDebcode(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+							tv_Free_Detail.setText(new FreeMslabDS(getActivity()).getFreeDetails(selectedItem.getFITEM_ITEM_CODE(),debCode));
+							QOH = new ItemLocDS(getActivity()).getProductQOH(selectedItem.getFITEM_ITEM_CODE(),new LocationsDS(mActivity).getRepLocation(mSharedPref.getGlobalVal("PrekeyCost")));
+							et_cases.clearFocus();
+							et_cases.requestFocus();
+							dialog.dismiss();
+						}
+					});
+
+				}
+			});
+
+			search.setOnQueryTextListener(new OnQueryTextListener() {
+
+				@Override
+				public boolean onQueryTextSubmit(String query) {
+					return false;
+				}
+
+				@Override
+				public boolean onQueryTextChange(String newText) {
+					list.clear();
+					String strLoccode="";
+					
+					strLoccode = new LocationsDS(getActivity()).getRepLocation(mSharedPref.getGlobalVal("PrekeyCost"));
+					list = new ItemsDS(getActivity()).getAllItem(newText, "txntype ='21'", Refno, strLoccode);
+
+					searchtext = newText;
+					adaptor = new ProductAdapter(getActivity(), list);
+					// adaptor = new ProductAdapter(getActivity(), sortEmpList);
+					productList.setAdapter(adaptor);
+					return false;
+				}
+			});
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			dialog.show();
+			clearTextFields();
+			super.onPostExecute(result);
+			bAdd.setClickable(true);
+		}
+	}
+
+	public void prodcutDetailsDialogbox() {
+
+		final Dialog dialog = new Dialog(getActivity());
+		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		dialog.setContentView(R.layout.order_details_search_item);
+		Window window = dialog.getWindow();
+		window.setLayout(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		final SearchView search = (SearchView) dialog.findViewById(R.id.et_search);
+		final ListView productList = (ListView) dialog.findViewById(R.id.lv_product_list);
+		dialog.setCancelable(true);
+		search.setQuery(searchtext, false);
+
+		// ~~~~~~~~~~~~~~~~~~~~~~ Menaka
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		int id = search.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+		EditText editText = (EditText) search.findViewById(id);
+		editText.selectAll();
+		// ~~~~~~~~~~~~~~~~~~~~~~ Menaka
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		String strLoccode="";
+		
+		strLoccode = new LocationsDS(getActivity()).getRepLocation(mSharedPref.getGlobalVal("PrekeyCost"));
+
+		list = new ItemsDS(getActivity()).getAllItem(searchtext, "txntype ='21'", Refno, strLoccode);
+
+
+		productList.setAdapter(new ProductAdapter(getActivity(), list));
+
+		productList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+
+				selectedItem = list.get(position);
+				String itemName = selectedItem.getFITEM_ITEM_NAME();
+				String itemcode = selectedItem.getFITEM_ITEM_CODE();
+				final double unitPrice = Double.parseDouble(new ItemPriDS(getActivity()).getProductPriceByCode(selectedItem.getFITEM_ITEM_CODE(),mSharedPref.getGlobalVal("PrekeyCost"))) / Double.parseDouble(selectedItem.getFITEM_NOU_CASE());
+
+				et_item.setText(selectedItem.getFITEM_ITEM_NAME());
+				et_unit.setText(selectedItem.getFITEM_PACK());				
+				String debCode = new OrdHedDS(getActivity()).getRefnoByDebcode(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+				tv_Free_Detail.setText(new FreeMslabDS(getActivity()).getFreeDetails(selectedItem.getFITEM_ITEM_CODE() , debCode));
+				QOH = new ItemLocDS(getActivity()).getProductQOH(selectedItem.getFITEM_ITEM_CODE(),new LocationsDS(mActivity).getRepLocation(mSharedPref.getGlobalVal("PrekeyCost")));
+				et_price.setText(String.format("%.2f", unitPrice));
+				et_cases.clearFocus();
+				et_cases.requestFocus();
+
+				dialog.dismiss();
+
+			}
+		});
+
+		search.setOnQueryTextListener(new OnQueryTextListener() {
+
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				return false;
+			}
+
+			@Override
+			public boolean onQueryTextChange(String newText) {
+
+				list.clear();
+				String strLoccode="";
+				
+				strLoccode = new LocationsDS(getActivity()).getRepLocation(mSharedPref.getGlobalVal("PrekeyCost"));
+				list = new ItemsDS(getActivity()).getAllItem(newText, "txntype ='21'", Refno, strLoccode);
+				// Menaka productList.clearTextFilter();
+
+				// *************************** Menaka
+				// **********************************************
+
+				// Filter<ItemSearchList,String> filter = new
+				// Filter<ItemSearchList,String>() {
+				// public boolean isMatched(ItemSearchList object, String text)
+				// {
+				// return
+				// object.getFITEM_ITEM_NAME().toUpperCase().startsWith(String.valueOf(text.toUpperCase()));
+				// }
+				// };
+				//
+				// final
+				//
+				// ArrayList<ItemSearchList> sortEmpList = new
+				// FilterList().filterList(list, filter,
+				// searchtext.toUpperCase());
+
+				// *************************** Menaka
+				// **********************************************
+
+				searchtext = newText;
+				productList.setAdapter(new ProductAdapter(getActivity(), list));
+
+				return false;
+			}
+		});
+
+		dialog.show();
+
+	}
+
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		mActivity = activity;
+	}
+
+	/*-*-*-*-*-*-*-*-**-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+
+	private void setTitle(String title) {
+//		SetTitleAdapter adapter = new SetTitleAdapter();
+//		adapter.createCutomActionBarTitle(title, getActivity());
+	}
+
+	private void setValues(String val, String totalDis) {
+		tv_value.setText(val);
+		// Menaka 28-07-2016 tv_total_discount_amt.setText(totalDis);
+	}
+
+	@Override
+	public void onTaskCompleted(String result) {
+		try {
+			if (!result.equals("") || !result.equals("No Address")) {
+
+				Home activity = (Home) getActivity();
+
+				if (activity.selectedOrdHed.getFORDHED_ADDRESS() == null) {
+					// Lalith Requested on 07-06-2016
+					// toast.createToastMessage(result, getActivity());
+					SharedPreferencesClass.setLocalSharedPreference(getActivity(), "GPS_Address", result);
+					activity.selectedOrdHed.setFORDHED_ADDRESS(result);
+				}
+
+			}
+		} catch (Exception e) {
+			Log.v("OrdHed ", e.toString());
+		}
+	}
+	//------------------------------dhanushika 2018/3/5------------------------------------------------------------------------------------------------
+	
+    public class LoardingProductFromDB extends AsyncTask<Object, Integer, ArrayList<Product>> {
+    	int totalRecords;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setTitle("Fetch Data Please Wait.");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+         
+        }
+
+        @Override
+        protected ArrayList<Product> doInBackground(Object... objects) {
+        	int recordCount = 0;
+    		publishProgress(recordCount);
+    		
+            if (new ProductDS(getActivity()).tableHasRecords()) {
+                productList = new ProductDS(getActivity()).getAllItems("","");
+            } else {
+            	
+            	String strLoccode="";
+        		
+        		 strLoccode = new LocationsDS(getActivity()).getRepLocation(mSharedPref.getGlobalVal("PrekeyCost"));
+        		 String debCode = new OrdHedDS(getActivity()).getRefnoByDebcode(referenceNum.getCurrentRefNo(getResources().getString(R.string.NumVal)));
+ 
+        		 productList = new ItemsDS(getActivity()).getAllItemFor("txntype ='21'", Refno, strLoccode,debCode);
+
+        		 totalRecords=productList.size();
+                  new ProductDS(getActivity()).insertOrUpdateProducts(productList);
+                	 
+                	++recordCount;
+					publishProgress(recordCount);
+             
+               
+
+            }
+            return productList;
+        }
+
+
+        
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			super.onProgressUpdate(values);
+			 Log.i("makemachine", "onProgress Update(): " + String.valueOf(values[0]));
+			 String titleMsg = "Fetch data";
+			progressDialog.setMessage(titleMsg + " :" + String.valueOf(values[0]) + "/" +totalRecords);
+				
+				
+	          
+		}
+
+		@Override
+        protected void onPostExecute(ArrayList<Product> products) {
+            super.onPostExecute(products);
+
+            if(progressDialog.isShowing()){
+            	progressDialog.dismiss();
+            }
+            ProductDialogBox();
+        }
+        
+    }
+	//-----------------------dhanushika -----------------------------------------------------------------------
+    
+    public void ProductDialogBox() {
+
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+        View promptView = layoutInflater.inflate(R.layout.product_dialog_layout, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setView(promptView);
+
+        final ListView lvProducts = (ListView) promptView.findViewById(R.id.lv_product_list);
+        //final SearchView search = (SearchView) promptView.findViewById(R.id.et_search);
+        final EditText search = (EditText) promptView.findViewById(R.id.et_search);
+        
+       // final AutoCompleteTextView sup_typeSp = (AutoCompleteTextView) promptView.findViewById(R.id.suptype);
+        
+        final ArrayList<FSupplier> list=new FSupplierDS(getActivity()).getAllSupplier();
+   
+        search.requestFocus();
+        //search.setQueryHint("Item Search");
+        lvProducts.clearTextFilter();
+     
+        SupCode = "";
+        
+//        int id = search.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+//		EditText editText = (EditText) search.findViewById(id);
+//		editText.selectAll();
+        
+        ArrayList<String>supNamesStr=new  ArrayList<String>();
+        for(FSupplier supplier:list){
+        	supNamesStr.add(supplier.getFSupplier_CODE() + " - " + supplier.getFSupplier_NAME());
+        }
+        
+        
+//
+//		 final ArrayAdapter<String> dataAdapter3 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, supNamesStr);
+//		dataAdapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//		sup_typeSp.setAdapter(dataAdapter3);
+//
+		
+//		sup_typeSp.addTextChangedListener(new TextWatcher() {
+//
+//			@Override
+//			public void onTextChanged(CharSequence s, int start, int before, int count) {
+//				// TODO Auto-generated method stub
+//
+//			}
+//
+//			@Override
+//			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//				// TODO Auto-generated method stub
+//
+//			}
+//
+//			@Override
+//			public void afterTextChanged(Editable s) {
+//
+//				if(sup_typeSp.getText().toString().equals("")){
+//					productList.clear();
+//			        productList = new ProductDS(getActivity()).getAllItems("","");
+//			        lvProducts.setAdapter(new NewProduct_Adapter(getActivity(), productList));
+//				}
+//
+//
+//			}
+//		});
+		
+//		int id = search.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+//		final EditText editText = (EditText) search.findViewById(id);
+//		
+//		
+
+		
+
+//		search.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				// TODO Auto-generated method stub
+//				search.selectAll();
+//			}
+//
+//		});
+//
+//		sup_typeSp.setOnItemClickListener(new OnItemClickListener() {
+//
+//			 @Override
+//		        public void onItemClick(AdapterView<?> parent, View view,
+//		                int position, long id) {
+//
+//				 //toast.createToastMessage(dataAdapter3.getItem(position).toString().trim(), getActivity());
+//
+//				String	SupCodeAndName=dataAdapter3.getItem(position).toString();
+//
+//					String string = SupCodeAndName; //78 - SUB-AYU PHARMA AND NEUTRA (PVT) LTD
+//					String[] parts = string.split("-");
+//					SupCode = parts[0]; // 78
+//					String part2 = parts[1]; //SUB-AYU PHARMA AND NEUTRA (PVT) LTD
+//
+//					search.setText("");
+//					 productList.clear();
+//					 //productList = new ProductDS(getActivity()).getAllItemsbySupCode(SupCode.trim());
+//				     lvProducts.setAdapter(new NewProduct_Adapter(getActivity(), productList));
+//
+//				     sup_typeSp.requestFocus();
+//						InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//						if (imm != null) {
+//							imm.showSoftInput(sup_typeSp, InputMethodManager.SHOW_IMPLICIT);
+//						}
+//
+//						sup_typeSp.selectAll();
+//
+//			}
+
+			
+
+//		});
+		
+		
+		productList.clear();
+        productList = new ProductDS(getActivity()).getAllItems("",SupCode.trim());
+        lvProducts.setAdapter(new NewProduct_Adapter(getActivity(), productList));
+        
+        alertDialogBuilder.setCancelable(false).setNegativeButton("DONE", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+                selectedItemList = new ProductDS(getActivity()).getSelectedItems();
+                updateSODet(selectedItemList);
+                activity.FreeTapped = false;
+                getActivity().getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+        alertDialog.getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+
+//        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//            	productList.clear();
+//                productList = new ProductDS(getActivity()).getAllItems(query,SupCode.trim());
+//              
+//                lvProducts.setAdapter(new NewProduct_Adapter(getActivity(), productList));
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//
+//                    productList.clear();
+//                    productList = new ProductDS(getActivity()).getAllItems(newText,SupCode.trim());
+//               
+//                    lvProducts.setAdapter(new NewProduct_Adapter(getActivity(), productList));
+//                                return true;
+//            }
+//        });
+        
+        search.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				// TODO Auto-generated method stub
+				String newText = "";
+				newText = s.toString();
+			  productList.clear();
+              productList = new ProductDS(getActivity()).getAllItems(s.toString(),SupCode.trim());
+            
+              lvProducts.setAdapter(new NewProduct_Adapter(getActivity(), productList));
+              //return true;
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				// TODO Auto-generated method stub
+				String newText = "";
+				newText = s.toString();
+				productList.clear();
+                productList = new ProductDS(getActivity()).getAllItems(s.toString(),SupCode.trim());         
+                lvProducts.setAdapter(new NewProduct_Adapter(getActivity(), productList));
+			}
+		});
+    }
+    
+//--------------------------dhanushika ---78------------------------------------------------------
+
+    public void updateSODet(final ArrayList<Product> list) {
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected void onPreExecute() {
+            	  progressDialog = new ProgressDialog(getActivity());
+                  progressDialog.setTitle("Updating products...");
+                  progressDialog.setCancelable(false);
+                  progressDialog.show();
+             
+                super.onPreExecute();
+            }
+
+            @Override
+            protected Void doInBackground(Void... params) {
+
+                int i = 0;
+                new OrdDetDS(getActivity()).mDeleteRecords(activity.selectedOrdHed.getFORDHED_REFNO());
+
+                for (Product product : list) {
+                    i++;
+                    mUpdateSO("0", product.getFPRODUCT_ITEMCODE(), product.getFPRODUCT_QTY(), product.getFPRODUCT_PRICE(), i + "", product.getFPRODUCT_QOH());
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                if(progressDialog.isShowing()){
+                	progressDialog.dismiss();
+                }
+
+                new showData().execute();
+            }
+
+        }.execute();
+    }
+
+}

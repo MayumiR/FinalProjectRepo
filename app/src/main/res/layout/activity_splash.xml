@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="2"
+    android:background="@color/colorPrimaryDark"
+    tools:context="com.bit.sfa.DefView.Splash">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_weight="0.5"
+        android:background="#Fff"
+        android:gravity="center"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="match_parent"
+            android:contentDescription="@string/app_name"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/logo" />
+
+        <com.bit.sfa.DefView.FinacFont
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/textColor"
+            android:textStyle="bold"
+            android:text="@string/kandana_foods_and_drugs_pvt_ltd"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:typeface="monospace" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_weight="1.5"
+        android:id="@+id/footer"
+        android:layout_height="match_parent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:weightSum="2"
+            android:layout_margin="10dp"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/dm_logo" />
+
+            <com.bit.sfa.DefView.FinacFont
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:padding="10dp"
+                android:gravity="center"
+                android:textSize="25sp"
+                android:layout_gravity="center"
+                android:textColor="#FFF"
+                android:layout_height="wrap_content"
+                android:text="@string/developed_by_datamation_systems_n_94_11_2_501202_n_www_datamation_lk" />
+        </TableRow>
+    </LinearLayout>
+
+</LinearLayout>

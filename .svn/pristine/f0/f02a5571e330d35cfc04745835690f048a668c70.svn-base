@@ -1,0 +1,11 @@
+package com.kandanafd.kfd_medi.DataControl;
+
+import com.kandanafd.kfd_medi.Settings.TaskType;
+
+/**
+ * Created by Sathiyaraja on 6/19/2018.
+ */
+
+public interface DownloadTaskListener {
+    void onTaskCompleted(TaskType taskType, String result);
+}

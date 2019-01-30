@@ -1,0 +1,926 @@
+package com.kandanafd.kfd_medi.Adapter;
+
+import android.app.Dialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.kandanafd.kfd_medi.DataControl.ControlDS;
+import com.kandanafd.kfd_medi.DataControl.DealerDS;
+import com.kandanafd.kfd_medi.DataControl.DebtorDS;
+import com.kandanafd.kfd_medi.DataControl.RouteDS;
+import com.kandanafd.kfd_medi.DataControl.SalOrdPrintDS;
+import com.kandanafd.kfd_medi.DataControl.SalRepDS;
+import com.kandanafd.kfd_medi.Models.Control;
+import com.kandanafd.kfd_medi.Models.Dealer;
+import com.kandanafd.kfd_medi.Models.Debtor;
+import com.kandanafd.kfd_medi.Models.FmSalRep;
+import com.kandanafd.kfd_medi.Models.SalOrdPrintPre;
+import com.kandanafd.kfd_medi.Models.SalRep;
+import com.kandanafd.kfd_medi.R;
+import com.kandanafd.kfd_medi.Settings.SettingsActivity;
+
+import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+
+/**
+ * Created by Sathiyaraja on 6/20/2018.
+ */
+
+public class SalesPrintPreviewAlertBox {
+    public static final String SETTINGS = "SETTINGS";
+    public static SharedPreferences localSP;
+
+    private ControlDS dsControlDS;
+    Control control;
+
+    private DealerDS dsDealerDS;
+    Dealer dealer;
+
+    private SalRepDS dsSalRepDS;
+    SalRep salRep;
+
+    private DebtorDS dsDebtorDS;
+    Debtor debtor;
+    private String fdealadd3;
+
+    private SalOrdPrintDS dsSalOrdPrintDS;
+    SalOrdPrintPre salordprintpre;
+
+    String Fdealadd3 = "";
+    String Fdealmob = "";
+
+    String printLineSeperator = "________________________________________________";
+    String printSpaceName = "                    ";
+    String printSpaceQty = "     ";
+    String Heading_a = "";
+    String Heading_bmh="";
+    String Heading_b="";
+    String buttomRaw="";
+    String Heading_d="";
+
+    String BILL;
+
+    Dialog dialogProgress;
+
+    ListView lvItemDetails;
+
+    String PRefno="";
+
+    String printMainInvDiscount,printMainInvDiscountVal,PrintNetTotalValuePrintVal,printCaseQuantity,printPicesQuantity,TotalInvoiceDiscount;
+
+    int countCountInv;
+
+    BluetoothAdapter mBTAdapter;
+    BluetoothSocket mBTSocket = null;
+
+    SettingsActivity setting =new SettingsActivity ();
+
+    String PRINTER_MAC_ID;// ="00:22:58:3A:C6:49";
+    /** Standard activity result: operation canceled. */
+    public static final int RESULT_CANCELED    = 0;
+
+
+    public static final int RESULT_OK           = -1;
+    /** Start of user-defined activity results. */
+
+    //Shared Preferences variables
+    public static final String SETTING = "SETTINGS";
+    Context context;
+    public SalesPrintPreviewAlertBox(Context context) {
+
+        this.context=context;
+
+    }
+
+
+    @SuppressWarnings("unused")
+    public void PrintDetailsDialogbox(final Context context, String title, String refno) {
+
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
+
+        View promptView = layoutInflater.inflate(
+                R.layout.sales_management_pre_sales_print_view, null);
+        localSP = context.getSharedPreferences(SETTINGS,
+                Context.MODE_WORLD_READABLE + Context.MODE_WORLD_WRITEABLE);
+
+        final TextView Companyname = (TextView) promptView.findViewById(R.id.headcompanyname);
+        final TextView Companyaddress1 = (TextView) promptView.findViewById(R.id.headaddress1);
+        final TextView Companyaddress2 = (TextView) promptView.findViewById(R.id.headaddress2);
+        final TextView CompanyTele = (TextView) promptView.findViewById(R.id.headteleno);
+        final TextView Companyweb = (TextView) promptView.findViewById(R.id.headwebsite);
+        final TextView Companyemail = (TextView) promptView.findViewById(R.id.heademail);
+
+//        final TextView Distributorname = (TextView) promptView.findViewById(R.id.salesdealername);
+//        final TextView Distributoraddress1 = (TextView) promptView.findViewById(R.id.salesdealeraddress1);
+//        final TextView Distributoraddress2 = (TextView) promptView.findViewById(R.id.salesdealeraddress2);
+//        final TextView DistributorTele = (TextView) promptView.findViewById(R.id.salesdealerphone);
+
+        final TextView SalesRepname = (TextView) promptView.findViewById(R.id.salesrepname);
+        final TextView SalesRepPhone = (TextView) promptView.findViewById(R.id.salesrepphone);
+
+        final TextView Debcode = (TextView) promptView.findViewById(R.id.headcuscode);
+        final TextView Debname = (TextView) promptView.findViewById(R.id.headcusname);
+        final TextView Debaddress1 = (TextView) promptView.findViewById(R.id.headcusaddress1);
+        final TextView Debaddress2 = (TextView) promptView.findViewById(R.id.headcusaddress2);
+        final TextView DebTele = (TextView) promptView.findViewById(R.id.headcustele);
+
+        final TextView SalOrdDate = (TextView) promptView.findViewById(R.id.printsalorddate);
+        final TextView DelivDate = (TextView) promptView.findViewById(R.id.printsaldelvdate);
+        final TextView OrderNo = (TextView) promptView.findViewById(R.id.printrefno);
+        final TextView Remarks = (TextView) promptView.findViewById(R.id.printremark);
+
+
+        final TextView HeaderDisValue = (TextView) promptView.findViewById(R.id.printremark);
+        final TextView HeaderDisPerVal = (TextView) promptView.findViewById(R.id.printtotinvdisper);
+
+        final TextView GrossValue = (TextView) promptView.findViewById(R.id.printgrosssales);
+        final TextView TotalReturn = (TextView) promptView.findViewById(R.id.printmktret);
+        final TextView HeaderDiscountTotal = (TextView) promptView.findViewById(R.id.printtotinvdis);
+        final TextView HeaderDisPer = (TextView) promptView.findViewById(R.id.printsalorddate);
+        final TextView LineDiscount = (TextView) promptView.findViewById(R.id.printtotlinedis);
+        final TextView TotalDiscount = (TextView) promptView.findViewById(R.id.printtotaldisamt); //additional
+        final TextView TotalNetValue = (TextView) promptView.findViewById(R.id.printnettotal);
+
+        final TextView TotalCaseQty = (TextView) promptView.findViewById(R.id.printcaseqtyval);
+        final TextView TotalPieceQty = (TextView) promptView.findViewById(R.id.printpiecesqty);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle(title.toUpperCase());
+
+        alertDialogBuilder.setView(promptView);
+
+        RouteDS routeDS = new RouteDS(context);
+        dsControlDS = new ControlDS(context);
+
+        ArrayList<Control> controlList;
+        controlList = dsControlDS.getAllControl();
+
+        //dsDealerDS = new DealerDS(context);
+        //ArrayList<Dealer> dealerList;
+        //dealerList = dsDealerDS.getAllDealer();
+
+
+
+        PRefno = refno;
+
+        // Print Preview Company Details.
+        Companyname.setText(controlList.get(0).getFCONTROL_COM_NAME());
+        Companyaddress1.setText(controlList.get(0).getFCONTROL_COM_ADD1());
+        Companyaddress2.setText(controlList.get(0).getFCONTROL_COM_ADD2());
+        CompanyTele.setText(controlList.get(0).getFCONTROL_COM_TEL1());
+        Companyweb.setText(controlList.get(0).getFCONTROL_COM_WEB());
+        Companyemail.setText(controlList.get(0).getFCONTROL_COM_EMAIL());
+
+        // Print Distributor Details.
+	/*	Distributorname.setText(dealerList.get(0).getFDEALER_DEAL_NAME());
+		Distributoraddress1.setText(dealerList.get(0).getFDEALER_DEAL_ADD1());
+
+		if (dealerList.get(0).getFDEALER_DEAL_ADD3().toString().isEmpty())
+		{
+			Fdealadd3 = "";
+			DistributorTele.setVisibility(RESULT_CANCELED);
+
+		}
+		else {
+			Fdealadd3 = dealerList.get(0).getFDEALER_DEAL_ADD3();
+		}
+
+		if(dealerList.get(0).getFDEALER_DEAL_TELE().equalsIgnoreCase("")){
+			Fdealmob = "";
+			DistributorTele.setVisibility(RESULT_CANCELED);
+		}else{
+			Fdealmob = dealerList.get(0).getFDEALER_DEAL_TELE();
+		}
+
+
+
+		Distributoraddress2.setText(dealerList.get(0).getFDEALER_DEAL_ADD2()+ " , " + Fdealadd3);
+		DistributorTele.setText(Fdealmob);
+	*/
+        // Print Sales Rep Details.
+        dsSalRepDS = new SalRepDS(context);
+        ArrayList<FmSalRep> salrepList;
+        salrepList = dsSalRepDS.getSaleRepDetails();
+
+        dsSalOrdPrintDS = new SalOrdPrintDS(context);
+        ArrayList<SalOrdPrintPre> salOrdprintList;
+        salOrdprintList = dsSalOrdPrintDS.getAllListPreview(refno);
+
+
+        SalesRepname.setText(salrepList.get(0).getRepNamem());
+        SalesRepPhone.setText(salrepList.get(0).getRepMobil());
+
+        // Print Debtor Details.
+
+        Debcode.setText(salOrdprintList.get(0).getSAL_PRINT_DEBCODE());
+        Debname.setText(salOrdprintList.get(0).getSAL_PRINT_DEBNAME());
+        Debaddress1.setText(salOrdprintList.get(0).getSAL_PRINT_DEBADD1()+" ");
+        Debaddress2.setText(salOrdprintList.get(0).getSAL_PRINT_DEBADD2()+" "+salOrdprintList.get(0).getSAL_PRINT_DEBADD3());
+        DebTele.setText(salOrdprintList.get(0).getSAL_PRINT_DEBTELE());
+
+        // Print Sales Order header Details.
+
+        SalOrdDate.setText("Sales Order Date:"+salOrdprintList.get(0).getSAL_PRINT_TXN_DATE());
+        DelivDate.setText("Delivery Date: "+salOrdprintList.get(0).getSAL_PRINT_DELVIDATE());
+        OrderNo.setText("Sales Order Number: "+salOrdprintList.get(0).getSAL_PRINT_REF_NO());
+        Remarks.setText("Remarks: " +salOrdprintList.get(0).getSAL_PRINT_REMARKS());
+
+        // Print Calculation Summary Details.
+        TotalReturn.setText(salOrdprintList.get(0).getPRINT_TOTALMKT_AMT());
+        LineDiscount.setText(salOrdprintList.get(0).getSAL_PRINT_ITEM_DIS());
+        TotalNetValue.setText(salOrdprintList.get(0).getSAL_PRINT_TOTAL_AMT());
+        TotalDiscount.setText(salOrdprintList.get(0).getSAL_PRINT_TOTAL_DIS_AMT());
+
+        // Print Sales Order body Details.
+        lvItemDetails = (ListView) promptView.findViewById(R.id.dmsalesloadingdetlist);
+      // lvItemDetails.setAdapter(new PrintItemAdapter(context,salOrdprintList));
+
+
+        // Print Calculation Summary Details.
+
+        Double TotalDiscountValue = Double.parseDouble(salOrdprintList.get(0).getSAL_PRINT_TOTAL_DIS_AMT().replaceAll("[,]", ""));
+        Double HeaderDiscountValue= Double.parseDouble(salOrdprintList.get(0).getSAL_PRINT_TOTALDIS_HEAD().replaceAll("[,]", ""));
+        Double LineDiscountValue= Double.parseDouble(salOrdprintList.get(0).getSAL_PRINT_ITEM_DIS().replaceAll("[,]", ""));
+
+        Double HeadDiscPercentageValue = (TotalDiscountValue-(HeaderDiscountValue + LineDiscountValue));
+
+        Double TotalHeaderDiscountValue= HeaderDiscountValue + HeadDiscPercentageValue;
+        Double DisRatioVal = Double.parseDouble(salOrdprintList.get(0).getSAL_HEAD_DIS().replaceAll("[,]", ""));
+
+        if (DisRatioVal <= 0.0) {
+
+            HeaderDiscountTotal.setText(String.format("%,.2f",TotalHeaderDiscountValue));
+
+        }
+
+        else
+        {
+            HeaderDiscountTotal.setText(String.format("%,.2f",TotalHeaderDiscountValue));
+            HeaderDisPerVal.setText("("+salOrdprintList.get(0).getSAL_HEAD_DIS()+"%"+")");
+        }
+
+
+        HeaderDiscountTotal.setText(String.format("%,.2f",TotalHeaderDiscountValue));
+
+        Double TotalAmountValue = Double.parseDouble(salOrdprintList.get(0).getSAL_PRINT_TOTAL_AMT().replaceAll("[,]", ""));
+        Double TotalReturnValue = Double.parseDouble(salOrdprintList.get(0).getPRINT_TOTALMKT_AMT().replaceAll("[,]", ""));
+        Double TotGrossValue = TotalAmountValue + TotalDiscountValue +TotalReturnValue ;
+
+        GrossValue.setText(String.format("%,.2f",TotGrossValue));
+
+        TotalCaseQty.setText(dsSalOrdPrintDS.getTotalCaseQtyReturns(refno));
+        TotalPieceQty.setText(dsSalOrdPrintDS.getTotalPieceQtyReturns(refno));
+
+
+
+        //oncreate
+        localSP = context.getSharedPreferences(SETTINGS,Context.MODE_WORLD_READABLE+Context.MODE_WORLD_WRITEABLE);
+
+        //Printer MAC Address
+        PRINTER_MAC_ID = localSP.getString("printer_mac_address", "").toString();
+        Log.v("mac_id", PRINTER_MAC_ID);
+
+
+
+        alertDialogBuilder.setCancelable(false).setPositiveButton("Print",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Log.v("", "***************************");
+                        PrintCurrentview();
+
+
+                    }
+                });
+
+        alertDialogBuilder.setCancelable(false).setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+
+                    }
+                });
+
+        AlertDialog alertD = alertDialogBuilder.create();
+
+        alertD.show();
+
+
+
+      //  ListExpandHelper.getListViewSize(lvItemDetails);
+    }
+
+
+    public void printItems() {
+
+        // Print Company Information
+        String printGapAdjustCom = "                        ";
+
+        ArrayList<Control> controlList;
+        controlList = dsControlDS.getAllControl();
+
+        ArrayList<Dealer> dealerList;
+        dealerList = dsDealerDS.getAllDealer();
+
+        ArrayList<FmSalRep> salrepList;
+        salrepList = dsSalRepDS.getSaleRepDetails();
+
+        ArrayList<SalOrdPrintPre> salOrdprintList;
+        salOrdprintList = dsSalOrdPrintDS.getAllListPreview(PRefno);
+
+        int lengthDealACom = controlList.get(0).getFCONTROL_COM_NAME().length();
+        int lengthDealABCom = (48 - lengthDealACom) / 2;
+        String printGapAdjustACom = printGapAdjustCom.substring(0,Math.min(lengthDealABCom,printGapAdjustCom.length()));
+
+        int lengthDealBCom = controlList.get(0).getFCONTROL_COM_ADD1().length();
+        int lengthDealBBCom = (48 - lengthDealBCom) / 2;
+        String printGapAdjustBCom = printGapAdjustCom.substring(0,Math.min(lengthDealBBCom,printGapAdjustCom.length()));
+
+        String addressCCom = controlList.get(0).getFCONTROL_COM_ADD2().trim() + ", " + controlList.get(0).getFCONTROL_COM_ADD3().trim() + ".";
+        int lengthDealCCom = addressCCom.length();
+        int lengthDealCBCom = (48 - lengthDealCCom) / 2;
+        String printGapAdjustCCom = printGapAdjustCom.substring(0,Math.min(lengthDealCBCom,printGapAdjustCom.length()));
+
+        String TelCom = "Tel:" + controlList.get(0).getFCONTROL_COM_TEL1().trim();
+        int lengthDealDCom = TelCom.length();
+        int lengthDealDBCom = (48 - lengthDealDCom) / 2;
+        String printGapAdjustDCom = printGapAdjustCom.substring(0,Math.min(lengthDealDBCom,printGapAdjustCom.length()));
+
+        int lengthDealECom = controlList.get(0).getFCONTROL_COM_WEB().length();
+        int lengthDealEBCom = (48 - lengthDealECom) / 2;
+        String printGapAdjustECom = printGapAdjustCom.substring(0,Math.min(lengthDealEBCom,printGapAdjustCom.length()));
+
+        int lengthDealFCom = controlList.get(0).getFCONTROL_COM_EMAIL().length();
+        int lengthDealFBCom = (48 - lengthDealFCom) / 2;
+        String printGapAdjustFCom = printGapAdjustCom.substring(0,Math.min(lengthDealFBCom,printGapAdjustCom.length()));
+
+        String subTitleheadACom = printGapAdjustACom + controlList.get(0).getFCONTROL_COM_NAME();
+        String subTitleheadBCom = printGapAdjustBCom + controlList.get(0).getFCONTROL_COM_ADD1();
+        String subTitleheadCCom = printGapAdjustCCom + controlList.get(0).getFCONTROL_COM_ADD2() + ", " + controlList.get(0).getFCONTROL_COM_ADD3() + ".";
+        String subTitleheadDCom = printGapAdjustDCom + controlList.get(0).getFCONTROL_COM_TEL1();
+        String subTitleheadECom = printGapAdjustECom + controlList.get(0).getFCONTROL_COM_WEB();
+        String subTitleheadFCom = printGapAdjustFCom + controlList.get(0).getFCONTROL_COM_EMAIL();
+        String subTitleheadGCom = printLineSeperator;
+
+        String title_Print_ACom = /*"\r\n" +*/ subTitleheadACom;
+        String title_Print_BCom = "\r\n" + subTitleheadBCom;
+        String title_Print_CCom = "\r\n" + subTitleheadCCom;
+        String title_Print_DCom = "\r\n" + subTitleheadDCom;
+        String title_Print_ECom = "\r\n" + subTitleheadECom;
+        String title_Print_FCom = "\r\n" + subTitleheadFCom;
+        String title_Print_GCom = "\r\n" + subTitleheadGCom;
+
+        Heading_a = title_Print_ACom + title_Print_BCom + title_Print_CCom +title_Print_DCom +title_Print_ECom + title_Print_FCom +title_Print_GCom ;
+
+
+        String printGapAdjust = "                        ";
+
+        // Print Debtor Information
+        int lengthDealA = dealerList.get(0).getFDEALER_DEAL_NAME().length();
+        int lengthDealAB = (48 - lengthDealA) / 2;
+        String printGapAdjustA = printGapAdjust.substring(0,Math.min(lengthDealAB,printGapAdjust.length()));
+
+        int lengthDealB = dealerList.get(0).getFDEALER_DEAL_ADD1().length();
+        int lengthDealBB = (48 - lengthDealB) / 2;
+        String printGapAdjustB = printGapAdjust.substring(0,Math.min(lengthDealBB,printGapAdjust.length()));
+
+        String addressC = dealerList.get(0).getFDEALER_DEAL_ADD2() + ", " + dealerList.get(0).getFDEALER_DEAL_ADD3() + ".";
+        int lengthDealC = addressC.length();
+        int lengthDealCB = (48 - lengthDealC) / 2;
+        String printGapAdjustC = printGapAdjust.substring(0,Math.min(lengthDealCB,printGapAdjust.length()));
+
+        int lengthDealD = dealerList.get(0).getFDEALER_DEAL_TELE().length();
+        int lengthDealDB = (48 - lengthDealD) / 2;
+        String printGapAdjustD = printGapAdjust.substring(0,Math.min(lengthDealDB,printGapAdjust.length()));
+
+        String subTitleheadA = printGapAdjustA + dealerList.get(0).getFDEALER_DEAL_NAME();
+        String subTitleheadB = printGapAdjustB + dealerList.get(0).getFDEALER_DEAL_ADD1();
+        String subTitleheadC = printGapAdjustC + dealerList.get(0).getFDEALER_DEAL_ADD2() + ", " + dealerList.get(0).getFDEALER_DEAL_ADD3() + ".";
+        String subTitleheadD = printGapAdjustD + dealerList.get(0).getFDEALER_DEAL_TELE();
+        String subTitleheadE = printLineSeperator;
+
+        String SalesRepNamestr = "Sales Rep :"+ salrepList.get(0).getRepNamem().trim();
+        int lengthDealE = SalesRepNamestr.length();
+        int lengthDealEB = (48 - lengthDealE) / 2;
+        String printGapAdjustE = printGapAdjust.substring(0,Math.min(lengthDealEB,printGapAdjust.length()));
+        String subTitleheadF = printGapAdjustE + SalesRepNamestr;
+
+
+        String SalesRepPhonestr = "Sales Phone :"+ salrepList.get(0).getRepMobil().trim();
+        int lengthDealF = SalesRepPhonestr.length();
+        int lengthDealFB = (48 - lengthDealF) / 2;
+        String printGapAdjustF = printGapAdjust.substring(0,Math.min(lengthDealFB,printGapAdjust.length()));
+        String subTitleheadG = printGapAdjustF + SalesRepPhonestr;
+
+        String subTitleheadH = printLineSeperator;
+
+        // ***Print Customer Details***
+        int lengthDealIA = salOrdprintList.get(0).getSAL_PRINT_DEBCODE().length();
+        int lengthDealIBA = (48 - lengthDealIA) / 2;
+        String printGapAdjustIA = printGapAdjust.substring(0,Math.min(lengthDealIBA,printGapAdjust.length()));
+
+        int lengthDealI = salOrdprintList.get(0).getSAL_PRINT_DEBNAME().length();
+        int lengthDealIB = (48 - lengthDealI) / 2;
+        String printGapAdjustI = printGapAdjust.substring(0,Math.min(lengthDealIB,printGapAdjust.length()));
+
+        String customerAddressStr = salOrdprintList.get(0).getSAL_PRINT_DEBADD1() + ","+ salOrdprintList.get(0).getSAL_PRINT_DEBADD2();
+        int lengthDealJ = customerAddressStr.length();
+        int lengthDealJB = (48 - lengthDealJ) / 2;
+        String printGapAdjustJ = printGapAdjust.substring(0,Math.min(lengthDealJB,printGapAdjust.length()));
+
+        int lengthDealK = salOrdprintList.get(0).getSAL_PRINT_DEBADD3().length();
+        int lengthDealKB = (48 - lengthDealK) / 2;
+        String printGapAdjustK = printGapAdjust.substring(0,Math.min(lengthDealKB,printGapAdjust.length()));
+
+        int lengthDealL = salOrdprintList.get(0).getSAL_PRINT_DEBTELE().length();
+        int lengthDealLB = (48 - lengthDealL) / 2;
+        String printGapAdjustL = printGapAdjust.substring(0,Math.min(lengthDealLB,printGapAdjust.length()));
+
+        // Print Customer Information
+        String subTitleheadCode = printGapAdjustIA + salOrdprintList.get(0).getSAL_PRINT_DEBCODE();
+        String subTitleheadI = printGapAdjustI + salOrdprintList.get(0).getSAL_PRINT_DEBNAME();
+        String subTitleheadJ = printGapAdjustJ + salOrdprintList.get(0).getSAL_PRINT_DEBADD1() + "," + salOrdprintList.get(0).getSAL_PRINT_DEBADD2();
+        String subTitleheadK = printGapAdjustK + salOrdprintList.get(0).getSAL_PRINT_DEBADD3();
+        String subTitleheadL = printGapAdjustL + salOrdprintList.get(0).getSAL_PRINT_DEBTELE();
+
+        String subTitleheadO = printLineSeperator;
+
+        // ***Print Invoice Header***
+        String subTitleheadM = "Sales Order Date :"+ salOrdprintList.get(0).getSAL_PRINT_TXN_DATE();
+        int lengthDealM = subTitleheadM.length();
+        int lengthDealMB = (48 - lengthDealM) / 2;
+        String printGapAdjustM = printGapAdjust.substring(0,Math.min(lengthDealMB,printGapAdjust.length()));
+
+        String subTitleheadMD = "Delivery Date :"+ salOrdprintList.get(0).getSAL_PRINT_DELVIDATE();
+        int lengthDealMD = subTitleheadMD.length();
+        int lengthDealMBD = (48 - lengthDealMD) / 2;
+        String printGapAdjustMD = printGapAdjust.substring(0,Math.min(lengthDealMBD,printGapAdjust.length()));
+
+        String subTitleheadN = "Sales Order Number :"+ salOrdprintList.get(0).getSAL_PRINT_REF_NO();
+        int lengthDealN = subTitleheadN.length();
+        int lengthDealNB = (48 - lengthDealN) / 2;
+        String printGapAdjustN = printGapAdjust.substring(0,Math.min(lengthDealNB,printGapAdjust.length()));
+
+        String subTitleheadR = "Remarks :" + salOrdprintList.get(0).getSAL_PRINT_REMARKS();
+        int lengthDealR = subTitleheadR.length();
+        int lengthDealRB = (48 - lengthDealR) / 2;
+        String printGapAdjustR = printGapAdjust.substring(0,Math.min(lengthDealRB,printGapAdjust.length()));
+
+
+        // Print Invoice Heading
+        subTitleheadM = printGapAdjustM + subTitleheadM;
+        subTitleheadMD = printGapAdjustMD + subTitleheadMD;
+        subTitleheadN = printGapAdjustN + subTitleheadN;
+        subTitleheadR = printGapAdjustR + subTitleheadR;
+
+        String title_Print_A = "\r\n" + subTitleheadA;
+        String title_Print_B = "\r\n" + subTitleheadB;
+        String title_Print_C = "\r\n" + subTitleheadC;
+        String title_Print_D = "\r\n" + subTitleheadD;
+        String title_Print_E = "\r\n" + subTitleheadE;
+        String title_Print_F = "\r\n" + subTitleheadF;
+        String title_Print_G = "\r\n" + subTitleheadG;
+        String title_Print_H = "\r\n" + subTitleheadH;// Line
+        // ********************
+        String title_Print_IC = /*"\r\n"+*/ subTitleheadCode; //Debcode new
+        String title_Print_I = "\r\n" + subTitleheadI;
+        String title_Print_J = "\r\n" + subTitleheadJ;
+        String title_Print_K = "\r\n" + subTitleheadK;
+        String title_Print_L = "\r\n" + subTitleheadL;
+        String title_Print_O = "\r\n" + subTitleheadO;
+        // ********************
+        String title_Print_M =/* "\r\n" +*/ subTitleheadM;// Line
+        String title_Print_MD = "\r\n" + subTitleheadMD;// Line
+        String title_Print_N = "\r\n" + subTitleheadN;
+        String title_Print_R = "\r\n" + subTitleheadR;
+        // ********************
+
+        if(subTitleheadK.toString().equalsIgnoreCase(" "))
+        {
+            Heading_bmh = "\r" + title_Print_A + title_Print_B
+                    + title_Print_C + title_Print_D
+                    + title_Print_E + title_Print_F
+                    + title_Print_G + title_Print_H
+                    + title_Print_IC
+                    + title_Print_I + title_Print_J
+//					+ title_Print_K + title_Print_L
+                    + title_Print_O + title_Print_M
+                    + title_Print_MD + title_Print_N
+                    + title_Print_R;
+        }else
+
+            Heading_bmh = "\r" + title_Print_A + title_Print_B
+                    + title_Print_C + title_Print_D
+                    + title_Print_E + title_Print_F
+                    + title_Print_G + title_Print_H
+                    + title_Print_IC
+                    + title_Print_I + title_Print_J
+                    + title_Print_K + title_Print_L
+                    + title_Print_O + title_Print_M
+                    + title_Print_MD + title_Print_N
+                    + title_Print_R;
+
+        String title_cb = "\r\nProduct Name                                    ";
+        String title_cbb = "\r\nDisc                                     (QTY)";
+        String title_cc = "\r\nUnits             UnitPrice                (RS)";
+
+        Heading_b = "\r\n" + printLineSeperator + title_cb + title_cbb + title_cc + "\r\n" + printLineSeperator;
+
+
+        ArrayList<SalOrdPrintPre> getOrdHed = dsSalOrdPrintDS.getAllListPreview(PRefno);
+        if(!getOrdHed.isEmpty()){
+            for (SalOrdPrintPre salOrdPrintPre : getOrdHed) {
+
+                countCountInv = countCountInv + 1;
+                String indexcountinv = Integer.toString(countCountInv);
+                String Transtype = salOrdPrintPre.getSAL_PRINT_TRAN_TYPE();
+
+                if (Transtype.equalsIgnoreCase("SA")) {
+                    Transtype = "Trans : SALES";
+                } else if (Transtype.equalsIgnoreCase("MR")) {
+                    Transtype = "Trans : MARKET RETURN";
+                } else if (Transtype.equalsIgnoreCase("UR")) {
+                    Transtype = "Trans : USABLE RETURN";
+                } else if (Transtype.equalsIgnoreCase("FI")) {
+                    Transtype = "Trans : FREE ISSUE DISTRIBUTOR";
+                } else if (Transtype.equalsIgnoreCase("FD")) {
+                    Transtype = "Trans : FREE ISSUE COMPANY";
+                }
+
+                String itemDisPer = salOrdPrintPre.getSAL_PRINT_DETAIL_DISPER();
+                String itemDisVal = salOrdPrintPre.getSAL_DIS_VALUE_AMT();
+                String itemDisPerVal = salOrdPrintPre.getSAL_PRINT_DISAMT_DETAIL();
+                //String itemCaseqty = salOrdPrintPre.getSAL_PRINT_PIECE_QTY();
+                String itemPieceqty = salOrdPrintPre.getSAL_PRINT_PIECE_QTY();
+                String itemname    = salOrdPrintPre.getSAL_PRINT_ITEMNAME();
+                String unitsInccase    = salOrdPrintPre.getSAL_PRINT_UNITS();
+                String unitPrice =  salOrdPrintPre.getSAL_PRINT_SELL_PRICE();
+
+                String DiscountRow = "(0.00)/(0.00)(0.00%)";
+
+                if (itemDisPer.equalsIgnoreCase("0")) {
+                    itemDisPer = "(0.00%)";
+                } else {
+                    itemDisPer = "("+ itemDisPer + "%)"	;
+                }
+
+                if(itemDisVal.equalsIgnoreCase("0")) {
+                    itemDisVal = "0.00";
+                }else{
+                    itemDisVal = itemDisVal;
+                }
+
+                if(itemDisPerVal.equalsIgnoreCase("0")){
+                    itemDisPerVal = "0.00";
+                }else{
+                    itemDisPerVal =itemDisPerVal;
+                }
+
+                DiscountRow =  itemDisVal + "/" + itemDisPerVal + itemDisPer;
+
+                String PrintStritemIndex = indexcountinv.substring(0, Math.min(4, indexcountinv.length()));
+                //String itemCases = itemCaseqty + printSpaceName;
+                //String PrintStritemCases = itemCases.substring(0,Math.min(3, itemCases.length()));
+                String itemPieces = itemPieceqty + printSpaceName;
+                String PrintStritemPieces = itemPieces.substring(0,Math.min(3, itemPieces.length()));
+                String itemDicountAmt = DiscountRow	+ printSpaceName;
+                String PrintStritemDicountAmt = itemDicountAmt.substring(0,Math.min(30,itemDicountAmt.length()));  //change 15-25
+                String Amount = printSpaceName + salOrdPrintPre.getSAL_PRINT_DETAIL_AMT();
+                String PrintStritemRawTotal = Amount.substring(Math.max(Amount.length() - 35, 0));  //change 15-35
+                //String PrintStrCsPs =  " (CS:" + PrintStritemCases + "PS:"+ PrintStritemPieces + ")";  //change 15-35 ino
+                String PrintStrCsPs =  " (QTY:"+ PrintStritemPieces + ")";  //change 15-35 ino
+                PrintStrCsPs = PrintStrCsPs.substring(0,Math.min(15,PrintStrCsPs.length()));
+                String UnitsInCase = unitsInccase + printSpaceName;
+                UnitsInCase = UnitsInCase.substring(0,Math.min(3, UnitsInCase.length()));
+                String StrItemUnitPrice = salOrdPrintPre.getSAL_PRINT_SELL_PRICE();
+
+                if (!Transtype.equals("FD")) {
+                    StrItemUnitPrice = salOrdPrintPre.getSAL_PRINT_SELL_PRICE();
+                }else{
+                    StrItemUnitPrice = "0.00";
+                }
+
+                // **********Printing**********
+                String Str_itemname= itemname ;
+                String PrintItemName = Str_itemname.substring(0,Math.min(45,Str_itemname.length()));
+
+                String title_g = "\r\n" + Transtype;
+                String title_h = "\r\n" + PrintStritemIndex + "." + PrintItemName;
+                String title_i = "\r\n" + PrintStritemDicountAmt +"  "+ PrintStrCsPs;
+
+                String title_f_Sub = "\r\n" + "U:" + UnitsInCase + printSpaceQty + /*printSpaceQty +*/ StrItemUnitPrice	+ printSpaceName;
+                String title_f_Sub_Print = title_f_Sub.substring(0,Math.min(20, title_f_Sub.length()));
+
+                String title_f = /*"\r\n" + i change*/ title_f_Sub_Print + PrintStritemRawTotal;
+
+                Heading_d =Heading_d.concat(title_g + title_h + title_i + title_f);
+
+            }
+        }
+
+
+
+        // **************Print Summary****************************
+        String buttomTitlehed = "\r\n____________________________________________";
+
+        String printSpaceSumName = "                    ";
+        String summaryTitle_a = "Total Quantity" + printSpaceSumName;
+        summaryTitle_a = summaryTitle_a.substring(0,Math.min(20, summaryTitle_a.length()));
+
+        printCaseQuantity=dsSalOrdPrintDS.getTotalCaseQtyReturns(PRefno);
+        printPicesQuantity=dsSalOrdPrintDS.getTotalPieceQtyReturns(PRefno);
+
+        String buttomTitlea = "\r\n\n" + summaryTitle_a + "Cases  : "+ printCaseQuantity;
+        String buttomTitleab = "\r\n" + printSpaceSumName + "Pieces : "+ printPicesQuantity;
+
+        // -----------------------------------------------------------------
+        String summaryTitle_b = "Total Market Return" + printSpaceSumName;
+        summaryTitle_b = summaryTitle_b.substring(0,Math.min(27, summaryTitle_b.length()));
+        String summaryTitle_b_Val = printSpaceSumName + salOrdprintList.get(0).getPRINT_TOTALMKT_AMT();
+        summaryTitle_b_Val = summaryTitle_b_Val.substring(Math.max(summaryTitle_b_Val.length() - 18, 0));
+
+        // -----------------------------------------------------------------
+        String summaryTitle_d = "Line Discount" + printSpaceSumName;
+        summaryTitle_d = summaryTitle_d.substring(0,Math.min(27, summaryTitle_d.length()));
+        String summaryTitle_d_Val = printSpaceSumName + salOrdprintList.get(0).getSAL_PRINT_ITEM_DIS();
+        summaryTitle_d_Val = summaryTitle_d_Val.substring(Math.max(summaryTitle_d_Val.length() - 18, 0));
+
+        // -----------------------------------------------------------------Header Discount Value in Ratio
+
+        Double TotalDiscountValue = Double.parseDouble(salOrdprintList.get(0).getSAL_PRINT_TOTAL_DIS_AMT().replaceAll("[,]", ""));
+        Double HeaderDiscountValue= Double.parseDouble(salOrdprintList.get(0).getSAL_PRINT_TOTALDIS_HEAD().replaceAll("[,]", ""));
+        Double LineDiscountValue= Double.parseDouble(salOrdprintList.get(0).getSAL_PRINT_ITEM_DIS().replaceAll("[,]", ""));
+
+        Double HeadDiscPercentageValue = (TotalDiscountValue-(HeaderDiscountValue + LineDiscountValue));
+
+        Double TotalHeaderDiscountValue= HeaderDiscountValue + HeadDiscPercentageValue;
+        Double DisRatioValPrint = Double.parseDouble(salOrdprintList.get(0).getSAL_HEAD_DIS().replaceAll("[,]", ""));
+
+        if (DisRatioValPrint <= 0.0) {
+
+            printMainInvDiscount= "Header Discount";
+            printMainInvDiscountVal = "Header Discount Value:";
+            TotalInvoiceDiscount= (String.format("%,.2f",TotalHeaderDiscountValue));
+        }
+
+        else
+        {
+            printMainInvDiscountVal = "Header Discount:" + "("+salOrdprintList.get(0).getSAL_HEAD_DIS()+"%"+")";
+            //printMainInvDiscountVal = "Header Discount Value:";
+            TotalInvoiceDiscount = (String.format("%,.2f",TotalHeaderDiscountValue));
+
+        }
+
+
+
+
+        // -----------------------------------------------------------------Header Discount Value in Ratio
+//						String summaryTitle_dd = printMainInvDiscount + printSpaceSumName;
+//						summaryTitle_dd = summaryTitle_dd.substring(0,Math.min(27, summaryTitle_dd.length()));
+//						String summaryTitle_dd_Val = printSpaceSumName + salOrdprintList.get(0).getSAL_HEAD_DIS();
+//						summaryTitle_dd_Val = summaryTitle_dd_Val.substring(Math.max(summaryTitle_dd_Val.length() - 18, 0));
+
+
+        // ----------------------------------------------------------------- New section For Header Discount Invoice Value
+        String summaryTitle_ddnew = printMainInvDiscountVal + printSpaceSumName;
+        summaryTitle_ddnew = summaryTitle_ddnew.substring(0,Math.min(27, summaryTitle_ddnew.length()));
+        String summaryTitle_dd_Valnew = printSpaceSumName	+ TotalInvoiceDiscount;
+        summaryTitle_dd_Valnew = summaryTitle_dd_Valnew.substring(Math.max(summaryTitle_dd_Valnew.length() - 18, 0));
+
+        // -----------------------------------------------------------------
+
+
+        Double TotalAmountValue = Double.parseDouble(salOrdprintList.get(0).getSAL_PRINT_TOTAL_AMT().replaceAll("[,]", ""));
+        Double TotalReturnValue = Double.parseDouble(salOrdprintList.get(0).getPRINT_TOTALMKT_AMT().replaceAll("[,]", ""));
+        Double TotGrossValue = TotalAmountValue + TotalDiscountValue +TotalReturnValue ;
+
+        PrintNetTotalValuePrintVal= (String.format("%,.2f",TotGrossValue));
+
+        String summaryTitle_e = "Net Total" + printSpaceSumName;
+        summaryTitle_e = summaryTitle_e.substring(0,Math.min(27, summaryTitle_e.length()));
+        String summaryTitle_e_Val = printSpaceSumName + salOrdprintList.get(0).getSAL_PRINT_TOTAL_AMT();
+        summaryTitle_e_Val = summaryTitle_e_Val.substring(Math.max(summaryTitle_e_Val.length() - 18, 0));
+        //-----------------------------------------------------------------
+
+        String summaryTitle_eg = "Total Discount" + printSpaceSumName;
+        summaryTitle_eg = summaryTitle_eg.substring(0,Math.min(27, summaryTitle_eg.length()));
+        String summaryTitle_eg_Val = printSpaceSumName + salOrdprintList.get(0).getSAL_PRINT_TOTAL_DIS_AMT();
+        summaryTitle_eg_Val = summaryTitle_eg_Val.substring(Math.max(summaryTitle_eg_Val.length() - 18, 0));
+
+        // -----------------------------------------------------------------
+        String summaryTitle_c = "Total Value" + printSpaceSumName;
+        summaryTitle_c = summaryTitle_c.substring(0,Math.min(27, summaryTitle_c.length()));
+        String summaryTitle_c_Val = printSpaceSumName +  PrintNetTotalValuePrintVal;
+        summaryTitle_c_Val = summaryTitle_c_Val.substring(Math.max(summaryTitle_c_Val.length() - 18, 0));
+
+        String summaryBottom_cpoyline1 = " Developed by Datamation Systems. ";
+        int lengthsummarybottm = summaryBottom_cpoyline1.length();
+        int lengthsummarybottmline1 = (48 - lengthsummarybottm) / 2;
+        String printGapbottmline1 = printGapAdjust.substring(0,Math.min(lengthsummarybottmline1,printGapAdjust.length()));
+
+        String summaryBottom_cpoyline3 = "www.datamation.lk";
+        int lengthsummarybotline3 = summaryBottom_cpoyline3.length();
+        int lengthsummarybottmline3 = (48 - lengthsummarybotline3) / 2;
+        String printGapbottmline3 = printGapAdjust.substring(0,Math.min(lengthsummarybottmline3,printGapAdjust.length()));
+
+        String summaryBottom_cpoyline2= " +94 11 2 501202 / + 94 (0) 777 899899 ";
+        int lengthsummarybotline2 = summaryBottom_cpoyline2.length();
+        int lengthsummarybottmline2 = (48 - lengthsummarybotline2) / 2;
+        String printGapbottmline2 = printGapAdjust.substring(0,Math.min(lengthsummarybottmline2,printGapAdjust.length()));
+
+        String buttomTitleb = "\r\n" + summaryTitle_b + summaryTitle_b_Val;
+        String buttomTitlec = "\r\n" + summaryTitle_c + summaryTitle_c_Val;
+        String buttomTitled = "\r\n" + summaryTitle_d + summaryTitle_d_Val;
+        //String buttomTitledd = "\r\n" + summaryTitle_dd + summaryTitle_dd_Val;
+        String buttomTitleddnew = "\r\n" + summaryTitle_ddnew + summaryTitle_dd_Valnew;
+        String buttomTitldis = "\r\n" + summaryTitle_eg + summaryTitle_eg_Val;
+        String buttomTitlee = "\r\n" + summaryTitle_e + summaryTitle_e_Val;
+        String buttomTitlef = "\r\n\n\n" + "Order Accept................................";
+        String buttomTitlefa = "\r\n\n\n" + "Please place The Rubber Stamp.";
+        String buttomTitlefv = "\r\n\n\n" + printLineSeperator;
+        String buttomTitlecopyw = "\r\n\n\n" +  printGapbottmline1 + summaryBottom_cpoyline1 ;
+        String buttomTitlecopywbottom = "\r\n" + printGapbottmline2 + summaryBottom_cpoyline2 ;
+        String buttomTitlecopywbottom3 = "\r\n" + printGapbottmline3 +summaryBottom_cpoyline3 ;
+
+        buttomRaw = "\r\n" + printLineSeperator + buttomTitlea
+                + buttomTitleab + buttomTitlec + buttomTitleb
+                //+ buttomTitledd
+                + buttomTitleddnew + buttomTitled + buttomTitldis + buttomTitlee + "\r\n"
+                + printLineSeperator + "\r\n" + "\r\n" + buttomTitlef + buttomTitlefa +"\r\n"
+                + printLineSeperator + buttomTitlecopyw + buttomTitlecopywbottom + buttomTitlecopywbottom3
+                + "\r\n\n\n\n\n\n\n" + printLineSeperator + "\n";
+
+
+
+
+        callPrintDevice();
+
+
+    }
+
+
+
+
+    public void PrintCurrentview() {
+        checkPrinter();
+        if (PRINTER_MAC_ID.equals("404")) {
+            Log.v("", "No MAC Address Found.Enter Printer MAC Address.");
+            android.widget.Toast.makeText(context, "No MAC Address Found.Enter Printer MAC Address.", android.widget.Toast.LENGTH_LONG).show();
+
+
+        } else {
+
+            printItems();
+        }
+    }
+
+    private void checkPrinter() {
+
+        if (PRINTER_MAC_ID.trim().length() == 0) {
+            PRINTER_MAC_ID = "404";
+        } else {
+            PRINTER_MAC_ID = PRINTER_MAC_ID;
+        }
+    }
+
+    private void callPrintDevice() {
+        BILL = " ";
+
+        BILL = Heading_a + Heading_bmh + Heading_b + Heading_d + buttomRaw;
+        Log.v("", "BILL :" + BILL);
+        mBTAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        try {
+            if (mBTAdapter.isDiscovering())
+                mBTAdapter.cancelDiscovery();
+            else
+                mBTAdapter.startDiscovery();
+        } catch (Exception e) {
+            Log.e("Class ", "fire 4", e);
+        }
+        System.out
+                .println("BT Searching status :" + mBTAdapter.isDiscovering());
+
+        if (mBTAdapter == null) {
+            Toast.makeText(context,"Device has no bluetooth capability...",Toast.LENGTH_SHORT).show();
+            //finish();
+        } else {
+            if (!mBTAdapter.isEnabled()) {
+                Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//				 int REQUEST_ENABLE_BT = 1;
+//			     startActivityForResult(intentBtEnabled, REQUEST_ENABLE_BT);
+            }
+            printBillToDevice(PRINTER_MAC_ID);
+            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            //registerReceiver(mReceiver, filter); // Don't forget to
+            // unregister
+            // during
+            // onDestroy
+
+        }
+    }
+
+
+
+    public  BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+
+            try {
+                String action = intent.getAction();
+                // When discovery finds a device
+                if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                    // Get the BluetoothDevice object from the Intent
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    System.out.println("***" + device.getName() + " : "+ device.getAddress());
+
+                    if (device.getAddress().equalsIgnoreCase(PRINTER_MAC_ID)) {
+                        mBTAdapter.cancelDiscovery();
+                        dialogProgress.dismiss();
+                        printBillToDevice(PRINTER_MAC_ID);
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("Class  ", "fire 1 ", e);
+
+
+            }
+        }
+    };
+
+
+
+
+    public void printBillToDevice(final String address) {
+
+
+        mBTAdapter.cancelDiscovery();
+
+        try {
+            System.out.println("**************************#****connecting");
+            BluetoothDevice mdevice = mBTAdapter.getRemoteDevice(address);
+            Method m = mdevice.getClass().getMethod("createRfcommSocket", new Class[] { int.class });
+            mBTSocket = (BluetoothSocket) m.invoke(mdevice, 1);
+
+            mBTSocket.connect();
+            OutputStream os = mBTSocket.getOutputStream();
+            os.flush();
+
+            os.write(BILL.getBytes());
+            System.out.println(BILL);
+
+            if (mBTAdapter != null)
+                mBTAdapter.cancelDiscovery();
+            //setResult(RESULT_OK);
+            //finish();
+        } catch (Exception e) {
+            Log.e("Class ", "fire 2 ", e);
+            //toast.createToastErrorMessage("Device has no MacAddress.Please Enter the MAC Address..", null);
+            android.widget.Toast.makeText(context, "Printer Device Disable Or Invalid MAC.Please Enable the Printer or MAC Address.", android.widget.Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+            this.PrintDetailsDialogbox(context,"",PRefno);
+            //setResult(RESULT_CANCELED);
+            //finish();
+
+        }
+
+    }
+
+
+
+//	protected void onDestroy() {
+//		Log.i("Dest ", "Checking Ddest");
+//		//finish();
+//		try {
+//			if (dialogProgress != null)
+//				dialogProgress.dismiss();
+//			if (mBTAdapter != null)
+//				mBTAdapter.cancelDiscovery();
+//			this.unregisterReceiver(mReceiver);
+//		} catch (Exception e) {
+//			Log.e("Class ", "fire 3", e);
+//		}
+//	}
+
+
+    private void registerReceiver(BroadcastReceiver mReceiver2) {
+        // TODO Auto-generated method stub
+
+    }
+
+
+
+}
