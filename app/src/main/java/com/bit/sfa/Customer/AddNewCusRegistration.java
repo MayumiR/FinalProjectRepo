@@ -79,7 +79,7 @@ import java.util.regex.Pattern;
 import static com.bit.sfa.Settings.TaskType.UPLOAD_NEW_CUSTOMER;
 
 /**
- * Created by Sathiyaraja on 6/25/2018.
+ * Created by R on 6/25/2018.
  */
 
 public class AddNewCusRegistration extends Fragment implements AsyncTaskListener {
@@ -540,12 +540,12 @@ public class AddNewCusRegistration extends Fragment implements AsyncTaskListener
         Detlist.clearTextFilter();
         if (Flag == 1) {
             fDistrictArrayList = ds.getDistrict("");
-            Detlist.setAdapter(new DistrictAdapter(getActivity(), fDistrictArrayList));
+            //Detlist.setAdapter(new DistrictAdapter(getActivity(), fDistrictArrayList));
             town.setText("");
             route.setText("");
         } else if (Flag == 2) {
             townArrayList = townDS.getTown(DisCode);
-            Detlist.setAdapter(new TownAdapter(getActivity(), townArrayList));
+            //Detlist.setAdapter(new TownAdapter(getActivity(), townArrayList));
             route.setText("");
         } else if (Flag == 3) {
             routeArrayList = routeDS.getRoute();
@@ -568,7 +568,7 @@ public class AddNewCusRegistration extends Fragment implements AsyncTaskListener
                 try {
                     if (Flag == 1) {
                         fDistrictArrayList = ds.getDistrict(newText);
-                        Detlist.setAdapter(new DistrictAdapter(getActivity(), fDistrictArrayList));
+                        //Detlist.setAdapter(new DistrictAdapter(getActivity(), fDistrictArrayList));
                     } else if (Flag == 2) {
                         //search from arraylist not from DB
                         ArrayList<Town> townS_result = new ArrayList<Town>();
@@ -581,7 +581,7 @@ public class AddNewCusRegistration extends Fragment implements AsyncTaskListener
                                 townS_result.add(town);
                             }
                         }
-                        Detlist.setAdapter(new TownAdapter(getActivity(), townS_result));
+                      //  Detlist.setAdapter(new TownAdapter(getActivity(), townS_result));
 
                     } else if (Flag == 3) {
                         routeArrayList = routeDS.getRoute();
