@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -18,35 +17,26 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bit.sfa.DataControl.DebtorDS;
 import com.bit.sfa.DataControl.FmDebtorDS;
 import com.bit.sfa.DataControl.FmSalRepDS;
-import com.bit.sfa.DataControl.FmisshedDS;
 import com.bit.sfa.DataControl.LocationsDS;
 import com.bit.sfa.DataControl.OrdHedDS;
 import com.bit.sfa.DataControl.RouteDS;
-import com.bit.sfa.DataControl.SalRepDS;
 import com.bit.sfa.DefView.Home;
-import com.bit.sfa.Models.Fmisshed;
 import com.bit.sfa.Models.OrdHed;
 import com.bit.sfa.R;
 import com.bit.sfa.Settings.ReferenceNum;
 import com.bit.sfa.Settings.SharedPref;
 import com.bit.sfa.Settings.SharedPreferencesClass;
-import com.bit.sfa.Settings.StaticData;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import static com.bit.sfa.Settings.SharedPreferencesClass.getLocalSharedPreference;
 

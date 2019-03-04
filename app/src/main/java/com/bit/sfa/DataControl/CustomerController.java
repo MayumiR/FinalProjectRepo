@@ -12,14 +12,14 @@ import com.bit.sfa.Settings.DatabaseHelper;
 
 import java.util.ArrayList;
 
-public class DebtorDS {
+public class CustomerController {
 
 	private SQLiteDatabase dB;
 	private DatabaseHelper dbHelper;
 	Context context;
 	private String TAG = "swadeshi";
 
-	public DebtorDS(Context context) {
+	public CustomerController(Context context) {
 		this.context = context;
 		dbHelper = new DatabaseHelper(context);
 	}

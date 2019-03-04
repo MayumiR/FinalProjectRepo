@@ -14,7 +14,7 @@ import com.bit.sfa.R;
 import java.util.ArrayList;
 
 /**
- * Created by Sathiyaraja on 6/20/2018.
+ * Created by Rashmi on 11/20/2018.
  */
 
 public class CustomerAdapter extends ArrayAdapter<FmDebtor> {

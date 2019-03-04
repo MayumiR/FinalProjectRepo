@@ -15,7 +15,7 @@ import com.bit.sfa.Settings.DatabaseHelper;
 import java.util.ArrayList;
 
 /**
- * Created by Sathiyaraja on 6/20/2018.
+ * Created by Rashmi on 6/20/2018.
  */
 
 public class OrdDetDS {
@@ -134,7 +134,7 @@ public class OrdDetDS {
             orderDisc.setItemCode(ordDet.getFORDDET_ITEM_CODE());
             orderDisc.setDisAmt(ordDet.getFORDDET_DIS_AMT());
 
-            new OrderDiscDS(context).UpdateOrderDiscount(orderDisc, ordDet.getFORDDET_DISC_REF(), ordDet.getFORDDET_DIS_PER());
+           // new OrderDiscDS(context).UpdateOrderDiscount(orderDisc, ordDet.getFORDDET_DISC_REF(), ordDet.getFORDDET_DIS_PER());
             String updateQuery = "UPDATE forddet SET DisPer='0.00', DisAmt='0.00', DisValAmt='" + discount + "' where Itemcode ='" + ordDet.getFORDDET_ITEM_CODE() + "'";
             dB.execSQL(updateQuery);
 
@@ -201,7 +201,7 @@ public class OrdDetDS {
                 orderDisc.setDisAmt(ordDet.getFORDDET_DIS_AMT());
                 orderDisc.setDisPer(ordDet.getFORDDET_DIS_PER());
 
-                new OrderDiscDS(context).UpdateOrderDiscount(orderDisc, DiscRef, DiscPer);
+              //  new OrderDiscDS(context).UpdateOrderDiscount(orderDisc, DiscRef, DiscPer);
                 String updateQuery = "UPDATE forddet SET DisPer='0.00', DisAmt='0.00', DisValAmt='" + ordDet.getFORDDET_DIS_AMT() + "' where Itemcode ='" + ordDet.getFORDDET_ITEM_CODE() + "'";
                 dB.execSQL(updateQuery);
 

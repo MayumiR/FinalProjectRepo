@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 
 /**
- * Created by Dhanushika on 4/5/2018.
+ * Created by Rashmi on 4/11/2018.
  */
 public class Customer_Adapter extends ArrayAdapter<NewCustomer> {
 

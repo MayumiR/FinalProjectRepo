@@ -14,7 +14,7 @@ import com.bit.sfa.Settings.DatabaseHelper;
 import java.util.ArrayList;
 
 /**
- * Created by Sathiyaraja on 25/06/2018.
+ * Created by Rashmi on 25/12/2018.
  */
 
 public class NewCustomerDS {

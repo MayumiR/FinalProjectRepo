@@ -41,11 +41,9 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.bit.sfa.Adapter.Customer_Adapter;
-import com.bit.sfa.Adapter.DistrictAdapter;
 import com.bit.sfa.Adapter.RouteAdapter;
-import com.bit.sfa.Adapter.TownAdapter;
 import com.bit.sfa.DataControl.CompanyBranchDS;
-import com.bit.sfa.DataControl.DebtorDS;
+import com.bit.sfa.DataControl.CustomerController;
 import com.bit.sfa.DataControl.NewCustomerDS;
 import com.bit.sfa.DataControl.RouteDS;
 import com.bit.sfa.DataControl.SalRepDS;
@@ -222,7 +220,7 @@ public class AddNewCusRegistration extends Fragment implements AsyncTaskListener
                     customerName.setClickable(true);
                     customerName.setFocusableInTouchMode(true);
 
-                    DebtorDS TW = new DebtorDS(getActivity());
+                    CustomerController TW = new CustomerController(getActivity());
 
                     customerName.setEnabled(true);
                     editTextCNic.setEnabled(true);
