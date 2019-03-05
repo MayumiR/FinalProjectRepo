@@ -586,7 +586,7 @@ public class SettingsActivity extends AppCompatActivity implements DownloadTaskL
 
                                 if (hed > 0) {
                                     int det = new OrdDetDS(context).DeleteOldOrders(getDateFromDatePicker(fromDatePicker), getDateFromDatePicker(ToDatePicker));
-                                    int FreeIss = new OrdFreeIssueDS(context).DeleteOldOrders(getDateFromDatePicker(fromDatePicker), getDateFromDatePicker(ToDatePicker));
+                                    //int FreeIss = new OrdFreeIssueDS(context).DeleteOldOrders(getDateFromDatePicker(fromDatePicker), getDateFromDatePicker(ToDatePicker));
                                     Toast.makeText(getApplicationContext(), hed + " Orders Deleted Successfully", Toast.LENGTH_LONG).show();
 
                                 } else {

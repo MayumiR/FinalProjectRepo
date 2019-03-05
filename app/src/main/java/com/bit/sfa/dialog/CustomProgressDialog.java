@@ -5,8 +5,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.ceylonlinux.chelcey.salespad.R;
-import com.ceylonlinux.chelcey.salespad.libs.progress.ProgressWheel;
+import com.bit.sfa.R;
+import com.pnikosis.materialishprogress.ProgressWheel;
+
 
 /**
  * Created by TaZ on 12/12/14.
@@ -31,7 +32,7 @@ public class CustomProgressDialog extends Dialog {
         tvProgressText = (TextView)findViewById(R.id.progress_dialog_progress_txt);
         progressWheel = (ProgressWheel)findViewById(R.id.progress_dialog_progress_wheel);
 
-        progressWheel.setBarColor(context.getResources().getColor(R.color.theme_color));
+        progressWheel.setBarColor(context.getResources().getColor(R.color.blueColor));
         progressWheel.spin();
 
     }
