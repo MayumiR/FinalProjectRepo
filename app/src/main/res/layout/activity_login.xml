@@ -40,7 +40,7 @@
                 android:fontFamily="sans-serif"
                 android:textColor="@color/textColor"
                 android:textStyle="bold"
-                android:text="@string/kandana_foods_and_drugs_pvt_ltd"
+                android:text="@string/amashi_distributors_pvt_ltd"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                 android:typeface="monospace" />
@@ -127,7 +127,7 @@
                 android:layout_gravity="center"
                 android:textColor="#FFF"
                 android:layout_height="wrap_content"
-                android:text="@string/developed_by_datamation_systems_n_94_11_2_501202_n_www_datamation_lk" />
+                android:text="@string/developed_by_rashmi" />
         </TableRow>
     </LinearLayout>
 </LinearLayout>
