@@ -12,7 +12,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -33,13 +32,6 @@ import android.widget.SearchView;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.bit.sfa.Adapter.Customer_Adapter;
 import com.bit.sfa.Adapter.RouteAdapter;
 import com.bit.sfa.DataControl.CompanyBranchDS;
@@ -79,7 +71,7 @@ import java.util.regex.Pattern;
 import static com.bit.sfa.Settings.TaskType.UPLOAD_NEW_CUSTOMER;
 
 /**
- * Created by R on 6/25/2018.
+ * Created by Rashmi on 10/20/2018.
  */
 
 public class AddNewCusRegistration extends Fragment implements AsyncTaskListener {
@@ -92,18 +84,12 @@ public class AddNewCusRegistration extends Fragment implements AsyncTaskListener
     private ArrayList<Route> routeArrayList;
     private ArrayList<NewCustomer> newCustomerArrayList;
     private String DisCode;
-    private ImageView img, img2, img3, img4;
+    private ImageView img;
     private Switch mySwitch;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1888;
     private static int IMAGE1 = 0;
-    private static int IMAGE2 = 0;
-    private static int IMAGE3 = 0;
-    private static int IMAGE4 = 0;
     private byte[] byteArray;
     Bitmap bitimage = null;
-    Bitmap bitimage1 = null;
-    Bitmap bitimage2 = null;
-    Bitmap bitimage3 = null;
     private static String pictureName = null;
     private Uri filePath;
     ArrayList<Uri> uris = new ArrayList<>();
@@ -625,9 +611,6 @@ public class AddNewCusRegistration extends Fragment implements AsyncTaskListener
                     fax.setEnabled(true);
                     emailaddress.setEnabled(true);
                     img.setEnabled(true);
-                    img2.setEnabled(true);
-                    img3.setEnabled(true);
-                    img3.setEnabled(true);
 
                     btn_District.setEnabled(true);
                     btn_Town.setEnabled(true);
@@ -767,8 +750,6 @@ public class AddNewCusRegistration extends Fragment implements AsyncTaskListener
         cusList.add(newCustomer);
         if (newCustomerDS.createOrUpdateCustomer(cusList) > 0) {
             referenceNum.nNumValueInsertOrUpdate(getResources().getString(R.string.newCusVal));
-            // UtilityContainer.mLoadFragment(new CustomerRegMain(), getActivity());
-            // new UplordNewCustomer(getActivity(),AddNewCusRegistration.this, TaskType.UPLOADNEWCUSTOMER).execute(cusList);
 
             android.widget.Toast.makeText(getActivity(), " saved successfully..!", android.widget.Toast.LENGTH_SHORT).show();
         } else {
@@ -837,50 +818,6 @@ public class AddNewCusRegistration extends Fragment implements AsyncTaskListener
             progressDialog.setCancelable(false);
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.show();
-
-            FirebaseApp.initializeApp(getActivity());
-
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference riversRef = storage.getReferenceFromUrl("gs://kfd-medi.appspot.com/").child("images/" + imagepathName);
-            riversRef.putFile(filePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            //if the upload is successfull
-                            //hiding the progress dialog
-                            progressDialog.dismiss();
-                            Uri downloadUri = taskSnapshot.getDownloadUrl();
-                            System.out.println("downloadUri" + downloadUri.toString());
-
-                            pictureDownloadurl.add(downloadUri.toString()); // add uploaded image url to list
-
-                            //and displaying a success toast
-                            Toast.makeText(getActivity(), "Picture Uploaded ", Toast.LENGTH_SHORT).show();
-                        }
-
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            //if the upload is not successfull
-                            //hiding the progress dialog
-                            progressDialog.dismiss();
-
-                            //and displaying error message
-                            Toast.makeText(getActivity(), exception.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            //calculating progress percentage
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-
-                            //displaying percentage in progress dialog
-                            progressDialog.setMessage("Uploaded " + ((int) progress) + "%...");
-                        }
-                    });
-
 
         }
 
