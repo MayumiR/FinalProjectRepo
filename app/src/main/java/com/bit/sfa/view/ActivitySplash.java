@@ -71,6 +71,7 @@ public class ActivitySplash extends AppCompatActivity{
         localSP = getSharedPreferences(SharedPreferencesClass.SETTINGS,0);
 //user data aragenanm  no need to check,
         // login wela nam kelinma customer list ekata
+        //slim eke authenticate function eka liyanna-study that
         if(connectionStatus){
 
             new Handler().postDelayed(new Runnable() {
