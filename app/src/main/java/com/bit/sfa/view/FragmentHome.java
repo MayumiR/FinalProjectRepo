@@ -1,4 +1,4 @@
-package com.bit.sfa.DefView;
+package com.bit.sfa.view;
 
 
 
@@ -17,7 +17,7 @@ import com.bit.sfa.R;
  * Created by Sathiyaraja on 6/19/2018.
  */
 
-public class FragHome extends Fragment {
+public class FragmentHome extends Fragment {
 
     @Nullable
     @Override

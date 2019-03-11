@@ -31,7 +31,7 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <com.bit.sfa.DefView.FinacFont
+                <com.bit.sfa.utils.FinacFont
                     android:id="@+id/tvName"
                     android:layout_width="match_parent"
                     android:singleLine="true"
@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:text="TextView" />
 
-                <com.bit.sfa.DefView.FinacFont
+                <com.bit.sfa.utils.FinacFont
                     android:id="@+id/tvDesc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

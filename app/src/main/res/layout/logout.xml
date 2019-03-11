@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:elevation="4dp">
 
-        <com.bit.sfa.DefView.FinacBtn
+        <com.bit.sfa.utils.FinacBtn
             android:id="@+id/logout"
             android:layout_width="300dp"
             android:layout_height="wrap_content"

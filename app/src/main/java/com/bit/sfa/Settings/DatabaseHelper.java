@@ -13,7 +13,7 @@ import android.util.Log;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     // database information
-    public static final String DATABASE_NAME = "kandanafd_medi_database.db";
+    public static final String DATABASE_NAME = "sfa_database.db";
     public static final int DATABASE_VERSION = 2;
 
     public DatabaseHelper(Context context) {

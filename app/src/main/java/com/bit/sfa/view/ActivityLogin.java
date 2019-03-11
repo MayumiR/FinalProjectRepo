@@ -1,4 +1,4 @@
-package com.bit.sfa.DefView;
+package com.bit.sfa.view;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +19,7 @@ import com.bit.sfa.Settings.UserSessionManager;
 
 import java.util.ArrayList;
 
-public class Login extends AppCompatActivity {
+public class ActivityLogin extends AppCompatActivity {
 
     private LinearLayout footer;
     private EditText userName, password;
@@ -41,7 +41,7 @@ public class Login extends AppCompatActivity {
         sessionManager = new UserSessionManager(context);
         if(sessionManager.isLogged()){
 
-            Intent mainActivity = new Intent(this, Home.class);
+            Intent mainActivity = new Intent(this, ActivityHome.class);
             startActivity(mainActivity);
             finish();
 
@@ -92,7 +92,7 @@ public class Login extends AppCompatActivity {
 
             SharedPreferencesClass.setLocalSharedPreference(getApplicationContext(), "first_login", "Success");
 
-            Intent mainActivity = new Intent(this, Home.class);
+            Intent mainActivity = new Intent(this, ActivityHome.class);
             startActivity(mainActivity);
             finish();
         } else {

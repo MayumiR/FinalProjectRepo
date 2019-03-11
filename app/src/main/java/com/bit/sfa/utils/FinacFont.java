@@ -1,4 +1,4 @@
-package com.bit.sfa.DefView;
+package com.bit.sfa.utils;
 
 import android.content.Context;
 import android.graphics.Typeface;

@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:gravity="right" >
 
-        <com.bit.sfa.DefView.FinacBtn
+        <com.bit.sfa.utils.FinacBtn
             android:id="@+id/all_cust"
             android:layout_width="80dp"
             android:layout_height="40dp"
@@ -18,7 +18,7 @@
             android:textColor="@android:color/white"
             android:textStyle="italic" />
 
-        <com.bit.sfa.DefView.FinacBtn
+        <com.bit.sfa.utils.FinacBtn
             android:id="@+id/route_wise_cust"
             android:layout_width="80dp"
             android:layout_height="40dp"

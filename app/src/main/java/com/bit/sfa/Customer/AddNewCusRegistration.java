@@ -41,7 +41,7 @@ import com.bit.sfa.DataControl.RouteDS;
 import com.bit.sfa.DataControl.SalRepDS;
 import com.bit.sfa.DataControl.TownDS;
 import com.bit.sfa.DataControl.UtilityContainer;
-import com.bit.sfa.DefView.Home;
+import com.bit.sfa.view.ActivityHome;
 import com.bit.sfa.Models.NewCustomer;
 import com.bit.sfa.Models.Route;
 import com.bit.sfa.Models.Town;
@@ -101,7 +101,7 @@ public class AddNewCusRegistration extends Fragment implements AsyncTaskListener
     private ProgressDialog progressDialog;
     public static SharedPreferences localSP;
     public static final String SETTINGS = "SETTINGS";
-    Home home;
+    ActivityHome home;
     int CUSFLG = 1;
 
     @Nullable
@@ -111,7 +111,7 @@ public class AddNewCusRegistration extends Fragment implements AsyncTaskListener
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
 
         //hide bottom navigation
-        home = new Home();
+        home = new ActivityHome();
         home.bottomNav(true);
 
         mSharedPref = new SharedPref(getActivity());
@@ -469,7 +469,7 @@ public class AddNewCusRegistration extends Fragment implements AsyncTaskListener
 
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     Toast.makeText(getActivity(), "Back button disabled!", Toast.LENGTH_SHORT).show();
-                    Home.navigation.setVisibility(View.VISIBLE);
+                    ActivityHome.navigation.setVisibility(View.VISIBLE);
                     return true;
                 } else if ((keyCode == KeyEvent.KEYCODE_HOME)) {
 

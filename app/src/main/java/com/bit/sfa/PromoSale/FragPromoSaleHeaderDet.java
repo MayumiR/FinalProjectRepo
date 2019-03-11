@@ -15,19 +15,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 
 import android.support.v7.widget.SearchView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bit.sfa.Adapter.GiftDetailsAdapter;
@@ -39,11 +35,9 @@ import com.bit.sfa.DataControl.FmisshedDS;
 import com.bit.sfa.DataControl.OrdDetDS;
 import com.bit.sfa.DataControl.OrdHedDS;
 import com.bit.sfa.DataControl.PreProductDS;
-import com.bit.sfa.DataControl.ProductDS;
 import com.bit.sfa.DataControl.UploadTaskListener;
 import com.bit.sfa.DataControl.UtilityContainer;
-import com.bit.sfa.DefView.Home;
-import com.bit.sfa.Models.FmItem;
+import com.bit.sfa.view.ActivityHome;
 import com.bit.sfa.Models.Fmisshed;
 import com.bit.sfa.Models.OrdDet;
 import com.bit.sfa.Models.OrdHed;
@@ -57,7 +51,6 @@ import com.bit.sfa.Settings.SharedPref;
 import com.bit.sfa.Settings.TaskType;
 
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,7 +70,7 @@ public class FragPromoSaleHeaderDet extends Fragment implements UploadTaskListen
     private ListView lv_pre_order_detlv,lvFreeIssue_Pre;
     private ImageButton pre_Product_btn, pre_disc_btn, btnSave;
     private  String RefNo;
-    public Home mainActivity;
+    public ActivityHome mainActivity;
     int seqno = 0, index_id = 0;
     ArrayList<PreProduct> PreproductList = null, selectedItemList = null;
     ArrayList<Fmisshed> issueList = null,displayIssueList = null;
@@ -109,7 +102,7 @@ public class FragPromoSaleHeaderDet extends Fragment implements UploadTaskListen
         seqno = 0;
         mSharedPref = new SharedPref(getActivity());
         RefNo = new ReferenceNum(getActivity()).getCurrentRefNo(getResources().getString(R.string.NumVal));
-        mainActivity = (Home) getActivity();
+        mainActivity = (ActivityHome) getActivity();
         tmpsoHed=new OrdHed();
         resultList = new ArrayList<>();
         //------------------------------------------------------------------------------------------------------------------------
@@ -565,7 +558,7 @@ public class LoardingPreProductFromDB extends AsyncTask<Object, Object, ArrayLis
             //new OrdDetDS(getActivity()).UpdateTaxDetails(RefNo);
 //            Log.v(">>3>>","UpdateTaxDetails(RefNo)");
 
-            final Home activity = (Home) getActivity();
+            final ActivityHome activity = (ActivityHome) getActivity();
 
             activity.mselectedDebtor = null;
             activity.selectedDebtor = null;
@@ -579,7 +572,7 @@ public class LoardingPreProductFromDB extends AsyncTask<Object, Object, ArrayLis
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            Home home = new Home();
+            ActivityHome home = new ActivityHome();
             try {
 
                 if (NetworkUtil.isNetworkAvailable(getActivity())) {

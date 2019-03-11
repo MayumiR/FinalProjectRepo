@@ -37,7 +37,7 @@ import com.bit.sfa.DataControl.RouteDS;
 import com.bit.sfa.DataControl.SQLiteBackUp;
 import com.bit.sfa.DataControl.SalRepDS;
 import com.bit.sfa.DataControl.ServerDatabaseDS;
-import com.bit.sfa.DefView.Home;
+import com.bit.sfa.view.ActivityHome;
 import com.bit.sfa.Models.FmSalRep;
 import com.bit.sfa.R;
 
@@ -78,7 +78,7 @@ public class SettingsActivity extends AppCompatActivity implements DownloadTaskL
         btncontinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, Home.class);
+                Intent intent = new Intent(context, ActivityHome.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);

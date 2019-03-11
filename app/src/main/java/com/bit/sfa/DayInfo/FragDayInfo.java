@@ -23,8 +23,8 @@ import android.widget.Toast;
 import com.bit.sfa.DataControl.SalRepDS;
 import com.bit.sfa.DataControl.TourDS;
 import com.bit.sfa.DataControl.UtilityContainer;
-import com.bit.sfa.DefView.FragHome;
-import com.bit.sfa.DefView.Home;
+import com.bit.sfa.view.FragmentHome;
+import com.bit.sfa.view.ActivityHome;
 import com.bit.sfa.Models.Tour;
 import com.bit.sfa.PromoSale.PromoSaleManagement;
 import com.bit.sfa.R;
@@ -152,7 +152,7 @@ public class FragDayInfo extends Fragment implements View.OnClickListener {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 Log.i("", "keyCode: " + keyCode);
-                Home.navigation.setVisibility(View.VISIBLE);
+                ActivityHome.navigation.setVisibility(View.VISIBLE);
 
                 if( keyCode == KeyEvent.KEYCODE_BACK ) {
                     Toast.makeText(getActivity(), "Back button disabled!", Toast.LENGTH_SHORT).show();
@@ -242,7 +242,7 @@ public class FragDayInfo extends Fragment implements View.OnClickListener {
                         new TourDS(getActivity()).InsertUpdateTourData(tour);
                         clearTextFields();
                         Toast.makeText(getActivity(), "Tour End info saved! ", Toast.LENGTH_SHORT).show();
-                        UtilityContainer.mLoadFragment(new FragHome(), getActivity());
+                        UtilityContainer.mLoadFragment(new FragmentHome(), getActivity());
 
                     } else {
                         Toast.makeText(getActivity(), "Fill in the fields!", Toast.LENGTH_SHORT).show();

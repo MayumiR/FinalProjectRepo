@@ -26,7 +26,7 @@ import android.widget.Toast;
 import com.bit.sfa.Adapter.NewCustomerAdapter;
 import com.bit.sfa.DataControl.NewCustomerDS;
 import com.bit.sfa.DataControl.UtilityContainer;
-import com.bit.sfa.DefView.Home;
+import com.bit.sfa.view.ActivityHome;
 import com.bit.sfa.Models.NewCustomer;
 import com.bit.sfa.R;
 
@@ -96,7 +96,7 @@ public class CustomerRegMain extends Fragment {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 Log.i("", "keyCode: " + keyCode);
-                Home.navigation.setVisibility(View.VISIBLE);
+                ActivityHome.navigation.setVisibility(View.VISIBLE);
 
                 if( keyCode == KeyEvent.KEYCODE_BACK ) {
                     Toast.makeText(getActivity(), "Back button disabled!", Toast.LENGTH_SHORT).show();

@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:elevation="4dp">
 
-        <com.bit.sfa.DefView.FinacBtn
+        <com.bit.sfa.utils.FinacBtn
             android:id="@+id/presale"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
         android:elevation="4dp">
 
 
-        <com.bit.sfa.DefView.FinacBtn
+        <com.bit.sfa.utils.FinacBtn
             android:id="@+id/dinfo"
             android:layout_width="300dp"
             android:gravity="center"
@@ -49,7 +49,7 @@
         android:elevation="4dp">
 
 
-        <com.bit.sfa.DefView.FinacBtn
+        <com.bit.sfa.utils.FinacBtn
             android:id="@+id/expense"
             android:layout_width="300dp"
             android:gravity="center"
@@ -68,7 +68,7 @@
         android:elevation="4dp">
 
 
-        <com.bit.sfa.DefView.FinacBtn
+        <com.bit.sfa.utils.FinacBtn
             android:id="@+id/new_cus"
             android:layout_width="300dp"
             android:gravity="center"

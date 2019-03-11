@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
 
-    <com.bit.sfa.DefView.FinacFont
+    <com.bit.sfa.utils.FinacFont
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -28,14 +28,14 @@
         android:padding="15dp"
         android:weightSum="2">
 
-        <com.bit.sfa.DefView.FinacFont
+        <com.bit.sfa.utils.FinacFont
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Routename" />
 
 
-        <com.bit.sfa.DefView.FinacFont
+        <com.bit.sfa.utils.FinacFont
             android:id="@+id/routeName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,14 +53,14 @@
         android:padding="15dp"
         android:weightSum="2">
 
-        <com.bit.sfa.DefView.FinacFont
+        <com.bit.sfa.utils.FinacFont
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Route Code" />
 
 
-        <com.bit.sfa.DefView.FinacFont
+        <com.bit.sfa.utils.FinacFont
             android:id="@+id/routeCode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
 
     </TableRow>
 
-    <com.bit.sfa.DefView.FinacBtn
+    <com.bit.sfa.utils.FinacBtn
         android:layout_width="match_parent"
         android:id="@+id/close"
         android:background="@drawable/bottom_button_bg"

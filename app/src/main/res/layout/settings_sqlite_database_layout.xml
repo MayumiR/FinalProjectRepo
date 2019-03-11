@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:padding="10dp" >
 
-    <com.bit.sfa.DefView.FinacBtn
+    <com.bit.sfa.utils.FinacBtn
         android:id="@+id/b_backups"
         android:layout_width="fill_parent"
         android:layout_height="60dp"
@@ -20,7 +20,7 @@
         android:background="@color/colorPrimaryDark"
         android:text="Backup Data" />
 
-    <com.bit.sfa.DefView.FinacBtn
+    <com.bit.sfa.utils.FinacBtn
         android:id="@+id/b_restore"
         android:layout_width="fill_parent"
         android:layout_height="60dp"

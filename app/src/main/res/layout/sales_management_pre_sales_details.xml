@@ -33,7 +33,7 @@
                         android:padding="5dp"
                         android:weightSum="4">
 
-                        <com.bit.sfa.DefView.FinacFont
+                        <com.bit.sfa.utils.FinacFont
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -53,7 +53,7 @@
                         <!-- <requestFocus /> -->
                         <!-- </AutoCompleteTextView> -->
 
-                        <com.bit.sfa.DefView.FinacText
+                        <com.bit.sfa.utils.FinacText
                             android:id="@+id/et_item"
                             android:layout_width="0dp"
                             android:layout_height="40dp"
@@ -61,7 +61,7 @@
                             android:background="@drawable/edittextstyle"
                             android:enabled="true"
                             android:textColor="@android:color/black"
-                            android:textSize="18dp"></com.bit.sfa.DefView.FinacText>
+                            android:textSize="18dp"></com.bit.sfa.utils.FinacText>
 
                         <Button
                             android:id="@+id/btn_item_search"
@@ -76,7 +76,7 @@
                         android:padding="5dp"
                         android:weightSum="4">
 
-                        <com.bit.sfa.DefView.FinacFont
+                        <com.bit.sfa.utils.FinacFont
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -85,7 +85,7 @@
                             android:textSize="18dp"
                             android:textStyle="italic" />
 
-                        <com.bit.sfa.DefView.FinacText
+                        <com.bit.sfa.utils.FinacText
                             android:id="@+id/et_unit"
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
@@ -96,9 +96,9 @@
                             android:paddingRight="5dp"
                             android:text="0"
                             android:textColor="@android:color/black"
-                            android:textSize="18dp"></com.bit.sfa.DefView.FinacText>
+                            android:textSize="18dp"></com.bit.sfa.utils.FinacText>
 
-                        <com.bit.sfa.DefView.FinacFont
+                        <com.bit.sfa.utils.FinacFont
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
@@ -108,7 +108,7 @@
                             android:textSize="18dp"
                             android:textStyle="italic" />
 
-                        <com.bit.sfa.DefView.FinacText
+                        <com.bit.sfa.utils.FinacText
                             android:id="@+id/et_price"
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
@@ -120,7 +120,7 @@
                             android:paddingRight="2dp"
                             android:text="0.00"
                             android:textColor="@android:color/black"
-                            android:textSize="18dp"></com.bit.sfa.DefView.FinacText>
+                            android:textSize="18dp"></com.bit.sfa.utils.FinacText>
 
                         <TextView
                             android:layout_width="0dp"
@@ -135,7 +135,7 @@
                         android:padding="5dp"
                         android:weightSum="4">
 
-                        <com.bit.sfa.DefView.FinacFont
+                        <com.bit.sfa.utils.FinacFont
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -144,7 +144,7 @@
                             android:textSize="18dp"
                             android:textStyle="italic" />
 
-                        <com.bit.sfa.DefView.FinacText
+                        <com.bit.sfa.utils.FinacText
                             android:id="@+id/et_cases"
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
@@ -158,9 +158,9 @@
                             android:textColor="@android:color/black"
                             android:textSize="18dp">
 
-                        </com.bit.sfa.DefView.FinacText>
+                        </com.bit.sfa.utils.FinacText>
 
-                        <com.bit.sfa.DefView.FinacFont
+                        <com.bit.sfa.utils.FinacFont
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -187,7 +187,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp">
 
-                    <com.bit.sfa.DefView.FinacText
+                    <com.bit.sfa.utils.FinacText
                         android:id="@+id/tv_freedetails"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -298,7 +298,7 @@
                     android:layout_marginTop="10dp"
                     android:weightSum="2">
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -309,7 +309,7 @@
                         android:textSize="18dp"
                         android:textStyle="bold" />
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:id="@+id/tv_value"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
@@ -322,7 +322,7 @@
                         android:textColor="@android:color/black"
                         android:textSize="18dp">
 
-                    </com.bit.sfa.DefView.FinacFont>
+                    </com.bit.sfa.utils.FinacFont>
                 </TableRow>
 
                 <TableRow
@@ -331,7 +331,7 @@
                     android:layout_marginTop="10dp"
                     android:gravity="right">
 
-                    <com.bit.sfa.DefView.FinacBtn
+                    <com.bit.sfa.utils.FinacBtn
                         android:id="@+id/btn_add"
                         android:layout_width="120dp"
                         android:layout_height="40dp"
@@ -341,7 +341,7 @@
                         android:textColor="@android:color/black"
                         android:textStyle="bold" />
 
-                    <com.bit.sfa.DefView.FinacBtn
+                    <com.bit.sfa.utils.FinacBtn
                         android:id="@+id/btn_free"
                         android:layout_width="120dp"
                         android:layout_height="40dp"
@@ -362,7 +362,7 @@
         android:background="#e3e3e3"
         android:orientation="horizontal">
 
-        <com.bit.sfa.DefView.FinacFont
+        <com.bit.sfa.utils.FinacFont
             android:id="@+id/add"
             android:layout_width="160dp"
             android:layout_height="30dp"
@@ -376,7 +376,7 @@
             android:textColor="@android:color/white"
             android:textStyle="bold" />
 
-        <com.bit.sfa.DefView.FinacFont
+        <com.bit.sfa.utils.FinacFont
             android:id="@+id/indexhistory3"
             android:layout_width="75dp"
             android:layout_height="30dp"
@@ -390,7 +390,7 @@
             android:textColor="@android:color/white"
             android:textStyle="bold" />
 
-        <com.bit.sfa.DefView.FinacFont
+        <com.bit.sfa.utils.FinacFont
             android:id="@+id/indexhistory4"
             android:layout_width="65dp"
             android:layout_height="30dp"
@@ -404,7 +404,7 @@
             android:textColor="@android:color/white"
             android:textStyle="bold" />
 
-        <com.bit.sfa.DefView.FinacFont
+        <com.bit.sfa.utils.FinacFont
             android:id="@+id/indexmanual3"
             android:layout_width="55dp"
             android:layout_height="30dp"

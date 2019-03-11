@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:padding="10dp" >
 
-    <com.bit.sfa.DefView.FinacText
+    <com.bit.sfa.utils.FinacText
         android:id="@+id/et_server_url"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
         android:layout_below="@+id/et_server_url"
         android:background="@color/colorAccent"></View>
 
-    <com.bit.sfa.DefView.FinacFont
+    <com.bit.sfa.utils.FinacFont
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
         android:layout_height="50dp"
         android:layout_below="@+id/textView2" />
 
-    <com.bit.sfa.DefView.FinacFont
+    <com.bit.sfa.utils.FinacFont
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
         android:textStyle="italic" />
 
 
-    <com.bit.sfa.DefView.FinacFont
+    <com.bit.sfa.utils.FinacFont
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

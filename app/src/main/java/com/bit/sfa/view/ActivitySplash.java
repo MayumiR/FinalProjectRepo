@@ -1,4 +1,4 @@
-package com.bit.sfa.DefView;
+package com.bit.sfa.view;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -40,7 +40,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class Splash extends AppCompatActivity implements DownloadTaskListener {
+public class ActivitySplash extends AppCompatActivity{
 
     private ImageView logo;
     private static int SPLASH_TIME_OUT = 2000;
@@ -49,7 +49,7 @@ public class Splash extends AppCompatActivity implements DownloadTaskListener {
     SharedPreferences localSP;
     private String spURL;
     private static ProgressDialog progressDialog;
-    private String TAG = "DSS";
+    private String TAG = "ActivitySplash";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +57,9 @@ public class Splash extends AppCompatActivity implements DownloadTaskListener {
         setContentView(R.layout.activity_splash);
 
         db=new DatabaseHelper(getApplicationContext());
-        SQLiteDatabase KFD_MEDI_;
-        KFD_MEDI_ = db.getWritableDatabase();
-        db.onUpgrade(KFD_MEDI_, 1, 2);
+        SQLiteDatabase SFA;
+        SFA = db.getWritableDatabase();
+        db.onUpgrade(SFA, 1, 2);
 
         logo = (ImageView)findViewById(R.id.logo);
 
@@ -67,10 +67,11 @@ public class Splash extends AppCompatActivity implements DownloadTaskListener {
                 AnimationUtils.loadAnimation(getApplicationContext(), R.anim.logo_up);
         logo.startAnimation(animation1);
 
-
+        boolean connectionStatus = new ConnectionDetector(ActivitySplash.this).isConnectingToInternet();
         localSP = getSharedPreferences(SharedPreferencesClass.SETTINGS,0);
-
-        if(!localSP.getString("URL", "").equals("")){
+//user data aragenanm  no need to check,
+        // login wela nam kelinma customer list ekata
+        if(connectionStatus){
 
             new Handler().postDelayed(new Runnable() {
 
@@ -84,7 +85,7 @@ public class Splash extends AppCompatActivity implements DownloadTaskListener {
                     System.out.println("DSS"+ds.getCurrentRepCode());
                     if(!ds.getCurrentRepCode().equals("") && localSP.getString("Sync_Status", "").toString().equals("Success")){
 
-                        Intent intent = new Intent(context, Home.class);
+                        Intent intent = new Intent(context, ActivityHome.class);
                         startActivity(intent);
                         finish();
 
@@ -92,7 +93,7 @@ public class Splash extends AppCompatActivity implements DownloadTaskListener {
 
                     }else{
 
-                        Intent mainActivity = new Intent(Splash.this, SettingsActivity.class);
+                        Intent mainActivity = new Intent(ActivitySplash.this, SettingsActivity.class);
                         startActivity(mainActivity);
                         finish();
                         overridePendingTransition(R.anim.in, R.anim.exit);
@@ -104,86 +105,17 @@ public class Splash extends AppCompatActivity implements DownloadTaskListener {
             }, SPLASH_TIME_OUT);
 
         }else{
-            alertDialogbox(context);
+           Toast.makeText(this,"No internet connection..",Toast.LENGTH_LONG).show();
         }
 
 }
-    private void alertDialogbox(final Context context){
-        // get prompts.xml view
-        LayoutInflater layoutInflater = LayoutInflater.from(context);
 
-        View promptView = layoutInflater.inflate(R.layout.ip_connection, null);
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-        alertDialogBuilder.setTitle("Please enter server URL");
-        // set prompts.xml to be the layout file of the alertdialog builder
-        alertDialogBuilder.setView(promptView);
-
-        final EditText input = (EditText) promptView.findViewById(R.id.et_ip);
-
-        // setup a dialog window
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        //new PrefetchData().execute();
-                        boolean connectionStatus = new ConnectionDetector(Splash.this).isConnectingToInternet();
-                        spURL=input.getText().toString().trim();
-                        String URL ="http://"+input.getText().toString().trim();
-
-                        if (Patterns.WEB_URL.matcher(URL).matches()){
-
-                            if(connectionStatus == true){
-                                String downLoadURL="/KFDWebServices/KFDWebServicesRest.svc/GetdatabaseNames/mobile123";
-                                new Downloader(Splash.this, Splash.this, TaskType.DATABASENAME,URL,downLoadURL).execute();
-
-                            }else{
-
-                                Toast.makeText(Splash.this, "No Internet Connection", Toast.LENGTH_LONG).show();
-                                reCallActivity();
-                            }
-                        }else{
-
-                            Toast.makeText(Splash.this, "Invalid URL Entered. Please Enter Valid URL.", Toast.LENGTH_LONG).show();
-                            reCallActivity();
-                        }
-
-                    }
-                })
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,	int id) {
-                                dialog.cancel();
-
-                                Splash.this.finish();
-                            }
-                        });
-
-        // create an alert dialog
-        AlertDialog alertD = alertDialogBuilder.create();
-
-        alertD.show();
-
-    }
 
     public void reCallActivity(){
-        Intent mainActivity = new Intent(Splash.this, Splash.class);
+        Intent mainActivity = new Intent(ActivitySplash.this, ActivitySplash.class);
         startActivity(mainActivity);
     }
-    @Override
-    public void onTaskCompleted(TaskType taskType, String result) {
-        switch (taskType) {
-            case DATABASENAME:
 
-                new PrefetchData().execute(result);
-
-                break;
-
-            default:
-                break;
-        }
-    }
     private class PrefetchData extends AsyncTask<String, Integer, Boolean> {
 
         int totalRecords=0;
@@ -191,8 +123,8 @@ public class Splash extends AppCompatActivity implements DownloadTaskListener {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = new ProgressDialog(Splash.this);
-            progressDialog.setTitle("Prefetching data...");
+            progressDialog = new ProgressDialog(ActivitySplash.this);
+            progressDialog.setTitle("Validating...");
             progressDialog.show();
         }
 
@@ -203,7 +135,7 @@ public class Splash extends AppCompatActivity implements DownloadTaskListener {
                 int recordCount = 0;
                 String jsonLine= arg0[0];
 
-                ServerDatabaseDS ds =new ServerDatabaseDS(Splash.this);
+                ServerDatabaseDS ds =new ServerDatabaseDS(ActivitySplash.this);
                 ArrayList<ServerDatabase> list =new ArrayList<ServerDatabase>();
                 JSONObject jsonResponse = new JSONObject(jsonLine);
                 JSONArray jsonArray = jsonResponse.getJSONArray("GetdatabaseNamesResult");
@@ -233,7 +165,6 @@ public class Splash extends AppCompatActivity implements DownloadTaskListener {
 
 
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             return false;
@@ -254,15 +185,15 @@ public class Splash extends AppCompatActivity implements DownloadTaskListener {
 
                 Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
 
-                SharedPreferencesClass.setLocalSharedPreference(Splash.this, "URL", spURL);
+               //set user details to shared prefferences
 
-                Intent mainActivity = new Intent(Splash.this, SettingsActivity.class);
+                Intent mainActivity = new Intent(ActivitySplash.this, SettingsActivity.class);
                 startActivity(mainActivity);
                 finish();
 
             }else{
 
-                Toast.makeText(getApplicationContext(), "Fail", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Invalid Mac Id", Toast.LENGTH_SHORT).show();
                 reCallActivity();
 
             }

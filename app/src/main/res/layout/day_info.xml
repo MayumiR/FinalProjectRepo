@@ -16,7 +16,7 @@
             android:padding="5dp"
             android:weightSum="1">
 
-            <com.bit.sfa.DefView.FinacFont
+            <com.bit.sfa.utils.FinacFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="100dp"
@@ -24,7 +24,7 @@
                 android:text="Date"
                 android:textSize="18sp" />
 
-            <com.bit.sfa.DefView.FinacText
+            <com.bit.sfa.utils.FinacText
                 android:id="@+id/editTextDate"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
@@ -41,7 +41,7 @@
             android:padding="5dp"
             android:weightSum="1">
 
-            <com.bit.sfa.DefView.FinacFont
+            <com.bit.sfa.utils.FinacFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="60dp"
@@ -49,7 +49,7 @@
                 android:text="Start Time"
                 android:textSize="18sp" />
 
-            <com.bit.sfa.DefView.FinacText
+            <com.bit.sfa.utils.FinacText
                 android:id="@+id/editTextStime"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
@@ -66,7 +66,7 @@
             android:padding="5dp"
             android:weightSum="1">
 
-            <com.bit.sfa.DefView.FinacFont
+            <com.bit.sfa.utils.FinacFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="82dp"
@@ -74,7 +74,7 @@
                 android:text="Vehicle"
                 android:textSize="18sp" />
 
-            <com.bit.sfa.DefView.FinacText
+            <com.bit.sfa.utils.FinacText
                 android:id="@+id/editTextVehicle"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
@@ -90,7 +90,7 @@
             android:padding="5dp"
             android:weightSum="1">
 
-            <com.bit.sfa.DefView.FinacFont
+            <com.bit.sfa.utils.FinacFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="90dp"
@@ -98,7 +98,7 @@
                 android:text="Driver"
                 android:textSize="18sp" />
 
-            <com.bit.sfa.DefView.FinacText
+            <com.bit.sfa.utils.FinacText
                 android:id="@+id/editTextDriver"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
@@ -114,7 +114,7 @@
             android:padding="5dp"
             android:weightSum="1">
 
-            <com.bit.sfa.DefView.FinacFont
+            <com.bit.sfa.utils.FinacFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="68dp"
@@ -122,7 +122,7 @@
                 android:text="Assistant"
                 android:textSize="18sp" />
 
-            <com.bit.sfa.DefView.FinacText
+            <com.bit.sfa.utils.FinacText
                 android:id="@+id/editTextAsst"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
@@ -138,7 +138,7 @@
             android:padding="5dp"
             android:weightSum="1">
 
-            <com.bit.sfa.DefView.FinacFont
+            <com.bit.sfa.utils.FinacFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="70dp"
@@ -146,7 +146,7 @@
                 android:text="Start Km"
                 android:textSize="18sp" />
 
-            <com.bit.sfa.DefView.FinacText
+            <com.bit.sfa.utils.FinacText
                 android:id="@+id/editTextSkm"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
@@ -162,7 +162,7 @@
             android:padding="5dp"
             android:weightSum="1">
 
-            <com.bit.sfa.DefView.FinacFont
+            <com.bit.sfa.utils.FinacFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="90dp"
@@ -170,7 +170,7 @@
                 android:text="Route"
                 android:textSize="18sp" />
 
-            <com.bit.sfa.DefView.FinacText
+            <com.bit.sfa.utils.FinacText
                 android:id="@+id/editTextRoute"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
@@ -207,7 +207,7 @@
             android:padding="5dp"
             android:weightSum="1">
 
-            <com.bit.sfa.DefView.FinacFont
+            <com.bit.sfa.utils.FinacFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="68dp"
@@ -215,7 +215,7 @@
                 android:text="End Time"
                 android:textSize="18sp" />
 
-            <com.bit.sfa.DefView.FinacText
+            <com.bit.sfa.utils.FinacText
                 android:id="@+id/editTextEtime"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
@@ -231,7 +231,7 @@
             android:padding="5dp"
             android:weightSum="1">
 
-            <com.bit.sfa.DefView.FinacFont
+            <com.bit.sfa.utils.FinacFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="79dp"
@@ -239,7 +239,7 @@
                 android:text="End Km"
                 android:textSize="18sp" />
 
-            <com.bit.sfa.DefView.FinacText
+            <com.bit.sfa.utils.FinacText
                 android:id="@+id/editTextEkm"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
@@ -255,7 +255,7 @@
             android:padding="5dp"
             android:weightSum="1">
 
-            <com.bit.sfa.DefView.FinacFont
+            <com.bit.sfa.utils.FinacFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="72dp"
@@ -263,7 +263,7 @@
                 android:text="Distance"
                 android:textSize="18sp" />
 
-            <com.bit.sfa.DefView.FinacText
+            <com.bit.sfa.utils.FinacText
                 android:id="@+id/editTextDistance"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"

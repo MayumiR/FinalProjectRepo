@@ -19,7 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.bit.sfa.DefView.Home;
+import com.bit.sfa.view.ActivityHome;
 import com.bit.sfa.R;
 
 
@@ -137,7 +137,7 @@ public class PromoSaleManagement extends Fragment {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 Log.i("", "keyCode: " + keyCode);
-                Home.navigation.setVisibility(View.VISIBLE);
+                ActivityHome.navigation.setVisibility(View.VISIBLE);
 
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
 

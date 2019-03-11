@@ -19,7 +19,7 @@ import com.bit.sfa.DataControl.FmDebtorDS;
 import com.bit.sfa.DataControl.IResponseListener;
 import com.bit.sfa.DataControl.RouteDS;
 import com.bit.sfa.DataControl.SalRepDS;
-import com.bit.sfa.DefView.Home;
+import com.bit.sfa.view.ActivityHome;
 import com.bit.sfa.Models.FmDebtor;
 import com.bit.sfa.R;
 import com.bit.sfa.Settings.SharedPref;
@@ -124,12 +124,12 @@ public class FragPromoSaleCustomer extends Fragment {
                 if (x > 0){
                     //customerList = debtorDS.getRouteCustomers(current_route);
                     FmDebtor debtor = customerList.get(i);
-                    Home home = new Home();
+                    ActivityHome home = new ActivityHome();
                     String selectedDebtor = debtor.getDebNameM();
-                    System.out.println("selectedDebtor" + Home.SAcustomer);
+                    System.out.println("selectedDebtor" + ActivityHome.SAcustomer);
                     home.mselectedDebtor = debtor;
-                    Home.SAcustomer = selectedDebtor;
-                    Home.SAroute = debtor.getRouteCode();
+                    ActivityHome.SAcustomer = selectedDebtor;
+                    ActivityHome.SAroute = debtor.getRouteCode();
                     PromoSaleManagement.iscustomer = true;
                     new SharedPref(getActivity()).setGlobalVal("preKeyRoute" ,debtor.getRouteCode());
                     new SharedPref(getActivity()).setGlobalVal("PrekeyCusCode", debtor.getDebCodeM());
@@ -146,10 +146,10 @@ public class FragPromoSaleCustomer extends Fragment {
     /*-*-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
     public void navigateToHeader(int position) {
-        Home home = new Home();
+        ActivityHome home = new ActivityHome();
         FmDebtor debtor = customerList.get(position);
         String selectedDebtor = debtor.getDebNameM();
-        System.out.println("selectedDebtor" + Home.SAcustomer);
+        System.out.println("selectedDebtor" + ActivityHome.SAcustomer);
         home.mselectedDebtor = debtor;
         mSharedPref.setGlobalVal("PrekeyCustomer", "Y");
         new SharedPref(getActivity()).setGlobalVal("PrekeyCusCode", debtor.getDebCodeM());

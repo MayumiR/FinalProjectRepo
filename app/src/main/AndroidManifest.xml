@@ -32,7 +32,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
         <activity
-            android:name=".DefView.Splash"
+            android:name=".view.ActivitySplash"
             android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -42,7 +42,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DefView.Home"
+            android:name=".view.ActivityHome"
             android:label="@string/title_activity_home"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeWithTitle" />
@@ -52,7 +52,7 @@
         <activity
             android:name=".Settings.ImportActivity"
             android:theme="@style/AppThemeWithTitle" />
-        <activity android:name=".DefView.Login"></activity>
+        <activity android:name=".view.ActivityLogin"></activity>
     </application>
 
 </manifest>

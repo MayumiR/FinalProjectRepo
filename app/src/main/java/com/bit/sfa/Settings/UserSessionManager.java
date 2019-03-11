@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import com.bit.sfa.DefView.Login;
+import com.bit.sfa.view.ActivityLogin;
 
 /**
  * Created by Sathiyaraja on 7/6/2018.
@@ -44,7 +44,7 @@ public class UserSessionManager {
     public void Logout() {
         editor.clear();
         editor.commit();
-        Intent intent = new Intent(context, Login.class);
+        Intent intent = new Intent(context, ActivityLogin.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);

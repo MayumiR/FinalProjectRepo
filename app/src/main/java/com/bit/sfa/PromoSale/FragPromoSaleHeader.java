@@ -26,7 +26,7 @@ import com.bit.sfa.DataControl.FmSalRepDS;
 import com.bit.sfa.DataControl.LocationsDS;
 import com.bit.sfa.DataControl.OrdHedDS;
 import com.bit.sfa.DataControl.RouteDS;
-import com.bit.sfa.DefView.Home;
+import com.bit.sfa.view.ActivityHome;
 import com.bit.sfa.Models.OrdHed;
 import com.bit.sfa.R;
 import com.bit.sfa.Settings.ReferenceNum;
@@ -73,7 +73,7 @@ public class FragPromoSaleHeader extends Fragment {
         Date d = Calendar.getInstance().getTime();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-M-yyyy"); //change this
         String formattedDate = simpleDateFormat.format(d);
-        Home home = new Home();
+        ActivityHome home = new ActivityHome();
         ReferenceNum referenceNum = new ReferenceNum(getActivity());
      //   localSP = new SharedPreferencesClass();
 
@@ -161,7 +161,7 @@ public class FragPromoSaleHeader extends Fragment {
 
             //mSharedPref.setGlobalVal("PrekeyCostPos", String.valueOf(spnCostCenter.getSelectedItemPosition()));
 
-            Home activity = (Home) getActivity();
+            ActivityHome activity = (ActivityHome) getActivity();
             RouteDS routeDS = new  RouteDS(getActivity());
             FmSalRepDS repDS=new FmSalRepDS(activity);
             LocationsDS locDS = new LocationsDS(activity);
@@ -217,7 +217,7 @@ public class FragPromoSaleHeader extends Fragment {
     public void mRefreshHeader() {
 
         if (new SharedPref(getActivity()).getGlobalVal("PrekeyCustomer").equals("Y")) {
-            Home home = new Home();
+            ActivityHome home = new ActivityHome();
 //            issueList = new FmisshedDS(getActivity()).getIssuesByDebCode(new SharedPref(getActivity()).getGlobalVal("PrekeyCusCode"));
 //
 //            List<String> issues = new ArrayList<String>();

@@ -31,21 +31,21 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp">
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text="Ref No"
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text=":-"
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacText
+                    <com.bit.sfa.utils.FinacText
                         android:id="@+id/editTextCustomer_Code"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp">
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:id="@+id/txt_1"
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
@@ -68,14 +68,14 @@
                         android:text="Customer Name "
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text=":-"
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacText
+                    <com.bit.sfa.utils.FinacText
                         android:id="@+id/editText2"
                         android:layout_width="200dp"
                         android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
                         android:padding="5dp"
                         android:textColorHint="@color/menucolor">
 
-                    </com.bit.sfa.DefView.FinacText>
+                    </com.bit.sfa.utils.FinacText>
 
 
                     <ImageButton
@@ -108,21 +108,21 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp">
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text="Customer NIC "
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text=":-"
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacText
+                    <com.bit.sfa.utils.FinacText
                         android:id="@+id/editTextCNic"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -139,7 +139,7 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp">
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:id="@+id/txt_4"
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
@@ -148,14 +148,14 @@
                         android:text="RegNo "
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text=":-"
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacText
+                    <com.bit.sfa.utils.FinacText
                         android:id="@+id/editText3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -173,7 +173,7 @@
                     android:padding="5dp"
                     android:visibility="gone">
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:id="@+id/txt_7"
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
@@ -181,14 +181,14 @@
                         android:text="District "
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text=":-"
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacText
+                    <com.bit.sfa.utils.FinacText
                         android:id="@+id/spinner5"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -215,7 +215,7 @@
                     android:padding="5dp"
                     android:visibility="gone">
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:id="@+id/txt_5"
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
@@ -223,14 +223,14 @@
                         android:text="Town "
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text=":-"
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacText
+                    <com.bit.sfa.utils.FinacText
                         android:id="@+id/spinner3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -256,7 +256,7 @@
                     android:padding="5dp"
                     android:visibility="gone">
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:id="@+id/txt_6"
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
@@ -264,14 +264,14 @@
                         android:text="Route "
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text=":-"
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacText
+                    <com.bit.sfa.utils.FinacText
                         android:id="@+id/spinner4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -297,7 +297,7 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp">
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:id="@+id/txt_12"
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
@@ -305,14 +305,14 @@
                         android:text="Address Line 1 "
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text=":-"
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacText
+                    <com.bit.sfa.utils.FinacText
                         android:id="@+id/editText7"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -327,7 +327,7 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp">
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:id="@+id/txt_13"
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
@@ -335,14 +335,14 @@
                         android:text="Address Line 2 "
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text=":-"
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacText
+                    <com.bit.sfa.utils.FinacText
                         android:id="@+id/editText8"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -358,7 +358,7 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp">
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:id="@+id/txt_14"
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
@@ -366,7 +366,7 @@
                         android:text="City "
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
@@ -375,7 +375,7 @@
 
                     //
 
-                    <com.bit.sfa.DefView.FinacText
+                    <com.bit.sfa.utils.FinacText
                         android:id="@+id/editText9"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -390,7 +390,7 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp">
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:id="@+id/txt_15"
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
@@ -398,14 +398,14 @@
                         android:text="Mobile "
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text=":-"
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacText
+                    <com.bit.sfa.utils.FinacText
                         android:id="@+id/editText10"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -425,7 +425,7 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp">
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:id="@+id/txt_16"
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
@@ -433,14 +433,14 @@
                         android:text="Phone "
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text=":-"
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacText
+                    <com.bit.sfa.utils.FinacText
                         android:id="@+id/editText11"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -460,7 +460,7 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp">
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:id="@+id/txt_17"
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
@@ -468,14 +468,14 @@
                         android:text="Fax "
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text=":-"
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacText
+                    <com.bit.sfa.utils.FinacText
                         android:id="@+id/editText12"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -494,7 +494,7 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp">
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:id="@+id/txt_18"
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
@@ -502,14 +502,14 @@
                         android:text="Email "
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacFont
+                    <com.bit.sfa.utils.FinacFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text=":-"
                         android:textSize="@dimen/font_for_all" />
 
-                    <com.bit.sfa.DefView.FinacText
+                    <com.bit.sfa.utils.FinacText
                         android:id="@+id/editText20"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -529,7 +529,7 @@
                     android:layout_height="2dp"
                     android:background="#dcdcdc"></View>
 
-                <com.bit.sfa.DefView.FinacFont
+                <com.bit.sfa.utils.FinacFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left"

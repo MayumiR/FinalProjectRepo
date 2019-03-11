@@ -1,4 +1,4 @@
-package com.bit.sfa.DefView;
+package com.bit.sfa.view;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -68,7 +68,6 @@ import com.bit.sfa.Settings.ContentItem;
 import com.bit.sfa.Settings.GetMacAddress;
 import com.bit.sfa.Settings.ImportActivity;
 import com.bit.sfa.Settings.ListViewDataAdapter;
-import com.bit.sfa.Settings.SettingsActivity;
 import com.bit.sfa.Settings.SharedPref;
 import com.bit.sfa.Settings.SharedPreferencesClass;
 import com.bit.sfa.Settings.TaskType;
@@ -81,7 +80,7 @@ import java.util.List;
 
 import static com.bit.sfa.Settings.TaskType.UPLOAD_NEW_CUSTOMER;
 
-public class Home extends AppCompatActivity implements AsyncTaskListener, DownloadTaskListener , IResponseListener, UploadTaskListener{
+public class ActivityHome extends AppCompatActivity implements AsyncTaskListener, DownloadTaskListener , IResponseListener, UploadTaskListener{
 
     private TextView mTextMessage;
     public static SharedPreferences localSP;
@@ -161,7 +160,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
 
     public void Logout() {
 
-        final Dialog Ldialog = new Dialog(Home.this);
+        final Dialog Ldialog = new Dialog(ActivityHome.this);
         Ldialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         Ldialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         Ldialog.setContentView(R.layout.logout);
@@ -182,7 +181,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
     }
 
     public void managementTools() {
-        final Dialog dialog = new Dialog(Home.this);
+        final Dialog dialog = new Dialog(ActivityHome.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.setContentView(R.layout.management_tools);
@@ -226,7 +225,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
                     NewCustomerDS customerDS = new NewCustomerDS(context);
                     ArrayList<NewCustomer> newCustomers = customerDS.getUnsyncRecord();
 
-                    new UploadNewCustomer(context, Home.this, UPLOAD_NEW_CUSTOMER, newCustomers).execute();
+                    new UploadNewCustomer(context, ActivityHome.this, UPLOAD_NEW_CUSTOMER, newCustomers).execute();
 
                 } else
                     Toast.makeText(context, "No Internet Connection", Toast.LENGTH_LONG).show();
@@ -278,7 +277,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
                             // "").toString()+"/f07959533ca3";
                             Log.v("## Testing URL ##", FSALREP_URL);
 
-                            new Downloader(Home.this, Home.this, TaskType.FMSALREP, URL,
+                            new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FMSALREP, URL,
                                     FSALREP_URL).execute();
                         } catch (Exception e) {
                             Log.e("## ErrorIn2ndSync ##", e.toString());
@@ -320,7 +319,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
 
     public void salesMenu() {
 
-        final Dialog dialog = new Dialog(Home.this);
+        final Dialog dialog = new Dialog(ActivityHome.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.setContentView(R.layout.sales_menu);
@@ -386,7 +385,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
     @SuppressLint("ResourceType")
     public void settingsMenu() {
 
-        final Dialog dialog = new Dialog(Home.this);
+        final Dialog dialog = new Dialog(ActivityHome.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.setCancelable(false);
@@ -426,7 +425,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
             public void onItemClick(AdapterView<?> parent, View view2, int position, long id) {
 
                 String title = objects.get(position).getName().toString();
-                Context context = Home.this;
+                Context context = ActivityHome.this;
 
                 switch (position) {
                     case 0: // Sync Configuration
@@ -454,7 +453,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
 //                                                Intent myIntent = new Intent(context, ImportActivity.class);
 //                                                startActivity(myIntent);
 
-                                                syncDialogbox(Home.this, "Sync Configuration");
+                                                syncDialogbox(ActivityHome.this, "Sync Configuration");
 
                                             } else {
                                                 Toast.makeText(getApplicationContext(), "Invalid Password.", Toast.LENGTH_LONG).show();
@@ -757,7 +756,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
                                         + localSP.getString("MAC_Address", "").toString().replace(":", "");
 
 
-                                new Downloader(Home.this, Home.this, TaskType.FMSALREP, URL, FSALREP_URL).execute();
+                                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FMSALREP, URL, FSALREP_URL).execute();
 
                             } catch (Exception e) {
 
@@ -820,18 +819,18 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
 
         if (position == 0) {
          //   newFragment = new FragHome();
-            UtilityContainer.mLoadFragment(new FragHome(), Home.this);
+            UtilityContainer.mLoadFragment(new FragmentHome(), ActivityHome.this);
         } else if (position == 1) {
-            UtilityContainer.mLoadFragment(new FragSalesOrders(), Home.this);
+            UtilityContainer.mLoadFragment(new FragSalesOrders(), ActivityHome.this);
         } else if (position == 2) {
-            UtilityContainer.mLoadFragment( new CustomerRegMain(), Home.this);
+            UtilityContainer.mLoadFragment( new CustomerRegMain(), ActivityHome.this);
          //   newFragment = new CustomerRegMain();
 
         } else if (position == 4) {
            // newFragment = new FragDayInfo();
-            UtilityContainer.mLoadFragment(new FragDayInfo(), Home.this);
+            UtilityContainer.mLoadFragment(new FragDayInfo(), ActivityHome.this);
         } else if (position == 5) {
-            UtilityContainer.mLoadFragment(new FragExpenses(), Home.this);
+            UtilityContainer.mLoadFragment(new FragExpenses(), ActivityHome.this);
 
         }
 
@@ -863,7 +862,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
 
                 String FFREESLAB_URL = connURLsvc + "/FItenrDet/mobile123/" + localSP.getString("Console_DB", "").toString()+ "/" + ds.getCurrentRepCode() + "/" + cyear
                         + "/" + df_month.format((double) cmonth);
-                new Downloader(Home.this, Home.this, TaskType.FITENRDET, URL, FFREESLAB_URL)
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FITENRDET, URL, FFREESLAB_URL)
                         .execute();
 
                 break;
@@ -878,7 +877,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
                             + localSP.getString("Console_DB", "").toString() + "/" + ds.getCurrentRepCode() + "/" + cyear
                             + "/" + df_month.format((double) cmonth);
                     Log.v("FITENRHED_URL", FITENRHED_URL);
-                    new Downloader(Home.this, Home.this, TaskType.FITENRHED, URL, FITENRHED_URL)
+                    new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FITENRHED, URL, FITENRHED_URL)
                             .execute();
 
                 }
@@ -895,7 +894,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
                     String FITEDEBDET_URL = connURLsvc + "/fIteDebDet/mobile123/"
                             + localSP.getString("Dist_DB", "").toString() + "/" + ds.getCurrentRepCode() + "/" + cyear + "/"
                             + df_month.format((double) cmonth);
-                    new Downloader(Home.this, Home.this, TaskType.FITEDEBDET, URL, FITEDEBDET_URL)
+                    new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FITEDEBDET, URL, FITEDEBDET_URL)
                             .execute();
 
                 } else if (controlDS.getSysType() == 1) {
@@ -903,7 +902,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
                     String FITEDEBDET_URL = connURLsvc + "/fIteDebDet/mobile123/"
                             + localSP.getString("Console_DB", "").toString() + "/" + ds.getCurrentRepCode() + "/" + cyear
                             + "/" + df_month.format((double) cmonth);
-                    new Downloader(Home.this, Home.this, TaskType.FITEDEBDET, URL, FITEDEBDET_URL)
+                    new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FITEDEBDET, URL, FITEDEBDET_URL)
                             .execute();
 
                 }
@@ -915,7 +914,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
 
                 String FITEMPRI_URL = connURLsvc + "/fItemPri/mobile123/" + localSP.getString("Console_DB", "").toString()
                         + "/" + new SalRepDS(getApplicationContext()).getCurrentRepCode();
-                new Downloader(Home.this, Home.this, TaskType.FITEMPRI, URL, FITEMPRI_URL)
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FITEMPRI, URL, FITEMPRI_URL)
                         .execute();
 
                 break;
@@ -925,14 +924,14 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
 
                 String FITEM_URL = connURLsvc + "/fItems/mobile123/" + localSP.getString("Console_DB", "").toString() + "/"
                         + new SalRepDS(getApplicationContext()).getCurrentRepCode();
-                new Downloader(Home.this, Home.this, TaskType.FITEMS, URL, FITEM_URL).execute();
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FITEMS, URL, FITEM_URL).execute();
 
                 break;
 
             case FITEMS: {
                 String FCOMPANYSETTING_URL = connURLsvc + "/fCompanySettingM/mobile123/"
                         + localSP.getString("Console_DB", "").toString();
-                new Downloader(Home.this, Home.this, TaskType.FCOMPANYSETTING, URL,
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FCOMPANYSETTING, URL,
                         FCOMPANYSETTING_URL).execute();
 
             }
@@ -941,7 +940,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
                 Log.v("FCOMPANYSETTING", result.toString());
                 SalRepDS ds2 = new SalRepDS(getApplicationContext());
                 String FrepDalo_URL = connURLsvc + "/FrepDalo/mobile123/" + localSP.getString("Console_DB", "").toString() + "/" + ds2.getCurrentRepCode();
-                new Downloader(Home.this, Home.this, TaskType.FREPDALO, URL, FrepDalo_URL)
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FREPDALO, URL, FrepDalo_URL)
                         .execute();
                 break;
 
@@ -951,7 +950,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
 
                 SalRepDS sal = new SalRepDS(getApplicationContext());
                 String FSup_URL = connURLsvc + "/fSupplier/mobile123/" + localSP.getString("Console_DB", "").toString() + "/" + sal.getCurrentRepCode();
-                new Downloader(Home.this, Home.this, TaskType.FSUPPLIER, URL, FSup_URL)
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FSUPPLIER, URL, FSup_URL)
                         .execute();
                 break;
 
@@ -959,7 +958,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
                 Log.v("FSUPPLIER", result.toString());
 
                 String FAREA_URL = connURLsvc + "/fArea/mobile123/" + localSP.getString("Console_DB", "").toString();
-                new Downloader(Home.this, Home.this, TaskType.FAREA, URL, FAREA_URL).execute();
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FAREA, URL, FAREA_URL).execute();
 
                 break;
 
@@ -984,7 +983,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
 
                     String FCOMPANYBRANCH_URL = connURLsvc + "/FCompanyBranch/mobile123/"
                             + localSP.getString("Console_DB", "").toString() + "/" + ds.getCurrentRepCode();
-                    new Downloader(Home.this, Home.this, TaskType.FCOMPANYBRANCH, URL,
+                    new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FCOMPANYBRANCH, URL,
                             FCOMPANYBRANCH_URL).execute();
                 }
             }
@@ -993,7 +992,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
                 Log.v("FCOMPANYBRANCH", result.toString());
 
                 String FREASON_URL = connURLsvc + "/fReason/mobile123/" + localSP.getString("Console_DB", "").toString();
-                new Downloader(Home.this, Home.this, TaskType.FREASON, URL, FREASON_URL).execute();
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FREASON, URL, FREASON_URL).execute();
 
                 break;
 
@@ -1004,7 +1003,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
                 // String
                 // FROUTE_URL=connURLsvc+"/fRoute/mobile123/"+localSP.getString("Console_DB",
                 // "").toString();
-                new Downloader(Home.this, Home.this, TaskType.FROUTE, URL, FROUTE_URL).execute();
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FROUTE, URL, FROUTE_URL).execute();
             }
             break;
 
@@ -1021,7 +1020,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
                 if (controlDS.getSysType() == 1) {
 
                     String FBANK_URL = connURLsvc + "/fExpense/mobile123/" + localSP.getString("Console_DB", "").toString();
-                    new Downloader(Home.this, Home.this, TaskType.FEXPENSE, URL, FBANK_URL).execute();
+                    new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FEXPENSE, URL, FBANK_URL).execute();
 
                     Log.v("TAG", "option 1");
 
@@ -1056,7 +1055,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
                 Log.v("FEXPENSE", result.toString());
 
                 String FTOWN_URL = connURLsvc + "/fTown/mobile123/" + localSP.getString("Console_DB", "").toString();
-                new Downloader(Home.this, Home.this, TaskType.FTOWN, URL, FTOWN_URL).execute();
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FTOWN, URL, FTOWN_URL).execute();
 
                 break;
 
@@ -1065,28 +1064,28 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
 
                 String FROUTEDET_URL = connURLsvc + "/fmRouteDet/mobile123/" + localSP.getString("Console_DB", "").toString()
                         + "/" + ds.getCurrentRepCode();
-                new Downloader(Home.this, Home.this, TaskType.FROUTEDET, URL, FROUTEDET_URL)
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FROUTEDET, URL, FROUTEDET_URL)
                         .execute();
                 break;
             case FROUTEDET:
                 Log.v("FROUTEDET", result.toString());
 
                 String FTYPE_URL = connURLsvc + "/fType/mobile123/" + localSP.getString("Console_DB", "").toString();
-                new Downloader(Home.this, Home.this, TaskType.FTYPE, URL, FTYPE_URL).execute();
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FTYPE, URL, FTYPE_URL).execute();
 
                 break;
             case FTYPE:
                 Log.v("FTYPE", result.toString());
 
                 String FGROUP_URL = connURLsvc + "/fGroup/mobile123/" + localSP.getString("Console_DB", "").toString();
-                new Downloader(Home.this, Home.this, TaskType.FGROUP, URL, FGROUP_URL).execute();
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FGROUP, URL, FGROUP_URL).execute();
 
                 break;
             case FGROUP:
                 Log.v("FGROUP", result.toString());
 
                 String FBRAND_URL = connURLsvc + "/fbrand/mobile123/" + localSP.getString("Console_DB", "").toString();
-                new Downloader(Home.this, Home.this, TaskType.FBRAND, URL, FBRAND_URL).execute();
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FBRAND, URL, FBRAND_URL).execute();
 
                 break;
 
@@ -1095,7 +1094,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
 
                 String FINVDETL3_URL = connURLsvc + "/RepLastThreeInvDet/mobile123/"
                         + localSP.getString("Console_DB", "").toString() + "/" + ds.getCurrentRepCode();
-                new Downloader(Home.this, Home.this, TaskType.FINVDETL3, URL, FINVDETL3_URL)
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FINVDETL3, URL, FINVDETL3_URL)
                         .execute();
 
                 break;
@@ -1104,7 +1103,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
             {
 
                 String FCOST_URL = connURLsvc + "/fcost/mobile123/" + localSP.getString("Console_DB", "").toString() + "/" + ds.getCurrentRepCode();
-                new Downloader(Home.this, Home.this, TaskType.FCOST, URL, FCOST_URL).execute();
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FCOST, URL, FCOST_URL).execute();
             }
             break;
 
@@ -1114,7 +1113,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
 
 
                 String FREPLOC_URL = connURLsvc + "/fRepLoc/mobile123/" + localSP.getString("Console_DB", "").toString() + "/" + ds.getCurrentRepCode();
-                new Downloader(Home.this, Home.this, TaskType.FREPLOC, URL, FREPLOC_URL).execute();
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FREPLOC, URL, FREPLOC_URL).execute();
 
             }
 
@@ -1124,7 +1123,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
                 Log.v("FREPLOC", result.toString());
             {
                 String FMITEMS_URL = connURLsvc + "/Fmitems/mobile123/" + localSP.getString("Console_DB", "").toString();
-                new Downloader(Home.this, Home.this, TaskType.FMITEMS, URL, FMITEMS_URL).execute();
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FMITEMS, URL, FMITEMS_URL).execute();
 
 
             }
@@ -1133,14 +1132,14 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
                 Log.v("FMITEMS-", result.toString());
 
                 String FMITEMS_DET_URL = connURLsvc + "/FmitemsDet/mobile123/" + localSP.getString("Console_DB", "").toString();
-                new Downloader(Home.this, Home.this, TaskType.FMITEMS_DET, URL, FMITEMS_DET_URL).execute();
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FMITEMS_DET, URL, FMITEMS_DET_URL).execute();
                 break;
 
             case FMITEMS_DET:
                 Log.v("FMITEMS_DET", result.toString());
 
                 String FCOUNTRYMGR_URL = connURLsvc + "/FCountrymgr/mobile123/" + localSP.getString("Console_DB", "").toString();
-                new Downloader(Home.this, Home.this, TaskType.FCOUNTRYMGR, URL, FCOUNTRYMGR_URL)
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FCOUNTRYMGR, URL, FCOUNTRYMGR_URL)
                         .execute();
                 break;
 
@@ -1149,57 +1148,57 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
                 Log.v("FMAREA", result.toString());
 
                 String FMAREA_URL = connURLsvc + "/FmArea/mobile123/" + localSP.getString("Console_DB", "").toString();
-                new Downloader(Home.this, Home.this, TaskType.FMAREA, URL, FMAREA_URL)
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FMAREA, URL, FMAREA_URL)
                         .execute();
                 break;
             case FMAREA:
                 Log.v("FMAREASUB", result.toString());
 
                 String FMAREASUB_URL = connURLsvc + "/fmAreaSub/mobile123/" + localSP.getString("Console_DB", "").toString();
-                new Downloader(Home.this, Home.this, TaskType.FMAREASUB, URL, FMAREASUB_URL)
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FMAREASUB, URL, FMAREASUB_URL)
                         .execute();
                 break;
             case FMAREASUB:
                 Log.v("FMDEBTOR", result.toString());
 
                 String FMDEBTOR_URL = connURLsvc + "/FmDebtor/mobile123/" + localSP.getString("Console_DB", "").toString()+"/"+new FmSalRepDS(this).getCurrentRepCode().trim();
-                new Downloader(Home.this, Home.this, TaskType.FMDEBTOR, URL, FMDEBTOR_URL)
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FMDEBTOR, URL, FMDEBTOR_URL)
                         .execute();
                 break;
             case FMDEBTOR:
                 Log.v("FMDEBTORDET", result.toString());
 
                 String FMDEBTORDET_URL = connURLsvc + "/fmDebDet/mobile123/" + localSP.getString("Console_DB", "").toString();
-                new Downloader(Home.this, Home.this, TaskType.FMDEBTORDET, URL, FMDEBTORDET_URL)
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FMDEBTORDET, URL, FMDEBTORDET_URL)
                         .execute();
                 break;
             case FMDEBTORDET:
                 Log.v("FMEXP_GRP", result.toString());
 
                 String FMEXP_GRP_URL = connURLsvc + "/fExpGrp/mobile123/" + localSP.getString("Console_DB", "").toString();
-                new Downloader(Home.this, Home.this, TaskType.FMEXP_GRP, URL, FMEXP_GRP_URL)
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FMEXP_GRP, URL, FMEXP_GRP_URL)
                         .execute();
                 break;
             case FMEXP_GRP:
                 Log.v("FITNDEBDET", result.toString());
                 String FMISS_SUBDET_URL = connURLsvc + "/FmissSubDet/mobile123/" + localSP.getString("Console_DB", "").toString();
-                new Downloader(Home.this, Home.this, TaskType.FMISS_SUBDET, URL, FMISS_SUBDET_URL).execute();
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FMISS_SUBDET, URL, FMISS_SUBDET_URL).execute();
                 break;
             case FMISS_SUBDET:
                 Log.v("FMISS_SUBDET", result.toString());
                 String FMISS_HED_URL = connURLsvc + "/fmisshed/mobile123/" + localSP.getString("Console_DB", "").toString()+"/"+new FmSalRepDS(this).getCurrentRepCode().trim();
-                new Downloader(Home.this, Home.this, TaskType.FMISS_HED, URL, FMISS_HED_URL).execute();
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FMISS_HED, URL, FMISS_HED_URL).execute();
                 break;
 
             case FMISS_HED:
                 Log.v("FMISS_HED", result.toString());
                 String FMISS_DET_URL = connURLsvc + "/fmissdet/mobile123/" + localSP.getString("Console_DB", "").toString();
-                new Downloader(Home.this, Home.this, TaskType.FMISS_DET, URL, FMISS_DET_URL).execute();
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FMISS_DET, URL, FMISS_DET_URL).execute();
                 break;
             case FMISS_DET:
                 Log.v("FMISS_DET", result.toString());
                 String FORDSTAT_URL = connURLsvc + "/FOrdStat/mobile123/" + localSP.getString("Console_DB", "").toString() + "/" + ds.getCurrentRepCode();
-                new Downloader(Home.this, Home.this, TaskType.FORDSTAT, URL, FORDSTAT_URL).execute();
+                new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FORDSTAT, URL, FORDSTAT_URL).execute();
                 break;
             case FORDSTAT:
                 Log.v("FREPLOC", result.toString());
@@ -1220,7 +1219,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
 
                             String FCONTROL_URL = connURLsvc + "/fControl/mobile123/"
                                     + localSP.getString("Console_DB", "").toString();
-                            new Downloader(Home.this, Home.this, TaskType.FCONTROL, URL,
+                            new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FCONTROL, URL,
                                     FCONTROL_URL).execute();
 
                         } else {
@@ -1252,7 +1251,7 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
 
                         String downLoadURL = connURLsvc + "/fmItemLoc/mobile123/"
                                 + localSP.getString("Console_DB", "").toString() + "/" + repDS.getCurrentRepLocCode();
-                        new Downloader(Home.this, Home.this, TaskType.FITEMLOC, URL, downLoadURL)
+                        new Downloader(ActivityHome.this, ActivityHome.this, TaskType.FITEMLOC, URL, downLoadURL)
                                 .execute();
 
                     }
@@ -1275,14 +1274,14 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
     }
     public void mUploadResult(String message) {
 
-        android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(Home.this);
+        android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(ActivityHome.this);
         alertDialogBuilder.setMessage(message);
         alertDialogBuilder.setTitle("Upload Summary");
 
         alertDialogBuilder.setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int id) {
-                UtilityContainer.mLoadFragment(new PromoSaleManagement(), Home.this);
+                UtilityContainer.mLoadFragment(new PromoSaleManagement(), ActivityHome.this);
                 dialog.cancel();
             }
         });
@@ -1309,8 +1308,8 @@ public class Home extends AppCompatActivity implements AsyncTaskListener, Downlo
 
             case UPLOAD_NEW_CUSTOMER: {
                 Toast.makeText(getApplicationContext(), "Customer records uploaded successfully!", Toast.LENGTH_LONG).show();
-                ArrayList<PreSalesMapper> list = new OrdHedDS(Home.this).getAllUnSyncOrdHed();
-                new UploadPromoOrder(Home.this, Home.this, TaskType.UPLOAD_PROMO_ORDER).execute(list);
+                ArrayList<PreSalesMapper> list = new OrdHedDS(ActivityHome.this).getAllUnSyncOrdHed();
+                new UploadPromoOrder(ActivityHome.this, ActivityHome.this, TaskType.UPLOAD_PROMO_ORDER).execute(list);
             }
             break;
 

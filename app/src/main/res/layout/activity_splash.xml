@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:weightSum="2"
     android:background="@color/colorPrimaryDark"
-    tools:context="com.bit.sfa.DefView.Splash">
+    tools:context="com.bit.sfa.view.ActivitySplash">
 
 
     <LinearLayout
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/logo" />
 
-        <com.bit.sfa.DefView.FinacFont
+        <com.bit.sfa.utils.FinacFont
             android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/dm_logo" />
 
-            <com.bit.sfa.DefView.FinacFont
+            <com.bit.sfa.utils.FinacFont
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:padding="10dp"
